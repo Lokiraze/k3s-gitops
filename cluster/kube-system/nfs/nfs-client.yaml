@@ -18,8 +18,8 @@ spec:
     version: 1.2.8
   values:
     image:
-      repository: quay.io/external_storage/nfs-client-provisioner
-      tag: v3.1.0-k8s1.11
+      repository: kubesphere/nfs-client-provisioner:arm64
+      tag: arm64
     nfs:
       server: "192.168.1.50"
       path: "/mnt/user/kubernetes"
