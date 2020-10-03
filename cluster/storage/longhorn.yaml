@@ -1,48 +1,48 @@
-# ---
-# apiVersion: helm.fluxcd.io/v1
-# kind: HelmRelease
-# metadata:
-#   name: longhorn
-#   namespace: storage
-#   annotations:
-#     fluxcd.io/ignore: "false"
-#     fluxcd.io/automated: "false"
-# spec:
-#   releaseName: longhorn
-#   helmVersion: v3
-#   chart:
-#     repository: https://charts.longhorn.io
-#     name: longhorn
-#     version: 1.0.2
-#   values:
-#     image:
-#       longhorn:
-#         engine: yaamai/longhorn-engine
-#         engineTag: latest
-#         manager: yaamai/longhorn-manager
-#         managerTag: latest
-#         ui: yaamai/longhorn-ui
-#         uiTag: latest
-#         instanceManager: yaamai/longhorn-instance-manager
-#         instanceManagerTag: latest
-#       pullPolicy: Always
-#     csi:
-#       attacherImage: raspbernetes/csi-external-attacher
-#       attacherImageTag: 3.0.0
-#       provisionerImage: raspbernetes/csi-external-provisioner
-#       provisionerImageTag: 2.0.2
-#       nodeDriverRegistrarImage: raspbernetes/csi-node-driver-registrar
-#       nodeDriverRegistrarImageTag: 2.0.1
-#       resizerImage: raspbernetes/csi-external-resizer
-#       resizerImageTag: 1.0.0
-#     persistence:
-#       defaultClassReplicaCount: 3
-#     defaultSettings:
-#       defaultReplicaCount: 3
-#       createDefaultDiskLabeledNodes: true
-#       backupTarget: s3://longhorn@minio/backups
-#       backupTargetCredentialSecret: aws-secret
-#     ingress:
-#       enabled: false
-#       annotations:
-#         kubernetes.io/ingress.class: "nginx"
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: longhorn
+  namespace: storage
+  annotations:
+    fluxcd.io/ignore: "false"
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: longhorn
+  helmVersion: v3
+  chart:
+    repository: https://charts.longhorn.io
+    name: longhorn
+    version: 1.0.2
+  values:
+    image:
+      longhorn:
+        engine: yaamai/longhorn-engine
+        engineTag: latest
+        manager: yaamai/longhorn-manager
+        managerTag: latest
+        ui: yaamai/longhorn-ui
+        uiTag: latest
+        instanceManager: yaamai/longhorn-instance-manager
+        instanceManagerTag: latest
+      pullPolicy: Always
+    csi:
+      attacherImage: raspbernetes/csi-external-attacher
+      attacherImageTag: 3.0.0
+      provisionerImage: raspbernetes/csi-external-provisioner
+      provisionerImageTag: 2.0.2
+      nodeDriverRegistrarImage: raspbernetes/csi-node-driver-registrar
+      nodeDriverRegistrarImageTag: 2.0.1
+      resizerImage: raspbernetes/csi-external-resizer
+      resizerImageTag: 1.0.0
+    persistence:
+      defaultClassReplicaCount: 3
+    defaultSettings:
+      defaultReplicaCount: 3
+      createDefaultDiskLabeledNodes: true
+      backupTarget: s3://longhorn@minio/backups
+      backupTargetCredentialSecret: aws-secret
+    ingress:
+      enabled: false
+      annotations:
+        kubernetes.io/ingress.class: "nginx"
