@@ -3,7 +3,7 @@ apiVersion: helm.fluxcd.io/v1
 kind: HelmRelease
 metadata:
   name: nginx-ingress
-  namespace: kube-system
+  namespace: networking
   annotations:
     fluxcd.io/ignore: "false"
     fluxcd.io/automated: "false"
@@ -39,10 +39,10 @@ spec:
         enabled: false
         serviceMonitor:
           enabled: false
-          namespace: kube-system
+          namespace: networking
         prometheusRule:
           enabled: false
-          namespace: kube-system
+          namespace: networking
           rules:
             - alert: TooMany500s
               expr: sum(rate(nginx_ingress_controller_requests{status!~"5.*"}[2m])) / sum(rate(nginx_ingress_controller_requests[2m])) < 0.85
@@ -61,7 +61,7 @@ spec:
                 description: Too many 4XXs
                 summary: More than 15% of the all requests did return 4XX, this requires your attention
       extraArgs:
-        default-ssl-certificate: "kube-system/acme-crt-secret"
+        default-ssl-certificate: "networking/acme-crt-secret"
       resources:
         requests:
           memory: 500Mi
