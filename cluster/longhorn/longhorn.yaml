@@ -25,6 +25,7 @@ spec:
         uiTag: latest
         instanceManager: yaamai/longhorn-instance-manager
         instanceManagerTag: latest
+      pullPolicy: Always
     csi:
       attacherImage: raspbernetes/csi-external-attacher
       attacherImageTag: 3.0.0
