@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-media-tv-pv
+spec:
+  storageClassName: media-tv
+  capacity:
+    storage: 1Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 10.0.7.7
+    path: "/mnt/user/media/tvshows"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-media-tv-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: media-tv
+  resources:
+    requests:
+      storage: 1Mi
