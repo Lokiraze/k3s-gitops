@@ -18,7 +18,7 @@ spec:
     version: 1.2.8
   values:
     image:
-      repository: kubesphere/nfs-client-provisioner:arm64
+      repository: kubesphere/nfs-client-provisioner
       tag: arm64
     nfs:
       server: "192.168.1.50"
