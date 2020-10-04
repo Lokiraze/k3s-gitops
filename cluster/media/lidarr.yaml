@@ -37,10 +37,6 @@ spec:
           enabled: true
         media:
           enabled: false
-      additionalVolumes:
-        - name: nfs-media
-          persistentVolumeClaim:
-            claimName: nfs-media-music-pvc
       resources:
         requests:
           memory: 350Mi
