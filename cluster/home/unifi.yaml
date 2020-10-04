@@ -19,12 +19,12 @@ spec:
     version: 0.10.0
   values:
     image:
-      repository: jacobalberty/unifi
-      tag: 6.0.22
+      repository: ryansch/unifi-rpi
+      tag: 6.1.16
     persistence:
       enabled: true
       size: 2Gi
-    timezone: "America/New_York"
+    timezone: "America/Phoenix"
     runAsRoot: false
     ingress:
       enabled: true
