@@ -47,6 +47,11 @@ spec:
           postgresqlDatabase: home-assistant
       persistence:
         enabled: true
+    zwave:
+      enabled: true
+      device: ttyUSB0
+    nodeSelector:
+      usb: zwave
     vscode:
       enabled: true
       image:
