@@ -24,8 +24,6 @@ spec:
       enabled: true
     ingress:
       enabled: true
-      annotations:
-        cert-manager.io/cluster-issuer: "letsencrypt-prod"
     timezone: "America/Phoenix"
     enableProjects: true
     resources:
