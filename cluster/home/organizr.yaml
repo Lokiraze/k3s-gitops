@@ -1,38 +1,37 @@
-# ---
-# apiVersion: helm.fluxcd.io/v1
-# kind: HelmRelease
-# metadata:
-#   name: organizr
-#   namespace: home
-#   annotations:
-#     fluxcd.io/ignore: "false"
-#     fluxcd.io/automated: "true"
-#     fluxcd.io/tag.chart-image: 'semver:0'
-# spec:
-#   releaseName: organizr
-#   rollback:
-#     enable: false
-#   chart:
-#     repository: https://k8s-at-home.com/charts/
-#     name: organizr
-#     version: 1.0.1
-#   values:
-#     image:
-#       repository: linuxserver/organizr
-#       tag: f6d984d2-ls55
-#     persistence:
-#       enabled: true
-#     ingress:
-#       enabled: true
-#       annotations:
-#         cert-manager.io/cluster-issuer: "letsencrypt-prod"
-#     timezone: "America/Phoenix"
-#     enableProjects: true
-#     resources:
-#       requests:
-#         memory: 350Mi
-#         cpu: 25m
-#       limits:
-#         memory: 500Mi
-#   valueFileSecrets:
-#   - name: "organizr-values"
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: organizr
+  namespace: home
+  annotations:
+    fluxcd.io/ignore: "false"
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: organizr
+  rollback:
+    enable: false
+  chart:
+    repository: https://k8s-at-home.com/charts/
+    name: organizr
+    version: 1.0.1
+  values:
+    image:
+      repository: linuxserver/organizr
+      tag: f6d984d2-ls55
+    persistence:
+      enabled: true
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: "nginx"
+    timezone: "America/Phoenix"
+    enableProjects: true
+    resources:
+      requests:
+        memory: 350Mi
+        cpu: 25m
+      limits:
+        memory: 500Mi
+  valueFileSecrets:
+  - name: "organizr-values"
