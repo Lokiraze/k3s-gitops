@@ -5,7 +5,6 @@ metadata:
   name: organizr
   namespace: home
   annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     fluxcd.io/ignore: "false"
     fluxcd.io/automated: "true"
     fluxcd.io/tag.chart-image: 'semver:0'
@@ -25,6 +24,8 @@ spec:
       enabled: true
     ingress:
       enabled: true
+      annotations:
+        cert-manager.io/cluster-issuer: "letsencrypt-prod"
     timezone: "America/Phoenix"
     enableProjects: true
     resources:
