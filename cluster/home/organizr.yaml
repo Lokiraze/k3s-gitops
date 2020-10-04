@@ -22,7 +22,6 @@ spec:
       tag: f6d984d2-ls55
     persistence:
       enabled: true
-      storageClass: "nfs-client"
     ingress:
       enabled: true
       annotations:
