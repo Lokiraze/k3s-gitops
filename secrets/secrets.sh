@@ -127,6 +127,7 @@ do
   echo "The DO email is currently set to: ${DO_API_EMAIL}"
   # Apply this manifest to our cluster
   if output=$(envsubst < "$file"); then
+    echo $output
     printf '%s' "$output" | kubectl apply -f -
   fi
 done
