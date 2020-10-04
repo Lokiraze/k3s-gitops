@@ -3,7 +3,7 @@ apiVersion: helm.fluxcd.io/v1
 kind: HelmRelease
 metadata:
   name: grocy
-  namespace: default
+  namespace: home
   annotations:
     fluxcd.io/ignore: "false"
     fluxcd.io/automated: "true"
