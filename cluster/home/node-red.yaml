@@ -25,6 +25,8 @@ spec:
     flows: "flows.json"
     ingress:
       enabled: true
+      annotations:
+        kubernetes.io/ingress.class: "nginx"
     timezone: "America/Phoenix"
     enableProjects: true
     resources:
