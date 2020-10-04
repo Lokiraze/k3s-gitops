@@ -61,7 +61,7 @@ spec:
               annotations:
                 description: Too many 4XXs
                 summary: More than 15% of the all requests did return 4XX, this requires your attention
-      extraArgs:
+      #extraArgs:
         #default-ssl-certificate: "networking/acme-crt-secret"
       resources:
         requests:
