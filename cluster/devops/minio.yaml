@@ -41,6 +41,6 @@ spec:
       enabled: false
     metrics:
       serviceMonitor:
-        enabled: true
+        enabled: false
   valueFileSecrets:
   - name: "minio-values"
