@@ -28,7 +28,7 @@ spec:
       enabled: false
 #      accessModes: ReadWriteOnce
       size: 5Gi
-      storageClass: "openebs-cstor-sparse"
+      storageClass: "nfs-client"
     service:
       type: LoadBalancer
       loadBalancerIP: 192.168.69.20
