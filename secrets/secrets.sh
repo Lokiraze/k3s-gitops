@@ -95,7 +95,7 @@ sed -i 's/stdin\:/values.yaml\:/g' "${GENERATED_SECRETS}"
 
 # DigitalOcean API Key - cert-manager namespace
 kubectl create secret generic digitalocean-api-key \
-  --from-literal=api-key="${DO_API_KEY}" \
+  --from-literal=api-key="${DO_API_KEY_BASE64}" \
   --namespace cert-manager --dry-run=client -o json \
   | \
 kubeseal --format=yaml --cert="${PUB_CERT}" \
