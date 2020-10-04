@@ -3,6 +3,7 @@
 #
 # Get Absolute Path of the base repos
 export REPO_ROOT=$(git rev-parse --show-toplevel)
+export KUBECONFIG="$REPO_ROOT/kubeconfig"
 
 need() {
     if ! [ -x "$(command -v $1)" ]; then
