@@ -71,8 +71,8 @@ spec:
     defaultBackend:
       enabled: false
       image:
-        repository: billimek/custom-error-pages
-        tag: 0.4.4
+        repository: onedr0p/custom-error-pages
+        tag: v1.0.2
       resources:
         requests:
           memory: 250Mi
