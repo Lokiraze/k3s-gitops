@@ -16,7 +16,7 @@ spec:
   chart:
     repository: https://k8s-at-home.com/charts/
     name: sonarr
-    version: 4.0.1
+    version: 6.0.1
   values:
     lidarr:
       image:
