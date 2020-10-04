@@ -32,4 +32,4 @@ spec:
       accessMode: ReadWriteOnce
       size: 5Gi
   valueFileSecrets:
-    - name: "bitwarden-helm-values"
+    - name: "bitwarden-values"
