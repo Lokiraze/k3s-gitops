@@ -1,0 +1,68 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: home-assistant
+  namespace: default
+  annotations:
+    fluxcd.io/ignore: "false"
+    fluxcd.io/automated: "true"
+    # fluxcd.io/tag.chart-image: semver:~0.
+    filter.fluxcd.io/chart-image: semver:~0.
+    filter.fluxcd.io/vscode: "regex:^3.[0-9]+-.*$"
+spec:
+  releaseName: home-assistant
+  helmVersion: v3
+  rollback:
+    enable: true
+  chart:
+    repository: https://k8s-at-home.com/charts/
+    name: home-assistant
+    version: 2.5.0
+  values:
+    image:
+      repository: homeassistant/home-assistant
+      tag: 0.115.6
+    persistence:
+      enabled: true
+      size: 10Gi
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: "nginx"
+    service:
+      type: LoadBalancer
+      loadBalancerIP: 192.168.1.84
+    hostNetwork: true
+    probes:
+      liveness:
+        enabled: false
+      readiness:
+        enabled: false
+    postgresql:
+      enabled: true
+      global:
+        postgresql:
+          postgresqlUsername: home-assistant
+          postgresqlDatabase: home-assistant
+      persistence:
+        enabled: true
+    vscode:
+      enabled: true
+      image:
+        repository: codercom/code-server
+        tag: 3.4.1
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: "nginx"
+    resources:
+      limits:
+        memory: 2500Mi
+      requests:
+        cpu: 35m
+        memory: 2000Mi
+    monitoring:
+      enabled: false
+  valueFileSecrets:
+  - name: "home-assistant-values"
