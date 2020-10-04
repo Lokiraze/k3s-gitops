@@ -64,7 +64,7 @@ do
   secret_name=$(basename "${secret_path}")
 
   # Find namespace by looking for the chart file in the cluster folder
-  namespace="$(find ${REPO_ROOT}/cluster -type f -name "${secret_name}.yaml" | awk -F/ '{print $(NF-2)}')"
+  namespace="$(find ${REPO_ROOT}/cluster -type f -name "${secret_name}.yaml" | awk -F/ '{print $(NF-1)}')"
   echo "  Generating helm secret '${secret_name}' in namespace '${namespace}'..."
   echo "-----The Domain is currently set to: ${DOMAIN}-------"
 
