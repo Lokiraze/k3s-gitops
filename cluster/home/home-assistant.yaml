@@ -40,7 +40,7 @@ spec:
       readiness:
         enabled: false
     postgresql:
-      enabled: true
+      enabled: false
       image:
         repository: postgres
         tag: 9.6-alpine
