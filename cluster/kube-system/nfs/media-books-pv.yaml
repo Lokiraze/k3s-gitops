@@ -3,7 +3,6 @@ kind: PersistentVolume
 metadata:
   name: nfs-media-books-pv
 spec:
-  storageClassName: media-books
   capacity:
     storage: 1Mi
   accessModes:
@@ -21,7 +20,6 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: media-books
   resources:
     requests:
       storage: 1Mi
