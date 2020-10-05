@@ -31,7 +31,7 @@ spec:
     persistence:
       config:
         enabled: true
-        size: 250Mi
+        size: 1Gi
     resources:
       requests:
         memory: 350Mi

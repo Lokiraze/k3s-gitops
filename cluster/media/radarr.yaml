@@ -35,7 +35,7 @@ spec:
         type: statefulset
         config:
           enabled: true
-          size: 250Mi
+          size: 1Gi
         media:
           enabled: false
         extraExistingClaimMouts:
