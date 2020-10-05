@@ -3,7 +3,6 @@ kind: PersistentVolume
 metadata:
   name: nfs-media-movies-pv
 spec:
-  storageClassName: media-movies
   capacity:
     storage: 1Mi
   accessModes:
@@ -21,7 +20,6 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: media-movies
   resources:
     requests:
       storage: 1Mi

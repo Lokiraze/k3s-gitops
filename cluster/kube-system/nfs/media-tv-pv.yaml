@@ -3,7 +3,6 @@ kind: PersistentVolume
 metadata:
   name: nfs-media-tv-pv
 spec:
-  storageClassName: media-tv
   capacity:
     storage: 1Mi
   accessModes:
@@ -21,7 +20,6 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: media-tv
   resources:
     requests:
       storage: 1Mi

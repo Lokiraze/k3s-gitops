@@ -3,7 +3,6 @@ kind: PersistentVolume
 metadata:
   name: nfs-media-music-pv
 spec:
-  storageClassName: media-music
   capacity:
     storage: 1Mi
   accessModes:
@@ -21,7 +20,6 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: media-music
   resources:
     requests:
       storage: 1Mi
