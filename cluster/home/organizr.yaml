@@ -17,10 +17,6 @@ spec:
     version: 1.0.1
   values:
     organizr:
-      image:
-        organization: organizr
-        repository: organizr
-        tag: latest
       env:
         TZ: America/Phoenix
       persistence:
