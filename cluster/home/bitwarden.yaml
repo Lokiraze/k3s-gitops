@@ -12,9 +12,9 @@ spec:
   rollback:
     enable: true
   chart:
-    repository: https://cdwv.github.io/bitwarden-k8s/
-    name: bitwarden-k8s
-    version: 0.1.5
+    repository: https://k8s-at-home.com/charts/
+    name: bitwarden
+    version: 1.16.3
   values:
     nameOverride: bitwarden
     fullnameOverride: bitwarden
