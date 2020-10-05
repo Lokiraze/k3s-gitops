@@ -34,5 +34,5 @@ spec:
           cpu: 25m
         limits:
           memory: 500Mi
-      valueFileSecrets:
-        - name: "organizr-values"
+  valueFileSecrets:
+  - name: "organizr-values"

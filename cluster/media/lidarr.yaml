@@ -48,5 +48,5 @@ spec:
           cpu: 25m
         limits:
           memory: 1000Mi
-      valueFileSecrets:
-        - name: "lidarr-values"
+  valueFileSecrets:
+  - name: "lidarr-values"
