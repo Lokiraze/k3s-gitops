@@ -45,4 +45,4 @@ spec:
         limits:
           memory: 1000Mi
   valueFileSecrets:
-  - name: "radarr-values"
+    - name: "radarr-values"
