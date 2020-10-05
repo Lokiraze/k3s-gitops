@@ -16,22 +16,23 @@ spec:
     name: organizr
     version: 1.0.1
   values:
-    image:
-      repository: linuxserver/organizr
-      tag: f6d984d2-ls55
-    persistence:
-      enabled: true
-    ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: "nginx"
-    timezone: "America/Phoenix"
-    enableProjects: true
-    resources:
-      requests:
-        memory: 350Mi
-        cpu: 25m
-      limits:
-        memory: 500Mi
-    valueFileSecrets:
-      - name: "organizr-values"
+    organizer:
+      image:
+        repository: linuxserver/organizr
+        tag: f6d984d2-ls55
+      persistence:
+        enabled: true
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: "nginx"
+      timezone: "America/Phoenix"
+      enableProjects: true
+      resources:
+        requests:
+          memory: 350Mi
+          cpu: 25m
+        limits:
+          memory: 500Mi
+      valueFileSecrets:
+        - name: "organizr-values"
