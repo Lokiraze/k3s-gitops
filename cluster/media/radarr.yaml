@@ -7,7 +7,7 @@ metadata:
   annotations:
     fluxcd.io/ignore: "false"
     fluxcd.io/automated: "true"
-    fluxcd.io/tag.chart-image: semver:3.0
+    #fluxcd.io/tag.chart-image: semver:3.0
 spec:
   releaseName: radarr
   helmVersion: v3
@@ -22,7 +22,7 @@ spec:
       image:
         organization: linuxserver
         repository: radarr
-        tag: latest
+        tag: 3.0.0.3860-ls25
       ingress:
         enabled: true
         annotations:
