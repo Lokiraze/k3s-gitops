@@ -7,7 +7,7 @@ metadata:
   annotations:
     fluxcd.io/ignore: "false"
     fluxcd.io/automated: "true"
-    fluxcd.io/tag.chart-image: semver:3.0
+    #fluxcd.io/tag.chart-image: semver:3.0
 spec:
   releaseName: sonarr
   helmVersion: v3
@@ -22,7 +22,7 @@ spec:
       image:
         organization: linuxserver
         repository: sonarr
-        tag: latest
+        tag: 2.0.0.5343-ls124
       ingress:
         enabled: true
         annotations:
