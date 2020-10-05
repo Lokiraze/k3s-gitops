@@ -38,6 +38,10 @@ spec:
           size: 250Mi
         media:
           enabled: false
+        extraExistingClaimMouts:
+        - name: media-movies
+          existingClaim: nfs-media-movies-pvc
+          readOnly: false
       resources:
         requests:
           memory: 350Mi

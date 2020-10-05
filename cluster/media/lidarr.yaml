@@ -38,6 +38,10 @@ spec:
           size: 250Mi
         media:
           enabled: false
+        extraExistingClaimMouts:
+        - name: media-music
+          existingClaim: nfs-media-music-pvc
+          readOnly: false
       resources:
         requests:
           memory: 350Mi
