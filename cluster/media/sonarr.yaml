@@ -20,8 +20,8 @@ spec:
   values:
     lidarr:
       image:
-        organization: linuxserver
-        repository: sonarr
+        organization: ""
+        repository: linuxserver/sonarr
         tag: 2.0.0.5343-ls124
       ingress:
         enabled: true
