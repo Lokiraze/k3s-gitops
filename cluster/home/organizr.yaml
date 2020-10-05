@@ -18,9 +18,11 @@ spec:
   values:
     organizr:
       image:
-        organization: linuxserver
+        organization: organizr
         repository: organizr
-        tag: f6d984d2-ls55
+        tag: latest
+      env:
+        TZ: America/Phoenix
       persistence:
         enabled: true
       ingress:
