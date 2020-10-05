@@ -35,6 +35,7 @@ spec:
         type: statefulset
         config:
           enabled: true
+          size: 250Mi
         media:
           enabled: false
       resources:

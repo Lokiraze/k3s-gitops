@@ -35,12 +35,9 @@ spec:
         type: statefulset
         config:
           enabled: true
+          size: 250Mi
         media:
           enabled: false
-      additionalVolumes:
-        - name: nfs-media
-          persistentVolumeClaim:
-            claimName: nfs-media-tv-pvc
       resources:
         requests:
           memory: 350Mi
