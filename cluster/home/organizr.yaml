@@ -16,7 +16,7 @@ spec:
     name: organizr
     version: 1.0.1
   values:
-    organizer:
+    organizr:
       image:
         repository: linuxserver/organizr
         tag: f6d984d2-ls55
