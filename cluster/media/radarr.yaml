@@ -18,7 +18,7 @@ spec:
     name: radarr
     version: 4.0.1
   values:
-    lidarr:
+    radarr:
       image:
         organization: linuxserver
         repository: radarr
@@ -48,5 +48,5 @@ spec:
           cpu: 25m
         limits:
           memory: 1000Mi
-  valueFileSecrets:
-    - name: "radarr-values"
+      valueFileSecrets:
+        - name: "radarr-values"

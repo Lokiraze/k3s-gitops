@@ -18,7 +18,7 @@ spec:
     name: sonarr
     version: 6.0.1
   values:
-    lidarr:
+    sonarr:
       image:
         organization: linuxserver
         repository: sonarr
@@ -48,5 +48,5 @@ spec:
           cpu: 25m
         limits:
           memory: 1000Mi
-  valueFileSecrets:
-    - name: "sonarr-values"
+      valueFileSecrets:
+        - name: "sonarr-values"
