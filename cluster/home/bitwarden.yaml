@@ -13,7 +13,7 @@ spec:
     enable: true
   chart:
     repository: https://k8s-at-home.com/charts/
-    name: bitwarden
+    name: bitwardenrs
     version: 1.16.3
   values:
     nameOverride: bitwarden
