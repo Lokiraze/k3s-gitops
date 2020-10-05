@@ -20,8 +20,8 @@ spec:
   values:
     lidarr:
       image:
-        organization: ""
-        repository: linuxserver/lidarr
+        organization: linuxserver
+        repository: lidarr
         tag: 0.7.1.1851-ls2
       ingress:
         enabled: true

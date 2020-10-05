@@ -20,8 +20,8 @@ spec:
   values:
     lidarr:
       image:
-        organization: ""
-        repository: linuxserver/radarr
+        organization: linuxserver
+        repository: radarr
         tag: 3.0.0.3860-ls25
       ingress:
         enabled: true
