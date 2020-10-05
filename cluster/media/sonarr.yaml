@@ -6,7 +6,7 @@ metadata:
   namespace: media
   annotations:
     fluxcd.io/ignore: "false"
-    fluxcd.io/automated: "true"
+    fluxcd.io/automated: "false"
     #fluxcd.io/tag.chart-image: semver:3.0
 spec:
   releaseName: sonarr
@@ -38,6 +38,10 @@ spec:
           size: 250Mi
         media:
           enabled: false
+        extraExistingClaimMouts:
+        - name: media-tv
+          existingClaim: nfs-media-tv-pvc
+          readOnly: false
       resources:
         requests:
           memory: 350Mi
