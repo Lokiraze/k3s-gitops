@@ -11,7 +11,7 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   nfs:
-    server: 10.0.7.7
+    server: 192.168.1.50
     path: "/mnt/user/media/books"
 ---
 apiVersion: v1
