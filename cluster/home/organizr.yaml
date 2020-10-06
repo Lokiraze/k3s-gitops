@@ -34,4 +34,4 @@ spec:
         limits:
           memory: 500Mi
   valueFileSecrets:
-    - name: "organizr-values"
+  - name: "organizr-values"
