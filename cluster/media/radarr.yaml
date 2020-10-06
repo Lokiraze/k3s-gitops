@@ -37,11 +37,8 @@ spec:
           enabled: true
           size: 1Gi
         media:
-          enabled: false
-        extraExistingClaimMounts:
-        - name: media-movies
+          enabled: true
           existingClaim: nfs-media-movies-pvc
-          readOnly: false
       resources:
         requests:
           memory: 350Mi
