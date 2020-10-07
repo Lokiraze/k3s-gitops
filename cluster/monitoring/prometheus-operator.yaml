@@ -28,6 +28,11 @@ spec:
         limits:
           memory: 2000Mi
     prometheusOperator:
+      image:
+        tag: 0.42.1-arm64
+      tlsProxy:
+        image:
+          repository: raspbernetes/ghosttunnel
       createCustomResource: false
       prometheusConfigReloaderImage:
         repository: quay.io/coreos/prometheus-config-reloader
