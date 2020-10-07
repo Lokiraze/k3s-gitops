@@ -25,4 +25,4 @@ spec:
   storageClassName: nfs-client
   resources:
     requests:
-      storage: 100Gi
+      storage: 1Mi
