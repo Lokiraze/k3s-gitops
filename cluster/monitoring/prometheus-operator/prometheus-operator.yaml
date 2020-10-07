@@ -217,4 +217,4 @@ spec:
                 requests:
                   storage: 50Gi
   valueFileSecrets:
-  - name: "prometheus-operator-helm-values"
+  - name: "prometheus-operator-values"
