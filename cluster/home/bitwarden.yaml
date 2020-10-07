@@ -21,7 +21,8 @@ spec:
     image:
       repository: bitwardenrs/server
       tag: latest
-    signupsAllowed: "true"
+    bitwardenrs:
+      signupsAllowed: true
     ingress:
       enabled: true
       annotations:
