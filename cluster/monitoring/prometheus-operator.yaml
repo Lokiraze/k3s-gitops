@@ -12,7 +12,7 @@ spec:
   releaseName: prometheus-operator
   helmVersion: v3
   chart:
-    repository: https://github.com/prometheus-community/helm-charts
+    repository: https://prometheus-community.github.io/helm-charts
     name: kube-prometheus-stack
     version: 9.4.10
   values:
