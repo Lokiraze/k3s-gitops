@@ -77,6 +77,8 @@ spec:
         annotations:
           kubernetes.io/ingress.class: "nginx"
       sidecar:
+        image:
+          tag: 0.1.209
         datasources:
           enabled: true
           # Disable for thanos
