@@ -181,6 +181,10 @@ spec:
           url: https://grafana.net
     kubeEtcd:
       enabled: false
+    kube-state-metrics:
+      image:
+        repository: raspbernetes/kube-state-metrics
+        tag: 17b52ef550e12b4b7eef2b051979b221a0e9c42d
     kubeControllerManager:
       enabled: false
     kubeScheduler:
