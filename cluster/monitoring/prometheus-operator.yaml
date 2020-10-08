@@ -114,12 +114,12 @@ spec:
           nginx-dashboard:
             url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
             datasource: Prometheus
-          flux:
-            url: https://raw.githubusercontent.com/fluxcd/flux/master/chart/flux/dashboards/flux-dashboard.json
-            datasource: Prometheus
-          helm-operator:
-            url: https://raw.githubusercontent.com/fluxcd/helm-operator/master/chart/helm-operator/dashboards/helm-operator-dashboard.json
-            datasource: Prometheus
+          # flux:
+          #   url: https://raw.githubusercontent.com/fluxcd/flux/master/chart/flux/dashboards/flux-dashboard.json
+          #   datasource: Prometheus
+          # helm-operator:
+          #   url: https://raw.githubusercontent.com/fluxcd/helm-operator/master/chart/helm-operator/dashboards/helm-operator-dashboard.json
+          #   datasource: Prometheus
           # Ref: https://grafana.com/grafana/dashboards/11310
           # unifi-client-dpi:
           #   gnetId: 11310
