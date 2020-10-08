@@ -32,7 +32,7 @@ spec:
         tag: v0.42.1-arm64
       tlsProxy:
         image:
-          repository: raspbernetes/ghosttunnel
+          repository: raspbernetes/ghostunnel
       createCustomResource: false
       prometheusConfigReloaderImage:
         repository: quay.io/coreos/prometheus-config-reloader
