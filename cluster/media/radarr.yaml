@@ -39,13 +39,13 @@ spec:
         media:
           enabled: true
           existingClaim: nfs-media-movies-pvc
-      additionalVolumes:
-        - name: downloads
-          persistentVolumeClaim:
-            claimName: nfs-media-downloads-pvc
-      additionalVolumeMounts:
-        - name: downloads
-          mountPath: "/downloads"
+      # additionalVolumes:
+      #   - name: downloads
+      #     persistentVolumeClaim:
+      #       claimName: nfs-media-downloads-pvc
+      # additionalVolumeMounts:
+      #   - name: downloads
+      #     mountPath: "/downloads"
       resources:
         requests:
           memory: 350Mi
