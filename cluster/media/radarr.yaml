@@ -43,9 +43,6 @@ spec:
         - name: downloads
           persistentVolumeClaim:
             claimName: nfs-media-downloads-pvc
-      additionalVolumeMounts:
-        - name: downloads
-          mountPath: "/"
       resources:
         requests:
           memory: 350Mi
