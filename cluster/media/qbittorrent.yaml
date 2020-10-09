@@ -22,11 +22,14 @@ spec:
       image:
         organization: linuxserver
         repository: qbittorrent
-        tag: 4.1.5.99201903251247-6693-8f6c305ubuntu18.04.1-ls13
+        tag: arm64v8-latest
       ingress:
         enabled: true
         annotations:
           kubernetes.io/ingress.class: "nginx"
+      btService:
+        type: LoadBalancer
+        loadBalancerIP: 192.168.1.83
       env:
         TZ: "America/Phoenix"
         PUID: "1000"
