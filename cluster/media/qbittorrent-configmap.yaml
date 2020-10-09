@@ -5,7 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/name: jackettqbittorrent
   name: qbittorrent-custom-scripts
-  namespace: downloads
+  namespace: media
 data:
   99-wait-for-vpn: |-
     #!/bin/bash
