@@ -45,7 +45,7 @@ spec:
         - name: shared
           emptyDir: {}
       openvpn:
-        enabled: false
+        enabled: true
         image: 
           tag: aarch64
         scripts:
