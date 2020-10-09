@@ -32,6 +32,10 @@ spec:
         PUID: "1000"
         PGID: "100"
       persistence:
+        type: statefulset
+        config:
+          enabled: true
+          size: 1Gi
         downloads:
           enabled: false
       additionalVolumes:
