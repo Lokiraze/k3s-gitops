@@ -66,8 +66,8 @@ spec:
           - mountPath: /shared
             name: shared
         env:
-          - VPNPORT_1: "\"6881\""
-          - DNS: "\"1\""
+          VPNPORT_1: "\"6881\""
+          DNS: "\"1\""
         livenessProbe:
           exec:
             command:
