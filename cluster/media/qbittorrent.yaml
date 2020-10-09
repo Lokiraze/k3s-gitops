@@ -22,7 +22,7 @@ spec:
       image:
         organization: linuxserver
         repository: qbittorrent
-        tag: arm64v8-latest
+        tag: 4.1.5.99201903251247-6693-8f6c305ubuntu18.04.1-ls13
       ingress:
         enabled: true
         annotations:
