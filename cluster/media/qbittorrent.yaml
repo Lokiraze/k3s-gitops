@@ -33,7 +33,7 @@ spec:
         PGID: "100"
       persistence:
         downloads:
-          enabled: true
+          enabled: false
       additionalVolumes:
         - name: qbittorrent-scripts
           configMap:
@@ -45,7 +45,7 @@ spec:
         - name: shared
           emptyDir: {}
       openvpn:
-        enabled: true
+        enabled: false
         image: 
           tag: aarch64
         scripts:
