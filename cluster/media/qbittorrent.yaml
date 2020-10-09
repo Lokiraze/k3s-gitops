@@ -32,13 +32,18 @@ spec:
         PUID: "1000"
         PGID: "100"
       persistence:
-        type: statefulset
-        config:
+        downloads:
           enabled: true
-          size: 1Gi
-        media:
-          enabled: true
-          existingClaim: nfs-media-downloads-pvc
+      additionalVolumes:
+        - name: qbittorrent-scripts
+          configMap:
+            name: qbittorrent-custom-scripts
+            defaultMode: 511
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: nfs-media-downloads-pvc
+        - name: shared
+          emptyDir: {}
       openvpn:
         enabled: true
         image: 
@@ -61,12 +66,5 @@ spec:
           cpu: 25m
         limits:
           memory: 1000Mi
-      additionalVolumes:
-        - name: shared
-          emptyDir: {}
-        - name: custom-scripts
-          configMap:
-            name: qbittorrent-custom-scripts
-            defaultMode: 511
   valueFileSecrets:
   - name: "qbittorrent-values"
