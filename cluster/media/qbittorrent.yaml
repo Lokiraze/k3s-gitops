@@ -65,6 +65,8 @@ spec:
         additionalVolumeMounts:
           - mountPath: /shared
             name: shared
+        env:
+          VPNPORT_1: "6881"
         livenessProbe:
           exec:
             command:
