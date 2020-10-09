@@ -49,6 +49,9 @@ spec:
             claimName: nfs-media-downloads-pvc
         - name: shared
           emptyDir: {}
+      additionalVolumeMounts:
+        - mountPath: /shared
+          name: shared
       openvpn:
         enabled: true
         image: 
