@@ -68,6 +68,7 @@ spec:
         env:
           VPNPORT_1: "\"6881\""
           DNS: "\"1\""
+          OTHER_ARGS: "\"--up /vpn/up.sh --down /vpn/down.sh\""
         livenessProbe:
           exec:
             command:
