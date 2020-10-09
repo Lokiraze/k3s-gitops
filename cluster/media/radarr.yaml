@@ -35,6 +35,7 @@ spec:
         type: statefulset
         config:
           enabled: true
+          storageClass: "nfs-client"
           size: 1Gi
         media:
           enabled: true
