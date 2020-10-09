@@ -68,7 +68,6 @@ do
   echo "  Generating helm secret '${secret_name}' in namespace '${namespace}'..."
   echo "-----The Domain is currently set to: ${DOMAIN}-------"
 
-  envsubst -v "$file"
   # Create secret
   envsubst < "$file" \
     | \
