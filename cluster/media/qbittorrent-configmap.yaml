@@ -1,14 +1,14 @@
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  labels:
-    app.kubernetes.io/name: jackettqbittorrent
-  name: qbittorrent-custom-scripts
-  namespace: media
-data:
-  99-wait-for-vpn: |-
-    #!/bin/bash
-    echo "Waiting for VPN to be connected..."
-    while ! grep -q "connected" /shared/vpnstatus;do echo "VPN Not connected";sleep 2;done
-    echo "VPN Connected"
+# ---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   labels:
+#     app.kubernetes.io/name: jackettqbittorrent
+#   name: qbittorrent-custom-scripts
+#   namespace: media
+# data:
+#   99-wait-for-vpn: |-
+#     #!/bin/bash
+#     echo "Waiting for VPN to be connected..."
+#     while ! grep -q "connected" /shared/vpnstatus;do echo "VPN Not connected";sleep 2;done
+#     echo "VPN Connected"
