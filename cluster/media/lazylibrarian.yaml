@@ -14,9 +14,9 @@ spec:
   rollback:
     enable: false
   chart:
-    repository: https://k8s-at-home.com/charts/
+    repository: https://raw.githubusercontent.com/aldoborrero/k8s-usenet/master/charts/
     name: lazylibrarian
-    version: 2.0.1
+    version: 1.0.0
   values:
     image:
       repository: linuxserver/lazylibrarian
@@ -25,14 +25,21 @@ spec:
       enabled: true
       annotations:
         kubernetes.io/ingress.class: "nginx"
-    timezone: "America/Phoenix"
-    puid: 1000
-    pgid: 1000
+    lazylibrarian:
+      tz: "America/Phoenix"
+      puid: 1000
+      pgid: 1000
     persistence:
       config:
         enabled: true
         storageClass: "nfs-client"
         size: 1Gi
+      downloads:
+        enabled: true
+        existingClaim: nfs-media-downloads-pvc
+      books:
+        enabled: true
+        existingClaim: nfs-media-books-pvc
     resources:
       requests:
         memory: 350Mi
