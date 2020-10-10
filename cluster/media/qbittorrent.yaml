@@ -27,9 +27,6 @@ spec:
         enabled: true
         annotations:
           kubernetes.io/ingress.class: "nginx"
-      btService:
-        type: LoadBalancer
-        loadBalancerIP: 192.168.1.83
       env:
         TZ: "America/Phoenix"
         PUID: "1000"
