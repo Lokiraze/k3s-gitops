@@ -27,8 +27,8 @@ spec:
         kubernetes.io/ingress.class: "nginx"
     lazylibrarian:
       tz: "America/Phoenix"
-      puid: 1000
-      pgid: 1000
+      puid: 99
+      pgid: 100
     persistence:
       config:
         enabled: true
