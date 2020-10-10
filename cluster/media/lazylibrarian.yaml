@@ -6,8 +6,8 @@ metadata:
   namespace: media
   annotations:
     fluxcd.io/ignore: "false"
-    fluxcd.io/automated: "true"
-    fluxcd.io/tag.chart-image: 'regexp:^(version-v0\.16\.[0-9]+)$'
+    fluxcd.io/automated: "false"
+    #fluxcd.io/tag.chart-image: 'regexp:^(version-v0\.16\.[0-9]+)$'
 spec:
   releaseName: lazylibrarian
   helmVersion: v3
@@ -20,7 +20,7 @@ spec:
   values:
     image:
       repository: linuxserver/lazylibrarian
-      tag: version-v0.16.1559
+      tag: version-63b212b5
     ingress:
       enabled: true
       annotations:
