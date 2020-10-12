@@ -32,8 +32,10 @@ spec:
         tag: 9.5-alpine
       persistence:
         storageClass: "nfs-client"
+      securityContext:
+        runAsUser: 70
       containerSecurityContext:
-        runAsUser: 100
+        runAsUser: 70
     resources:
       requests:
         memory: 350Mi
