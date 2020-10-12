@@ -32,6 +32,7 @@ spec:
         tag: 9.5-alpine
       persistence:
         storageClass: "nfs-client"
+        mountPath: /var/lib/postgresql/data
       securityContext:
         runAsUser: 70
       containerSecurityContext:
