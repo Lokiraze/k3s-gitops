@@ -46,4 +46,4 @@ spec:
         memory: 500Mi
         cpu: 1000m
   valueFileSecrets:
-  - name: "jackett-values"
+  - name: "bookstack-values"
