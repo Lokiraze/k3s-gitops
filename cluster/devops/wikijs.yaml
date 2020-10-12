@@ -32,11 +32,12 @@ spec:
         tag: 9.5-alpine
       persistence:
         storageClass: "nfs-client"
-        mountPath: /var/lib/postgresql/data
+        mountPath: /var/lib/postgresql
       securityContext:
         runAsUser: 70
       containerSecurityContext:
         runAsUser: 70
+      postgresqlDataDir: /var/lib/postgresql/data
     resources:
       requests:
         memory: 350Mi
