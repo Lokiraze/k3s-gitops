@@ -35,6 +35,8 @@ spec:
       storage:
         storageClass: "nfs-client"
     mariadb:
+      replication:
+        enabled: false
       master:
         persistence:
           storageClass: "nfs-client"
