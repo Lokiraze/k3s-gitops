@@ -22,7 +22,7 @@ spec:
       image:
         organization: linuxserver
         repository: lidarr
-        tag: 0.7.1.1851-ls2
+        tag: 0.8.0.1918-ls5
       ingress:
         enabled: true
         annotations:

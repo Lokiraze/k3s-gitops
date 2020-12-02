@@ -22,7 +22,7 @@ spec:
       image:
         organization: linuxserver
         repository: radarr
-        tag: 3.0.0.3860-ls25
+        tag: 3.0.0.4204-ls86
       ingress:
         enabled: true
         annotations:
