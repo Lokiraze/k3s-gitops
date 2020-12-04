@@ -23,6 +23,7 @@ spec:
     service:
       type: LoadBalancer
       loadBalancerIP: 192.168.1.83
+    logLevel: debug
     ingress:
       enabled: true
       annotations:
