@@ -28,11 +28,17 @@ spec:
     postgresql:
       enabled: false
       image:
-        repository: postgres
-        tag: 9.6-alpine
+        repository: arm64v8/postgres
+        tag: 9.5-alpine
       persistence:
         enabled: true
         storageClass: "nfs-client"
+        mountPath: /var/lib/postgresql
+      securityContext:
+        runAsUser: 70
+      containerSecurityContext:
+        runAsUser: 70
+      postgresqlDataDir: /var/lib/postgresql/data
     resources:
       requests:
         memory: 350Mi
