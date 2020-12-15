@@ -16,6 +16,8 @@ spec:
     name: zwave2mqtt
     version: 1.0.1
   values:
+    image:
+      tag: 4.1.0
     env:
       TZ: America/Phoenix
     ingress:
