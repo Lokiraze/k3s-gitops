@@ -19,8 +19,7 @@ spec:
     version: 2.0.1
   values:
     image:
-      organization: linuxserver
-      repository: heimdall
+      repository: linuxserver/heimdall
       tag: version-2.2.2
     ingress:
       enabled: true

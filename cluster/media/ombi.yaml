@@ -19,8 +19,7 @@ spec:
     version: 5.8.0
   values:
     image:
-      organization: linuxserver
-      repository: ombi
+      repository: linuxserver/ombi
       tag: v4-preview
     ingress:
       enabled: true
