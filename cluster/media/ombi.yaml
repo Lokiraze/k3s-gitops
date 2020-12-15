@@ -21,7 +21,7 @@ spec:
     image:
       organization: linuxserver
       repository: ombi
-      tag: version-v4.0.681
+      tag: v4-preview
     ingress:
       enabled: true
       annotations:
