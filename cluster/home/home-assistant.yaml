@@ -57,8 +57,8 @@ spec:
         persistentVolumeClaim:
             claimName: nfs-media-music-pvc
     extraVolumeMounts:
-        - name: music
-          mountPath: "/music"
+      - name: music
+        mountPath: "/music"
     monitoring:
       enabled: false
   valueFileSecrets:
