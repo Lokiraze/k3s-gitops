@@ -18,7 +18,7 @@ spec:
   values:
     image:
       repository: zwavejs/zwavejs2mqtt
-      tag: latest
+      tag: dev
     env:
       TZ: America/Phoenix
     ingress:
