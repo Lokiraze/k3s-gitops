@@ -31,10 +31,10 @@ spec:
         accessMode: ReadWriteOnce
         size: 1Gi
     additionalVolumeMounts:
-      - name: usb
-        mountPath: /dev/serial/by-id/usb-LeafLabs_Maple-if00
+      - name: printer
+        mountPath: /dev/ttyACM0
     additionalVolumes:
-      - name: usb
+      - name: printer
         hostPath:
           path: /dev/serial/by-id/usb-LeafLabs_Maple-if00
     affinity:
