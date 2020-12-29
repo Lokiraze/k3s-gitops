@@ -1,47 +1,47 @@
----
-apiVersion: helm.fluxcd.io/v1
-kind: HelmRelease
-metadata:
-  name: keycloak
-  namespace: security
-  annotations:
-    fluxcd.io/ignore: "false"
-    fluxcd.io/automated: "true"
-    fluxcd.io/tag.chart-image: 'regexp:^(version-0\.6\.[0-9]+)$'
-spec:
-  releaseName: keycloak
-  helmVersion: v3
-  rollback:
-    enable: false
-  chart:
-    repository: https://codecentric.github.io/helm-charts
-    name: keycloak
-    version: 9.6.2
-  values:
-    image:
-      repository: alemairebe/keycloak
-      tag: 11.0.3
-    ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: "nginx"
-    postgresql:
-      enabled: true
-      image:
-        repository: arm64v8/postgres
-        tag: 9.5-alpine
-      persistence:
-        enabled: true
-        storageClass: "nfs-client"
-        mountPath: /var/lib/postgresql
-      securityContext:
-        runAsUser: 70
-      containerSecurityContext:
-        runAsUser: 70
-      postgresqlDataDir: /var/lib/postgresql/data
-    resources:
-      requests:
-        memory: 350Mi
-        cpu: 25m
-  valueFileSecrets:
-  - name: "keycloak-values"
+# ---
+# apiVersion: helm.fluxcd.io/v1
+# kind: HelmRelease
+# metadata:
+#   name: keycloak
+#   namespace: security
+#   annotations:
+#     fluxcd.io/ignore: "false"
+#     fluxcd.io/automated: "true"
+#     fluxcd.io/tag.chart-image: 'regexp:^(version-0\.6\.[0-9]+)$'
+# spec:
+#   releaseName: keycloak
+#   helmVersion: v3
+#   rollback:
+#     enable: false
+#   chart:
+#     repository: https://codecentric.github.io/helm-charts
+#     name: keycloak
+#     version: 9.6.2
+#   values:
+#     image:
+#       repository: alemairebe/keycloak
+#       tag: 11.0.3
+#     ingress:
+#       enabled: true
+#       annotations:
+#         kubernetes.io/ingress.class: "nginx"
+#     postgresql:
+#       enabled: true
+#       image:
+#         repository: arm64v8/postgres
+#         tag: 9.5-alpine
+#       persistence:
+#         enabled: true
+#         storageClass: "nfs-client"
+#         mountPath: /var/lib/postgresql
+#       securityContext:
+#         runAsUser: 70
+#       containerSecurityContext:
+#         runAsUser: 70
+#       postgresqlDataDir: /var/lib/postgresql/data
+#     resources:
+#       requests:
+#         memory: 350Mi
+#         cpu: 25m
+#   valueFileSecrets:
+#   - name: "keycloak-values"

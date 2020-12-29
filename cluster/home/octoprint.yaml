@@ -28,6 +28,8 @@ spec:
       data:
         enabled: true
         storageClass: "nfs-client"
+        accessMode: ReadWriteOnce
+        size: 1Gi
     additionalVolumeMounts:
       - name: usb
         mountPath: /dev/serial/by-id/usb-LeafLabs_Maple-if00
