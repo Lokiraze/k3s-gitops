@@ -33,10 +33,15 @@ spec:
     additionalVolumeMounts:
       - name: printer
         mountPath: /dev/ttyACM0
+      - name: camera
+        mountPath: /dev/video0
     additionalVolumes:
       - name: printer
         hostPath:
           path: /dev/serial/by-id/usb-LeafLabs_Maple-if00
+      - name: camera
+        hostPath:
+          path: /dev/v4l/by-id/usb-046d_HD_Pro_Webcam_C920_704715BF-video-index0
     affinity:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
