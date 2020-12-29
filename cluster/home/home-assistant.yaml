@@ -52,13 +52,13 @@ spec:
       requests:
         cpu: 35m
         memory: 2000Mi
-    extraVolumes:
-      - name: music
-        persistentVolumeClaim:
-            claimName: nfs-media-music-pvc
-    extraVolumeMounts:
-      - name: music
-        mountPath: "/media"
+    # extraVolumes:
+    #   - name: music
+    #     persistentVolumeClaim:
+    #         claimName: nfs-media-music-pvc
+    # extraVolumeMounts:
+    #   - name: music
+    #     mountPath: "/media"
     monitoring:
       enabled: false
   valueFileSecrets:
