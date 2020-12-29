@@ -22,3 +22,4 @@ setup/cluster/*cluster.yml
 kubeconfig
 all.yml
 .DS_STORE
+backups/
