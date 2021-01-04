@@ -68,6 +68,8 @@ spec:
         additionalVolumeMounts:
           - mountPath: /shared
             name: shared
+          - mountPath: "/downloads"
+            name: downloads
         env:
           VPNPORT_1: "\"6881\""
           DNS: "\"1\""
