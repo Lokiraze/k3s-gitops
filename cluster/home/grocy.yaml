@@ -20,7 +20,7 @@ spec:
   values:
     image:
       repository: linuxserver/grocy
-      tag: v3.0.0-ls85
+      tag: v3.0.1-ls86
     persistence:
       enabled: true
       storageClass: "nfs-client"

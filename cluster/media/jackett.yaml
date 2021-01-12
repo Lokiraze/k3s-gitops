@@ -20,7 +20,7 @@ spec:
   values:
     image:
       repository: linuxserver/jackett
-      tag: version-v0.16.2284
+      tag: version-v0.17.242
     ingress:
       enabled: true
       annotations:

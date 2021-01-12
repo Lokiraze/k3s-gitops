@@ -14,7 +14,7 @@
 #   chart:
 #     repository: https://prometheus-community.github.io/helm-charts
 #     name: kube-prometheus-stack
-#     version: 9.4.10
+#     version: 12.9.2
 #   values:
 #     defaultRules:
 #       rules:
@@ -54,7 +54,7 @@
 #     grafana:
 #       image:
 #         repository: grafana/grafana
-#         tag: 7.0.0
+#         tag: 7.3.6
 #       deploymentStrategy:
 #         type: Recreate
 #       persistence:
@@ -86,9 +86,6 @@
 #         dashboards:
 #           enabled: true
 #           searchNamespace: ALL
-#           provider:
-#             disableDelete: false
-#             allowUiUpdates: true
 #       plugins:
 #       - natel-discrete-panel
 #       - pr0ps-trackmap-panel
