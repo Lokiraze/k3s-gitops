@@ -163,6 +163,10 @@ spec:
           mode: console
         grafana_net:
           url: https://grafana.net
+    kube-state-metrics:
+      image: 
+        repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
+        tag: v2.0.0-beta
     kubeEtcd:
       enabled: false
     kubeControllerManager:
