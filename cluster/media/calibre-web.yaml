@@ -6,7 +6,7 @@ metadata:
   namespace: media
   annotations:
     fluxcd.io/ignore: "false"
-    fluxcd.io/automated: "true"
+    fluxcd.io/automated: "false"
     fluxcd.io/tag.chart-image: 'regexp:^(version-0\.6\.[0-9]+)$'
 spec:
   releaseName: calibre-web
