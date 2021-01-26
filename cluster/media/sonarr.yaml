@@ -22,7 +22,7 @@ spec:
       image:
         organization: linuxserver
         repository: sonarr
-        tag: preview-3.0.4.1061-ls25
+        tag: preview-version-3.0.4.1091
       ingress:
         enabled: true
         annotations:

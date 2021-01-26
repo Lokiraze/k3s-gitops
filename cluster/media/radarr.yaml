@@ -22,7 +22,7 @@ spec:
       image:
         organization: linuxserver
         repository: radarr
-        tag: nightly-3.0.2.4390-ls6
+        tag: nightly-version-3.0.2.4488
       ingress:
         enabled: true
         annotations:

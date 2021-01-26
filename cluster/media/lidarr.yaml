@@ -22,7 +22,7 @@ spec:
       image:
         organization: linuxserver
         repository: lidarr
-        tag: nightly-version-0.8.0.1996
+        tag: nightly-version-0.8.0.2041
       ingress:
         enabled: true
         annotations:
