@@ -41,7 +41,7 @@ spec:
     additionalVolumes:
       - name: printer
         hostPath:
-          path: /dev/serial/by-id/usb-LeafLabs_Maple-if00
+          path: /dev/ttyACM0
       - name: camera
         hostPath:
           path: /dev/v4l/by-id/usb-046d_HD_Pro_Webcam_C920_704715BF-video-index0
