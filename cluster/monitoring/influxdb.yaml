@@ -30,6 +30,9 @@ spec:
       size: 50Gi
       storageClass: "nfs-client"
     resources:
+      requests:
+        memory: 2000Mi
+        cpu: 100m
       limits:
         memory: 4000Mi
     livenessProbe:
