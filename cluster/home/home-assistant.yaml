@@ -18,15 +18,16 @@ spec:
   chart:
     repository: https://k8s-at-home.com/charts/
     name: home-assistant
-    version: 2.5.0
+    version: 5.4.4
   values:
     image:
       repository: homeassistant/home-assistant
       tag: 2021.2.0
     persistence:
-      enabled: true
-      size: 10Gi
-      storageClass: "nfs-client"
+      config:
+        enabled: true
+        size: 10Gi
+        storageClass: "nfs-client"
     ingress:
       enabled: true
       annotations:
@@ -44,22 +45,11 @@ spec:
       enabled: false
     zwave:
       enabled: false
-    vscode:
-      enabled: false
     resources:
       limits:
         memory: 2500Mi
       requests:
         cpu: 35m
         memory: 2000Mi
-    # extraVolumes:
-    #   - name: music
-    #     persistentVolumeClaim:
-    #         claimName: nfs-media-music-pvc
-    # extraVolumeMounts:
-    #   - name: music
-    #     mountPath: "/media"
-    monitoring:
-      enabled: false
   valueFileSecrets:
   - name: "home-assistant-values"
