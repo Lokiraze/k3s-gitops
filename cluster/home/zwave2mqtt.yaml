@@ -28,6 +28,7 @@ spec:
     service:
       additionalPorts:
         - port: 3000
+          targetPort: 3000
           name: ws
           protocol: TCP
     persistence: 

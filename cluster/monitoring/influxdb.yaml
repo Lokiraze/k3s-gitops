@@ -22,9 +22,7 @@ spec:
       tag: 1.8.2
     service:
       type: LoadBalancer
-      externalIPs:
-      - 192.168.1.86
-      externalTrafficPolicy: Local
+      loadBalancerIP: 192.168.1.80
     persistence:
       enabled: true
       size: 50Gi
