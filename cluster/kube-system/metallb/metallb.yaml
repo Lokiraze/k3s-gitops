@@ -4,6 +4,7 @@ metadata:
   name: metallb
   namespace: kube-system
 spec:
+  interval: 10m0s
   releaseName: metallb
   chart:
     spec:

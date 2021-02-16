@@ -1,7 +1,7 @@
 #!/bin/bash
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-KUBECONFIG="${REPO_ROOT}"/kubeconfig:~/.kube/config kubectl config view --flatten > ~/.kube/config.tmp && \
+KUBECONFIG=:"${REPO_ROOT}"/../k3s-ansible/kubeconfig:~/.kube/config kubectl config view --flatten > ~/.kube/config.tmp && \
   mv ~/.kube/config.tmp ~/.kube/config
 
 need() {
@@ -20,7 +20,7 @@ message() {
 
 if [[ -f "${REPO_ROOT}"/master.key ]]; then
   echo "Applying existing sealed-secret key"
-  #kubectl apply -f "${REPO_ROOT}"/master.key
+  kubectl apply -f "${REPO_ROOT}"/master.key
 fi
 
 installFlux() {
