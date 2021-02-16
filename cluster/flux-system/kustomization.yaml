@@ -12,4 +12,4 @@ resources:
 - helm-repositories/kubernetes-stable-charts.yaml
 - helm-repositories/longhorn-charts.yaml
 - helm-repositories/prometheus-community-charts.yaml
-- helm-repositories/sealed-secrets-charts.yaml
+- helm-repositories/sealed-secrets-chart.yaml
