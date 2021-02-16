@@ -6,7 +6,7 @@ export REPO_ROOT=$(git rev-parse --show-toplevel)
 export CLUSTER_ROOT="${REPO_ROOT}/cluster"
 export SECRET_ROOT="${REPO_ROOT}/secrets"
 export PUB_CERT="${SECRET_ROOT}/pub-cert.pem"
-export SECRETS_ENV="${SECRET_ROOT}/.secrets.env"
+export SECRETS_ENV="${REPO_ROOT}/.secrets.env"
 export GENERATED_SECRETS="${CLUSTER_ROOT}/zz_generated_secrets.yaml"
 
 # MacOS work-around for sed

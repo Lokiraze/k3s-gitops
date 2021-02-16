@@ -27,11 +27,11 @@ if [ "$(uname)" == "Darwin" ]; then
   export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
   # Source secrets.env
   set -a
-  . "${REPO_ROOT}/secrets/.secrets.env"
+  . "${REPO_ROOT}/.secrets.env"
   set +a
   echo "The Domain is currently set to: ${DOMAIN}"
 else
-  . "${REPO_ROOT}/secrets/.secrets.env"
+  . "${REPO_ROOT}/.secrets.env"
   echo "The Domain is currently set to: ${DOMAIN}"
 fi
 

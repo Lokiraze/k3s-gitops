@@ -8,7 +8,7 @@ source "${__dir}/environment.sh"
 #
 # Apply the templates to the cluster
 #
-for file in "${CLUSTER_ROOT}"/_templates/*.txt; do
+for file in "${SECRET_ROOT}"/manifest-templates/*.txt; do
     if output=$(envsubst <"$file"); then
         printf '%s' "$output" | kubectl apply -f -
     fi
