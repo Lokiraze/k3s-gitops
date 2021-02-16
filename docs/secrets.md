@@ -9,5 +9,9 @@ kubeseal --kubeconfig ./kubeconfig --controller-name sealed-secrets --fetch-cert
 ```
 
 ```bash
+kubeseal --controller-name sealed-secrets --fetch-cert > ./secrets/pub-cert.pem
+```
+
+```bash
 kubectl --kubeconfig ./kubeconfig apply -f ./cluster/zz_generated_secrets.yaml 
 ```
