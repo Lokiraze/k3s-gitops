@@ -20,7 +20,7 @@ message() {
 
 if [[ -f "${REPO_ROOT}"/master.key ]]; then
   echo "Applying existing sealed-secret key"
-  kubectl apply -f "${REPO_ROOT}"/master.key
+  #kubectl apply -f "${REPO_ROOT}"/master.key
 fi
 
 installFlux() {
