@@ -32,7 +32,7 @@ spec:
       config:
         enabled: true
         size: 1Gi
-        storageClassName: longhorn
+        storageClass: longhorn
     resources:
       requests:
         memory: 250Mi
