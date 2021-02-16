@@ -1,27 +1,27 @@
-apiVersion: helm.fluxcd.io/v1
-kind: HelmRelease
-metadata:
-  name: nfs-client-provisioner
-  namespace: kube-system
-  annotations:
-    fluxcd.io/automated: "true"
-    fluxcd.io/ignore: "false"
-    fluxcd.io/tag.chart-image: semver:~v3.1
-spec:
-  releaseName: nfs-client-provisioner
-  helmVersion: v3
-  rollback:
-    enable: false
-  chart:
-    repository: https://charts.helm.sh/stable
-    name: nfs-client-provisioner
-    version: 1.2.8
-  values:
-    image:
-      repository: kubesphere/nfs-client-provisioner
-      tag: arm64
-    nfs:
-      server: "192.168.1.50"
-      path: "/mnt/user/kubernetes"
-    storageClass:
-      defaultClass: false
+# apiVersion: helm.fluxcd.io/v1
+# kind: HelmRelease
+# metadata:
+#   name: nfs-client-provisioner
+#   namespace: kube-system
+#   annotations:
+#     fluxcd.io/automated: "true"
+#     fluxcd.io/ignore: "false"
+#     fluxcd.io/tag.chart-image: semver:~v3.1
+# spec:
+#   releaseName: nfs-client-provisioner
+#   helmVersion: v3
+#   rollback:
+#     enable: false
+#   chart:
+#     repository: https://charts.helm.sh/stable
+#     name: nfs-client-provisioner
+#     version: 1.2.8
+#   values:
+#     image:
+#       repository: kubesphere/nfs-client-provisioner
+#       tag: arm64
+#     nfs:
+#       server: "192.168.1.50"
+#       path: "/mnt/user/kubernetes"
+#     storageClass:
+#       defaultClass: false
