@@ -1,56 +1,57 @@
-# ---
-# apiVersion: helm.fluxcd.io/v1
-# kind: HelmRelease
-# metadata:
-#   name: sonarr
-#   namespace: media
-#   annotations:
-#     fluxcd.io/ignore: "false"
-#     fluxcd.io/automated: "false"
-#     #fluxcd.io/tag.chart-image: semver:3.0
-# spec:
-#   releaseName: sonarr
-#   helmVersion: v3
-#   rollback:
-#     enable: true
-#   chart:
-#     repository: https://k8s-at-home.com/charts/
-#     name: sonarr
-#     version: 6.0.1
-#   values:
-#     sonarr:
-#       image:
-#         organization: linuxserver
-#         repository: sonarr
-#         tag: preview-version-3.0.4.1091
-#       ingress:
-#         enabled: true
-#         annotations:
-#           kubernetes.io/ingress.class: "nginx"
-#       env:
-#         TZ: "America/Phoenix"
-#         PUID: "1000"
-#         PGID: "100"
-#       persistence:
-#         type: statefulset
-#         config:
-#           enabled: true
-#           size: 1Gi
-#         media:
-#           enabled: true
-#           existingClaim: nfs-media-tv-pvc
-#       additionalVolumes:
-#         - name: downloads
-#           persistentVolumeClaim:
-#             claimName: nfs-media-downloads-pvc
-#       additionalVolumeMounts:
-#         - name: downloads
-#           mountPath: "/downloads"
-#       resources:
-#         requests:
-#           memory: 350Mi
-#           cpu: 25m
-#         limits:
-#           memory: 1000Mi
-#   valueFileSecrets:
-#   - name: "sonarr-values"
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: sonarr
+  namespace: media
+spec:
+  releaseName: sonarr
+  interval: 5m
+  chart:
+    spec:
+      chart: sonarr
+      version: 9.0.2
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-at-home
+        namespace: flux-system
+      interval: 5m
+  values:
+    image:
+      organization: linuxserver
+      repository: sonarr
+      tag: preview-version-3.0.4.1091
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: "nginx"
+    env:
+      TZ: "America/Phoenix"
+      PUID: "1000"
+      PGID: "100"
+    persistence:
+      type: statefulset
+      config:
+        enabled: true
+        size: 1Gi
+        storageClass: longhorn
+      media:
+        enabled: true
+        existingClaim: nfs-media-tv-pvc
+    additionalVolumes:
+      - name: downloads
+        persistentVolumeClaim:
+          claimName: nfs-media-downloads-pvc
+    additionalVolumeMounts:
+      - name: downloads
+        mountPath: "/downloads"
+    resources:
+      requests:
+        memory: 350Mi
+        cpu: 25m
+      limits:
+        memory: 1000Mi
+  valuesFrom:
+    - kind: Secret
+      name: sonarr-values
+      optional: false
