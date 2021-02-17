@@ -19,10 +19,11 @@ spec:
   values:
     image:
       repository: nodered/node-red
-      tag: 1.2.7-12-minimal
+      tag: 1.2.9-12-minimal
     persistence:
-      enabled: true
-      storageClass: longhorn
+      data:
+        enabled: true
+        storageClass: longhorn
     flows: "flows.json"
     ingress:
       enabled: true
