@@ -21,8 +21,9 @@ spec:
       repository: linuxserver/grocy
       tag: v3.0.1-ls89
     persistence:
-      enabled: true
-      storageClass: longhorn
+      config:
+        enabled: true
+        storageClass: longhorn
     ingress:
       enabled: true
       annotations:
