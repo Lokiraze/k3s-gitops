@@ -4,7 +4,7 @@
 #   name: nfs-media-books-pv
 #   namespace: media
 # spec:
-#   storageClassName: nfs-client
+#   storageClassName: nfs-media
 #   capacity:
 #     storage: 1Mi
 #   accessModes:
