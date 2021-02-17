@@ -18,8 +18,7 @@ spec:
       interval: 5m
   values:
     image:
-      organization: linuxserver
-      repository: radarr
+      repository: linuxserver/radarr
       tag: nightly-version-3.0.2.4488
     ingress:
       enabled: true

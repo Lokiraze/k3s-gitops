@@ -18,8 +18,7 @@ spec:
       interval: 5m
   values:
     image:
-      organization: linuxserver
-      repository: sonarr
+      repository: linuxserver/sonarr
       tag: preview-version-3.0.4.1091
     ingress:
       enabled: true

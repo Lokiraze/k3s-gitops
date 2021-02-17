@@ -18,8 +18,7 @@ spec:
       interval: 5m
   values:
     image:
-      organization: linuxserver
-      repository: lidarr
+      repository: linuxserver/lidarr
       tag: nightly-version-0.8.0.2041
     ingress:
       enabled: true
