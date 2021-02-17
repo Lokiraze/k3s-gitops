@@ -22,7 +22,8 @@
 #       defaultClassReplicaCount: 2
 #     defaultSettings:
 #       backupstorePollInterval: 300
-#       backupTarget: nfs://192.168.1.50:/mnt/user/backups
+#       backupTarget: s3://longhorn@192.168.1.50:9768/kubernetes/backups
+#       backupTargetCredentialSecret: aws-secret
 #       createDefaultDiskLabeledNodes: true
 #       defaultDataLocality: best-effort
 #       defaultDataPath: /var/lib/longhorn
