@@ -42,5 +42,7 @@ spec:
       limits:
         memory: 500Mi
         cpu: 100m
-  valueFileSecrets:
-  - name: "calibre-web-values"
+  valuesFrom:
+    - kind: Secret
+      name: calibre-web-values
+      optional: false
