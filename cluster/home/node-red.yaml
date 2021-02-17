@@ -20,6 +20,8 @@ spec:
     image:
       repository: nodered/node-red
       tag: 1.2.7-12-minimal
+    securityContext: 
+      fsGroup: 1000
     persistence:
       data:
         enabled: true
