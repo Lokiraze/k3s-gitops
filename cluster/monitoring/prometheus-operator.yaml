@@ -72,6 +72,17 @@ spec:
         dashboards:
           enabled: true
           searchNamespace: ALL
+      additionalDataSources:
+        - name: influxdb
+          type: influxdb
+          access: proxy
+          url: http://influxdb:8086
+          database: pfsense
+        - name: influxdb
+          type: influxdb
+          access: proxy
+          url: http://influxdb:8086
+          database: home_assistant
       plugins:
       - natel-discrete-panel
       - pr0ps-trackmap-panel
