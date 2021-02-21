@@ -19,7 +19,7 @@ spec:
   values:
     image:
       repository: linuxserver/sonarr
-      tag: preview-version-3.0.4.1091
+      tag: preview-version-3.0.4.1131
     ingress:
       enabled: true
       annotations:

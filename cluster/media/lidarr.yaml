@@ -19,7 +19,7 @@ spec:
   values:
     image:
       repository: linuxserver/lidarr
-      tag: nightly-version-0.8.0.2041
+      tag: nightly-version-0.8.0.2062
     ingress:
       enabled: true
       annotations:
