@@ -34,6 +34,7 @@ spec:
         storageClass: longhorn
         size: 1Gi
       books:
+        enabled: true
         existingClaim: nfs-media-books-pvc
     resources:
       requests:
