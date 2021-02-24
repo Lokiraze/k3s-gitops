@@ -37,10 +37,10 @@ spec:
         existingClaim: nfs-media-books-pvc
     resources:
       requests:
-        memory: 350Mi
+        memory: 150Mi
         cpu: 25m
       limits:
-        memory: 500Mi
+        memory: 350Mi
         cpu: 100m
   valuesFrom:
     - kind: Secret
