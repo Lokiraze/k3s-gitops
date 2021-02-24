@@ -63,10 +63,10 @@ spec:
         default-ssl-certificate: "networking/acme-crt-secret"
       resources:
         requests:
-          memory: 500Mi
-          cpu: 25m
+          memory: 150Mi
+          cpu: 50m
         limits:
-          memory: 600Mi
+          memory: 300Mi
     defaultBackend:
       enabled: false
       image:

@@ -46,10 +46,10 @@ spec:
       enabled: false
     resources:
       limits:
-        memory: 2500Mi
+        memory: 250Mi
       requests:
-        cpu: 35m
-        memory: 2000Mi
+        cpu: 350m
+        memory: 100Mi
   valuesFrom:
     - kind: Secret
       name: home-assistant-values
