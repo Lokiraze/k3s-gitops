@@ -35,6 +35,7 @@ spec:
         size: 1Gi
       books:
         enabled: true
+        mountPath: /books
         existingClaim: nfs-media-books-pvc
     resources:
       requests:
