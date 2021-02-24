@@ -5,6 +5,7 @@ resources:
 - gotk-sync.yaml
 - helm-repositories/bitnami.yaml
 - helm-repositories/codecentric.yaml
+- helm-repositories/coredns-charts.yaml
 - helm-repositories/influxdata-charts.yaml
 - helm-repositories/ingress-nginx.yaml
 - helm-repositories/jetstack.yaml
