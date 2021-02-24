@@ -17,9 +17,6 @@ spec:
         namespace: flux-system
       interval: 5m
   values:
-    image:
-      repository: kubesphere/etcd
-      tag: v3.2.18
     statefulset:
       replicaCount: 1
     auth:
