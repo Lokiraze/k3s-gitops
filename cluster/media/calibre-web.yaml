@@ -43,7 +43,6 @@ spec:
         cpu: 25m
       limits:
         memory: 350Mi
-        cpu: 100m
   valuesFrom:
     - kind: Secret
       name: calibre-web-values
