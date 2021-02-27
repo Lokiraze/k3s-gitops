@@ -1,43 +1,43 @@
----
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
-kind: HelmRelease
-metadata:
-  name: openldap
-  namespace: security
-spec:
-  releaseName: openldap
-  interval: 5m
-  chart:
-    spec:
-      chart: openldap
-      version: 1.2.7
-      sourceRef:
-        kind: HelmRepository
-        name: kubernetes-stable-charts
-        namespace: flux-system
-      interval: 5m
-  values:
-    image:
-      tag: 1.5.0
-    service:
-      type: LoadBalancer
-      loadBalancerIP: 192.168.1.83
-    logLevel: debug
-    ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: "internal"
-    persistence:
-      enabled: true
-      storageClass: longhorn
-    resources:
-      requests:
-        memory: 350Mi
-        cpu: 25m
-      limits:
-        memory: 500Mi
-        cpu: 1000m
-  valuesFrom:
-    - kind: Secret
-      name: openldap-values
-      optional: false
+# ---
+# apiVersion: helm.toolkit.fluxcd.io/v2beta1
+# kind: HelmRelease
+# metadata:
+#   name: openldap
+#   namespace: security
+# spec:
+#   releaseName: openldap
+#   interval: 5m
+#   chart:
+#     spec:
+#       chart: openldap
+#       version: 1.2.7
+#       sourceRef:
+#         kind: HelmRepository
+#         name: kubernetes-stable-charts
+#         namespace: flux-system
+#       interval: 5m
+#   values:
+#     image:
+#       tag: 1.5.0
+#     service:
+#       type: LoadBalancer
+#       loadBalancerIP: 192.168.1.83
+#     logLevel: debug
+#     ingress:
+#       enabled: true
+#       annotations:
+#         kubernetes.io/ingress.class: "internal"
+#     persistence:
+#       enabled: true
+#       storageClass: longhorn
+#     resources:
+#       requests:
+#         memory: 350Mi
+#         cpu: 25m
+#       limits:
+#         memory: 500Mi
+#         cpu: 1000m
+#   valuesFrom:
+#     - kind: Secret
+#       name: openldap-values
+#       optional: false
