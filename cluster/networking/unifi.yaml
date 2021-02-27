@@ -28,7 +28,7 @@ spec:
     ingress:
       enabled: true
       annotations:
-        kubernetes.io/ingress.class: "nginx"
+        kubernetes.io/ingress.class: "internal"
         nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     guiService:
       type: LoadBalancer

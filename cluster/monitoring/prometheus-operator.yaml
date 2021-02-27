@@ -61,7 +61,7 @@ spec:
       ingress:
         enabled: true
         annotations:
-          kubernetes.io/ingress.class: "nginx"
+          kubernetes.io/ingress.class: "internal"
       sidecar:
         image:
           tag: 1.10.5
@@ -159,7 +159,7 @@ spec:
       ingress:
         enabled: true
         annotations:
-          kubernetes.io/ingress.class: "nginx"
+          kubernetes.io/ingress.class: "internal"
       prometheusSpec:
         # replicas: 2
         # replicaExternalLabelName: "replica"
