@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-shopt -s globstar
+#shopt -s globstar
 
 # shellcheck disable=SC2155
 export REPO_ROOT=$(git rev-parse --show-toplevel)
