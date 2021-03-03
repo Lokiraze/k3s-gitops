@@ -31,9 +31,9 @@ spec:
     crd:
       create: true
     metrics:
-      enabled: true
+      enabled: false
       serviceMonitor:
-        enabled: true
+        enabled: false
     resources:
       requests:
         memory: 250Mi

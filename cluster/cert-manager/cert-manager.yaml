@@ -44,7 +44,7 @@ spec:
       extraArgs:
         - --leader-elect=false
     prometheus:
-      enabled: true
+      enabled: false
       servicemonitor:
-        enabled: true
+        enabled: false
         prometheusInstance: monitoring

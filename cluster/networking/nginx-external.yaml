@@ -16,6 +16,9 @@ spec:
         name: ingress-nginx
         namespace: flux-system
       interval: 5m
+  dependsOn:
+    - name: cert-manager
+      namespace: cert-manager
   values:
     controller:
       ingressClass: external
@@ -36,9 +39,9 @@ spec:
         use-forwarded-headers: "true"
         forwarded-for-header: "X-Forwarded-For"
       metrics:
-        enabled: true
+        enabled: false
         serviceMonitor:
-          enabled: true
+          enabled: false
           namespace: networking
         prometheusRule:
           enabled: false
