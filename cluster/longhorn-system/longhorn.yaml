@@ -17,6 +17,9 @@ spec:
         name: longhorn
         namespace: flux-system
       interval: 5m
+  dependsOn:
+    - name: sealed-secrets
+      namespace: kube-system
   values:
     persistence:
       defaultClassReplicaCount: 2
