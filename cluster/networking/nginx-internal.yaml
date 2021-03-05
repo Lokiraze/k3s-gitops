@@ -23,6 +23,8 @@ spec:
     controller:
       ingressClass: internal
       replicaCount: 1
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       service:
         type: LoadBalancer
         loadBalancerIP: 192.168.1.85
