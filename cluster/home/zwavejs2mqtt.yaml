@@ -10,7 +10,7 @@ spec:
   chart:
     spec:
       chart: zwavejs2mqtt
-      version: 2.1.1
+      version: 2.0.1
       sourceRef:
         kind: HelmRepository
         name: k8s-at-home
@@ -22,7 +22,7 @@ spec:
   values:
     image:
       repository: zwavejs/zwavejs2mqtt
-      tag: 1.4.0
+      tag: 2.1.0
     env:
       TZ: America/Phoenix
     securityContext:
