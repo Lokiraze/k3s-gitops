@@ -51,7 +51,7 @@ spec:
       codeserver:
         enabled: true
         image:
-          tag: 3.7.4
+          tag: 3.9.0
         args:
           - --auth
           - none
@@ -62,7 +62,7 @@ spec:
         workingDir: "/config"
         volumeMounts:
           - name: config
-            mountPath: /data/config
+            mountPath: /config
         ingress:
           enabled: true
           annotations:
