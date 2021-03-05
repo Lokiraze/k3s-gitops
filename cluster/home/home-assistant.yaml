@@ -49,6 +49,7 @@ spec:
       enabled: false
     addons:
       codeserver:
+        enabled: true
         image:
           tag: 3.7.4
         ingress:
