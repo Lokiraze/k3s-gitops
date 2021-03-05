@@ -52,6 +52,17 @@ spec:
         enabled: true
         image:
           tag: 3.7.4
+        args:
+          - --auth
+          - none
+          - --user-data-dir
+          - "/config/.vscode"
+          - --extensions-dir
+          - "/config/.vscode"
+        workingDir: "/config"
+        volumeMounts:
+          - name: config
+            mountPath: /data/config
         ingress:
           enabled: true
           annotations:
