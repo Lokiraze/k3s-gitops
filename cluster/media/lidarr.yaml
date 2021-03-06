@@ -34,7 +34,7 @@ spec:
     persistence:
       config:
         enabled: true
-        size: 5Gi
+        size: 10Gi
         storageClass: longhorn
       media:
         enabled: true
