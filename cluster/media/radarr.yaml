@@ -19,6 +19,8 @@ spec:
   dependsOn:
     - name: sealed-secrets
       namespace: kube-system
+    - name: ingress-nginx-internal
+      namespace: networking
   values:
     image:
       repository: linuxserver/radarr
