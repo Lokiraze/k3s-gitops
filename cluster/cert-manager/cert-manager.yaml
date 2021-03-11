@@ -43,6 +43,11 @@ spec:
       replicaCount: 1
       extraArgs:
         - --leader-elect=false
+    podDnsPolicy: "None"
+    podDnsConfig:
+      nameservers:
+      - "1.1.1.1"
+      - "8.8.8.8"
     prometheus:
       enabled: false
       servicemonitor:

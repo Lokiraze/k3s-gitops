@@ -22,7 +22,7 @@ spec:
   values:
     image:
       repository: homeassistant/home-assistant
-      tag: 2021.3.1
+      tag: 2021.3.3
     persistence:
       config:
         enabled: true
@@ -35,7 +35,10 @@ spec:
         nginx.org/websocket-services: home-assistant
     service:
       type: LoadBalancer
-      loadBalancerIP: 192.168.1.84
+      externalIPs:
+      - 192.168.69.105
+      externalTrafficPolicy: Local
+    #  loadBalancerIP: 192.168.1.84
     hostNetwork: true
     dnsPolicy: ClusterFirstWithHostNet
     probes:

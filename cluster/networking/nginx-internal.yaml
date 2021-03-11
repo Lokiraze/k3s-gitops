@@ -27,7 +27,9 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       service:
         type: LoadBalancer
-        loadBalancerIP: 192.168.1.85
+        #loadBalancerIP: 192.168.1.85
+        externalIPs:
+        - 192.168.69.101
         externalTrafficPolicy: Local
       publishService:
         enabled: true

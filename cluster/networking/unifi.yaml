@@ -34,25 +34,25 @@ spec:
         kubernetes.io/ingress.class: "internal"
         nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     guiService:
-      type: LoadBalancer
-      loadBalancerIP: 192.168.1.82
-      annotations:
-        metallb.universe.tf/allow-shared-ip: unifi
+      type: ClusterIP
+      # loadBalancerIP: 192.168.1.82
+      # annotations:
+      #   metallb.universe.tf/allow-shared-ip: unifi
     controllerService:
       type: LoadBalancer
-      loadBalancerIP: 192.168.1.82
-      annotations:
-        metallb.universe.tf/allow-shared-ip: unifi
+      # loadBalancerIP: 192.168.1.82
+      # annotations:
+      #   metallb.universe.tf/allow-shared-ip: unifi
     stunService:
       type: LoadBalancer
-      loadBalancerIP: 192.168.1.82
-      annotations:
-        metallb.universe.tf/allow-shared-ip: unifi
+      # loadBalancerIP: 192.168.1.82
+      # annotations:
+      #   metallb.universe.tf/allow-shared-ip: unifi
     discoveryService:
       type: LoadBalancer
-      loadBalancerIP: 192.168.1.82
-      annotations:
-        metallb.universe.tf/allow-shared-ip: unifi
+      # loadBalancerIP: 192.168.1.82
+      # annotations:
+      #   metallb.universe.tf/allow-shared-ip: unifi
     resources:
       requests:
         memory: 500Mi
