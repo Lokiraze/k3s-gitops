@@ -1,190 +1,190 @@
-# ---
-# apiVersion: helm.toolkit.fluxcd.io/v2beta1
-# kind: HelmRelease
-# metadata:
-#   name: kube-prometheus-stack
-#   namespace: monitoring
-# spec:
-#   releaseName: prometheus-operator
-#   interval: 5m
-#   chart:
-#     spec:
-#       chart: kube-prometheus-stack
-#       version: 13.10.0
-#       sourceRef:
-#         kind: HelmRepository
-#         name: prometheus-community-charts
-#         namespace: flux-system
-#       interval: 5m
-#   values:
-#     server:
-#       resources:
-#         requests:
-#           memory: 1000Mi
-#           cpu: 25m
-#         limits:
-#           memory: 2000Mi
-#     prometheusOperator:
-#       image:
-#         tag: v0.45.0      
-#       prometheusConfigReloaderImage:
-#         tag: v0.45.0
-#     alertmanager:
-#       enabled: false
-#     nodeExporter:
-#       serviceMonitor:
-#         relabelings:
-#         - action: replace
-#           regex: (.*)
-#           replacement: $1
-#           sourceLabels:
-#           - __meta_kubernetes_pod_node_name
-#           targetLabel: kubernetes_node
-#     grafana:
-#       image:
-#         tag: 7.4.1
-#       deploymentStrategy:
-#         type: Recreate
-#       persistence:
-#         enabled: false
-#         storageClassName: "nfs-client"
-#         size: 10Gi
-#         accessModes:
-#         - ReadWriteOnce
-#       # extraContainers: |
-#       #   - name: renderer
-#       #     image: grafana/grafana-image-renderer:latest
-#       env:
-#         GF_EXPLORE_ENABLED: true
-#         GF_PANELS_DISABLE_SANITIZE_HTML: true
-#         GF_LOG_FILTERS: rendering:debug
-#       ingress:
-#         enabled: true
-#         annotations:
-#           kubernetes.io/ingress.class: "internal"
-#       sidecar:
-#         image:
-#           tag: 1.10.5
-#         datasources:
-#           enabled: true
-#           # Disable for thanos
-#           defaultDatasourceEnabled: true
-#         dashboards:
-#           enabled: true
-#           searchNamespace: ALL
-#       additionalDataSources:
-#         - name: influxdb-pfsense
-#           type: influxdb
-#           access: proxy
-#           url: http://influxdb:8086
-#           database: pfsense
-#         - name: influxdb-home-assistant
-#           type: influxdb
-#           access: proxy
-#           url: http://influxdb:8086
-#           database: home_assistant
-#         - name: influxdb-unraid-tower
-#           type: influxdb
-#           access: proxy
-#           url: http://influxdb:8086
-#           database: unraid_tower
-#       plugins:
-#       - natel-discrete-panel
-#       - pr0ps-trackmap-panel
-#       - grafana-piechart-panel
-#       - vonage-status-panel
-#       - grafana-worldmap-panel
-#       - grafana-clock-panel
-#       dashboardProviders:
-#         dashboardproviders.yaml:
-#           apiVersion: 1
-#           providers:
-#           - name: 'default'
-#             orgId: 1
-#             folder: ''
-#             type: file
-#             disableDeletion: false
-#             allowUiUpdates: true
-#             editable: true
-#             options:
-#               path: /var/lib/grafana/dashboards/default
-#       dashboards:
-#         default:
-#           nginx-dashboard:
-#             url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
-#             datasource: Prometheus
-#           pfsense-dashboard:
-#             url: https://raw.githubusercontent.com/VictorRobellini/pfSense-Dashboard/master/pfSense-Grafana-Dashboard.json
-#             datasource: influxdb-pfsense
-#           unraid-tower-dashboard:
-#             gnetId: 7233
-#             revision: 1
-#             datasource: influxdb-unraid-tower
-#           # version-checker:
-#           #   gnetId: 12833
-#           #   revision: 1
-#           #   datasource: Prometheus
-#       grafana.ini:
-#         paths:
-#           data: /var/lib/grafana/data
-#           logs: /var/log/grafana
-#           plugins: /var/lib/grafana/plugins
-#           provisioning: /etc/grafana/provisioning
-#         analytics:
-#           check_for_updates: true
-#         log:
-#           mode: console
-#         grafana_net:
-#           url: https://grafana.net
-#     kube-state-metrics:
-#       image: 
-#         repository: raspbernetes/kube-state-metrics
-#         tag: v1.9.7
-#     kubeEtcd:
-#       enabled: false
-#     kubeControllerManager:
-#       enabled: false
-#     kubeScheduler:
-#       enabled: false
-#     kubeProxy:
-#       enabled: false
-#     kubelet:
-#       serviceMonitor:
-#         metricRelabelings:
-#         - action: replace
-#           sourceLabels:
-#           - node
-#           targetLabel: instance
-#     prometheus:
-#       ingress:
-#         enabled: true
-#         annotations:
-#           kubernetes.io/ingress.class: "internal"
-#       prometheusSpec:
-#         # replicas: 2
-#         # replicaExternalLabelName: "replica"
-#         image:
-#           tag: v2.24.0
-#         ruleSelector: {}
-#         ruleNamespaceSelector: {}
-#         ruleSelectorNilUsesHelmValues: false
-#         serviceMonitorSelector: {}
-#         serviceMonitorNamespaceSelector: {}
-#         serviceMonitorSelectorNilUsesHelmValues: false
-#         podMonitorSelector: {}
-#         podMonitorNamespaceSelector: {}
-#         podMonitorSelectorNilUsesHelmValues: false
-#         retention: 60d
-#         enableAdminAPI: true
-#         walCompression: true
-#         storageSpec:
-#           volumeClaimTemplate:
-#             spec:
-#               storageClassName: longhorn
-#               resources:
-#                 requests:
-#                   storage: 50Gi
-#   valuesFrom:
-#     - kind: Secret
-#       name: prometheus-operator-values
-#       optional: false
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+  namespace: monitoring
+spec:
+  releaseName: prometheus-operator
+  interval: 5m
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      version: 13.10.0
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community-charts
+        namespace: flux-system
+      interval: 5m
+  values:
+    server:
+      resources:
+        requests:
+          memory: 1000Mi
+          cpu: 25m
+        limits:
+          memory: 2000Mi
+    prometheusOperator:
+      image:
+        tag: v0.45.0      
+      prometheusConfigReloaderImage:
+        tag: v0.45.0
+    alertmanager:
+      enabled: false
+    nodeExporter:
+      serviceMonitor:
+        relabelings:
+        - action: replace
+          regex: (.*)
+          replacement: $1
+          sourceLabels:
+          - __meta_kubernetes_pod_node_name
+          targetLabel: kubernetes_node
+    grafana:
+      image:
+        tag: 7.4.1
+      deploymentStrategy:
+        type: Recreate
+      persistence:
+        enabled: false
+        storageClassName: "nfs-client"
+        size: 10Gi
+        accessModes:
+        - ReadWriteOnce
+      # extraContainers: |
+      #   - name: renderer
+      #     image: grafana/grafana-image-renderer:latest
+      env:
+        GF_EXPLORE_ENABLED: true
+        GF_PANELS_DISABLE_SANITIZE_HTML: true
+        GF_LOG_FILTERS: rendering:debug
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: "internal"
+      sidecar:
+        image:
+          tag: 1.10.5
+        datasources:
+          enabled: true
+          # Disable for thanos
+          defaultDatasourceEnabled: true
+        dashboards:
+          enabled: true
+          searchNamespace: ALL
+      additionalDataSources:
+        - name: influxdb-pfsense
+          type: influxdb
+          access: proxy
+          url: http://influxdb:8086
+          database: pfsense
+        - name: influxdb-home-assistant
+          type: influxdb
+          access: proxy
+          url: http://influxdb:8086
+          database: home_assistant
+        - name: influxdb-unraid-tower
+          type: influxdb
+          access: proxy
+          url: http://influxdb:8086
+          database: unraid_tower
+      plugins:
+      - natel-discrete-panel
+      - pr0ps-trackmap-panel
+      - grafana-piechart-panel
+      - vonage-status-panel
+      - grafana-worldmap-panel
+      - grafana-clock-panel
+      dashboardProviders:
+        dashboardproviders.yaml:
+          apiVersion: 1
+          providers:
+          - name: 'default'
+            orgId: 1
+            folder: ''
+            type: file
+            disableDeletion: false
+            allowUiUpdates: true
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/default
+      dashboards:
+        default:
+          nginx-dashboard:
+            url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
+            datasource: Prometheus
+          pfsense-dashboard:
+            url: https://raw.githubusercontent.com/VictorRobellini/pfSense-Dashboard/master/pfSense-Grafana-Dashboard.json
+            datasource: influxdb-pfsense
+          unraid-tower-dashboard:
+            gnetId: 7233
+            revision: 1
+            datasource: influxdb-unraid-tower
+          # version-checker:
+          #   gnetId: 12833
+          #   revision: 1
+          #   datasource: Prometheus
+      grafana.ini:
+        paths:
+          data: /var/lib/grafana/data
+          logs: /var/log/grafana
+          plugins: /var/lib/grafana/plugins
+          provisioning: /etc/grafana/provisioning
+        analytics:
+          check_for_updates: true
+        log:
+          mode: console
+        grafana_net:
+          url: https://grafana.net
+    kube-state-metrics:
+      image: 
+        repository: raspbernetes/kube-state-metrics
+        tag: v1.9.7
+    kubeEtcd:
+      enabled: false
+    kubeControllerManager:
+      enabled: false
+    kubeScheduler:
+      enabled: false
+    kubeProxy:
+      enabled: false
+    kubelet:
+      serviceMonitor:
+        metricRelabelings:
+        - action: replace
+          sourceLabels:
+          - node
+          targetLabel: instance
+    prometheus:
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: "internal"
+      prometheusSpec:
+        # replicas: 2
+        # replicaExternalLabelName: "replica"
+        image:
+          tag: v2.24.0
+        ruleSelector: {}
+        ruleNamespaceSelector: {}
+        ruleSelectorNilUsesHelmValues: false
+        serviceMonitorSelector: {}
+        serviceMonitorNamespaceSelector: {}
+        serviceMonitorSelectorNilUsesHelmValues: false
+        podMonitorSelector: {}
+        podMonitorNamespaceSelector: {}
+        podMonitorSelectorNilUsesHelmValues: false
+        retention: 60d
+        enableAdminAPI: true
+        walCompression: true
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: longhorn
+              resources:
+                requests:
+                  storage: 50Gi
+  valuesFrom:
+    - kind: Secret
+      name: prometheus-operator-values
+      optional: false
