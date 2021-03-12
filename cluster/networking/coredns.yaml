@@ -28,9 +28,10 @@ spec:
     isClusterService: false
     serviceType: LoadBalancer
     service:
+      loadBalancerIP: 192.168.69.180
       #loadBalancerIP: 192.168.1.87
-      externalIPs:
-      - 192.168.69.180
+      # externalIPs:
+      # - 192.168.69.180
       externalTrafficPolicy: Local
     prometheus:
       service:
