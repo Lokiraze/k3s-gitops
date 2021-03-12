@@ -25,9 +25,7 @@ spec:
       tag: 1.8.2
     service:
       type: LoadBalancer
-      #loadBalancerIP: 192.168.1.80
-      externalIPs:
-      - 192.168.69.120
+      loadBalancerIP: 192.168.69.120
       externalTrafficPolicy: Local
     persistence:
       enabled: true

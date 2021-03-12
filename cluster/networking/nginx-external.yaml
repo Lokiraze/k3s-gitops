@@ -27,9 +27,7 @@ spec:
       replicaCount: 1
       service:
         type: LoadBalancer
-        #loadBalancerIP: 192.168.1.86
-        externalIPs:
-        - 192.168.69.100
+        loadBalancerIP: 192.168.69.100
         externalTrafficPolicy: Local
       publishService:
         enabled: true
