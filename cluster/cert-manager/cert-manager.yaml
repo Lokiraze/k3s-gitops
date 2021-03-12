@@ -41,8 +41,6 @@ spec:
       - --dns01-recursive-nameservers-only
     cainjector:
       replicaCount: 1
-      extraArgs:
-        - --leader-elect=false
     podDnsPolicy: "None"
     podDnsConfig:
       nameservers:
