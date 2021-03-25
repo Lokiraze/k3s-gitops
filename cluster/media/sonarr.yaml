@@ -23,8 +23,8 @@ spec:
       namespace: networking
   values:
     image:
-      repository: linuxserver/sonarr
-      tag: develop-version-3.0.5.1158
+      repository: ghcr.io/k8s-at-home/sonarr
+      tag: v3.0.5.1144
     ingress:
       enabled: true
       annotations:
