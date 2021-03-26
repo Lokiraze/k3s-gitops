@@ -60,6 +60,22 @@
       "datasources": ["helm"],
       "updateTypes": ["patch"],
       "labels": ["renovate/helm-release", "dependency/patch"]
+    },
+    // pin package versions
+    {
+      "matchDatasources": ["docker"],
+      "allowedVersions": "<13",
+      "matchPackageNames": [
+        "postgres",
+        "prodrigestivill/postgres-backup-local"
+      ]
+    },
+    {
+      "matchDatasources": ["docker"],
+      "allowedVersions": "<2",
+      "matchPackageNames": [
+        "influxdb",
+      ]
     }
   ]
 }
