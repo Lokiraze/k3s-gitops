@@ -29,6 +29,9 @@ spec:
       enabled: true
       annotations:
         kubernetes.io/ingress.class: "internal"
+    podSecurityContext:
+      runAsGroup: 1000
+      runAsUser: 1000
     timezone: "America/Phoenix"
     puid: 1000
     pgid: 1000
