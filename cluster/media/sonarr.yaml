@@ -29,6 +29,9 @@ spec:
       enabled: true
       annotations:
         kubernetes.io/ingress.class: "internal"
+    podSecurityContext:
+      runAsGroup: 100
+      runAsUser: 1000
     env:
       TZ: "America/Phoenix"
       PUID: "1000"
