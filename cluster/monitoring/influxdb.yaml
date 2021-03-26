@@ -22,7 +22,7 @@ spec:
   values:
     image:
       repository: influxdb
-      tag: 1.8.2
+      tag: 1.8.4
     service:
       type: LoadBalancer
       loadBalancerIP: 192.168.69.120
