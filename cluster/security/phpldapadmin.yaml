@@ -9,6 +9,7 @@ spec:
   interval: 5m
   chart:
     spec:
+      # renovate: registryUrl=https://cetic.github.io/helm-charts
       chart: phpldapadmin
       version: 0.1.4
       sourceRef:

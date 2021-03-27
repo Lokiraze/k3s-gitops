@@ -9,6 +9,7 @@ spec:
   interval: 5m
   chart:
     spec:
+      # renovate: registryUrl=https://codecentric.github.io/helm-charts
       chart: keycloak
       version: 9.6.2
       sourceRef:
