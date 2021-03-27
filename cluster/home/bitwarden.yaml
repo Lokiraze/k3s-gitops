@@ -27,7 +27,7 @@ spec:
     fullnameOverride: bitwarden
     image:
       repository: bitwardenrs/server
-      tag: latest
+      tag: 1.19.0-alpine
     bitwardenrs:
       signupsAllowed: true
     ingress:
