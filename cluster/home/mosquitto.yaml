@@ -11,7 +11,7 @@ spec:
     spec:
       # renovate: registryUrl=https://k8s-at-home.com/charts/
       chart: mosquitto
-      version: 0.7.0
+      version: 2.0.1
       sourceRef:
         kind: HelmRepository
         name: k8s-at-home
@@ -24,24 +24,11 @@ spec:
     image:
       repository: eclipse-mosquitto
       tag: 1.6.14
-    replicaCount: 1
-    serviceMonitor:
-      create: true
-    persistentVolume:
+    persistence:
       enabled: false
     service:
       type: LoadBalancer
       loadBalancerIP: 192.168.69.4
-      mqtt:
-        enabled: true
-        port: 1883                                                              # Default port. Here for visability
-      mqtts:
-        enabled: false                                                          # Disabled, too much work to get cert inside pod
-        port: 8883                                                              # Default port. Here for visability
-      ws:
-        enabled: true
-        port: 8080                                                              # Default port. Here for visability
-    statefulset:
-      podAnnotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "8888"
+      port:
+        port: 1883
+        name: mqtt
