@@ -1,0 +1,48 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: podgrab
+  namespace: media
+spec:
+  releaseName: podgrab
+  interval: 5m
+  chart:
+    spec:
+      chart: podgrab
+      version: 0.1.0
+      sourceRef:
+        kind: HelmRepository
+        name: nicholaswilde-charts
+        namespace: flux-system
+      interval: 5m
+  dependsOn:
+    - name: sealed-secrets
+      namespace: kube-system
+    - name: ingress-nginx-internal
+      namespace: networking
+  values:
+    image:
+      repository: ghcr.io/akhilrex/podgrab
+      tag: 1.0.0
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: "internal"
+    env:
+      TZ: "America/Phoenix"
+      PUID: 1000
+      PGID: 1000
+    persistence:
+      config:
+        enabled: true
+        storageClass: longhorn
+        size: 1Gi
+      assets:
+        enabled: true
+        mountPath: /assets
+        existingClaim: nfs-media-podcasts-pvc
+  valuesFrom:
+    - kind: Secret
+      name: podgrab-values
+      optional: false
