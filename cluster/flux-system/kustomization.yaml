@@ -13,5 +13,6 @@ resources:
 - helm-repositories/k8s-at-home.yaml
 - helm-repositories/kubernetes-stable-charts.yaml
 - helm-repositories/longhorn-charts.yaml
+- helm-repositories/nicholaswilde-charts.yaml
 - helm-repositories/prometheus-community-charts.yaml
 - helm-repositories/sealed-secrets-chart.yaml
