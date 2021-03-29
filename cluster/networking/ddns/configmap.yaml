@@ -14,9 +14,10 @@ data:
     IP=$(curl -s checkip.dyndns.org | grep -Eo '[0-9\.]+')
     # Get the Record ID associated with the $DOMAIN
     RECORD_ID=$(curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer ${TOKEN}" "https://api.digitalocean.com/v2/domains/${DOMAIN}/records")
+    echo $RECORD_ID
     # Send request to update DNS Record
-    curl -s -X PUT \
-        -H "Content-Type: application/json" \
-        -H "Authorization: Bearer $TOKEN" \
-        -d "{\"data\":\"${IP}\"}" \
-        "https://api.digitalocean.com/v2/domains/${DOMAIN}/records/${RECORD_ID}"
+    #curl -s -X PUT \
+    #    -H "Content-Type: application/json" \
+    #    -H "Authorization: Bearer $TOKEN" \
+    #    -d "{\"data\":\"${IP}\"}" \
+    #    "https://api.digitalocean.com/v2/domains/${DOMAIN}/records/${RECORD_ID}"
