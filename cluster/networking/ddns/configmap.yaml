@@ -17,4 +17,4 @@ data:
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $TOKEN" \
         -d "{\"data\":\"${IP}\"}" \
-        "https://api.digitalocean.com/v2/domains/${DOMAIN}/records/${RECORD_ID}"
+        "https://api.digitalocean.com/v2/domains/${DOMAIN}/records/${RECORD_ID}" -v
