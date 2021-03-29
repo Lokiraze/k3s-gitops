@@ -15,7 +15,7 @@ data:
     # Get the Record ID associated with the $DOMAIN
     echo $TOKEN
     echo $DOMAIN
-    RECORD_ID=$(curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer ${TOKEN}" "https://api.digitalocean.com/v2/domains/${DOMAIN}/records" -v)
+    RECORD_ID=$(curl --http1.1 -X GET -H "Content-Type: application/json" -H "Authorization: Bearer ${TOKEN}" "https://api.digitalocean.com/v2/domains/${DOMAIN}/records" -v)
     echo $RECORD_ID
     # Send request to update DNS Record
     #curl -s -X PUT \
