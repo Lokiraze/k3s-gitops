@@ -13,9 +13,8 @@ data:
     # Get your WAN IP
     IP=$(curl -s checkip.dyndns.org | grep -Eo '[0-9\.]+')
     # Send request to update DNS Record
-    echo $RECORD_ID
     curl --http1.1 -s -X PUT \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $TOKEN" \
         -d "{\"data\":\"${IP}\"}" \
-        "https://api.digitalocean.com/v2/domains/${DOMAIN}/records/${RECORD_ID}" -v
+        "https://api.digitalocean.com/v2/domains/${DOMAIN}/records/${RECORD_ID}"
