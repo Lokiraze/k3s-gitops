@@ -22,7 +22,7 @@ spec:
       namespace: kube-system
   values:
     persistence:
-      defaultClassReplicaCount: 2
+      defaultClassReplicaCount: 1
     defaultSettings:
       backupstorePollInterval: 300
       backupTarget: s3://longhorn@minio/backups
@@ -30,8 +30,8 @@ spec:
       createDefaultDiskLabeledNodes: true
       defaultDataLocality: best-effort
       defaultDataPath: /var/lib/longhorn
-      defaultReplicaCount: 2
-      replicaSoftAntiAffinity: false
+      defaultReplicaCount: 1
+      replicaSoftAntiAffinity: true
       storageMinimalAvailablePercentage: 10
     ingress:
       enabled: true
