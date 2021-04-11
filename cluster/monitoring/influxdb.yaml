@@ -43,7 +43,7 @@ spec:
     readinessProbe:
       timeoutSeconds: 10
     startupProbe:
-      enabled: true
+      enabled: false
       failureThreshold: 6
       periodSeconds: 5
     config:
