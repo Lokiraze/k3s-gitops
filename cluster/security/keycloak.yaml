@@ -25,6 +25,8 @@ spec:
       enabled: true
       annotations:
         kubernetes.io/ingress.class: "internal"
+    args:
+      - -Dkeycloak.profile.feature.docker=enabled
     postgresql:
       enabled: true
       image:
