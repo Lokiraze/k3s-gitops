@@ -2,15 +2,15 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: qbittorent
+  name: qbittorrent
   namespace: media
 spec:
-  releaseName: qbittorent
+  releaseName: qbittorrent
   interval: 5m
   chart:
     spec:
       # renovate: registryUrl=https://k8s-at-home.com/charts/
-      chart: qbittorent
+      chart: qbittorrent
       version: 10.0.0
       sourceRef:
         kind: HelmRepository
@@ -24,7 +24,7 @@ spec:
       namespace: networking
   values:
     image:
-      repository: ghcr.io/k8s-at-home/qbittorent
+      repository: ghcr.io/k8s-at-home/qbittorrent
       tag: v4.3.4.1
     ingress:
       enabled: true
@@ -74,5 +74,5 @@ spec:
         memory: 500Mi
   valuesFrom:
     - kind: Secret
-      name: qbittorent-values
+      name: qbittorrent-values
       optional: false
