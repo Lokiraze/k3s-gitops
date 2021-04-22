@@ -111,6 +111,15 @@ kubeseal --format=yaml --cert="${PUB_CERT}" \
   >> "${GENERATED_SECRETS}"
 echo "---" >> "${GENERATED_SECRETS}"
 
+# Docker Registry Keycloak trust - devops namespace
+kubectl create secret generic docker-registry-auth-token-rootcertbundle \
+  --from-file="${REPO_ROOT}"/secrets/localhost_trust_chain.pem \
+  --namespace devops --dry-run=client -o json \
+  | \
+kubeseal --format=yaml --cert="${PUB_CERT}" \
+  >> "${GENERATED_SECRETS}"
+echo "---" >> "${GENERATED_SECRETS}"
+
 # Remove empty new-lines
 sed -i '/^[[:space:]]*$/d' "${GENERATED_SECRETS}"
 
