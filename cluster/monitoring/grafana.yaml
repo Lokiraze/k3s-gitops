@@ -62,17 +62,14 @@ spec:
           type: influxdb
           access: proxy
           url: http://influxdb:8086
-          database: pfsense
         - name: influxdb-home-assistant
           type: influxdb
           access: proxy
           url: http://influxdb:8086
-          database: home_assistant
         - name: influxdb-unraid-tower
           type: influxdb
           access: proxy
           url: http://influxdb:8086
-          database: unraid_tower
     dashboards:
       default:
         nginx-dashboard:
