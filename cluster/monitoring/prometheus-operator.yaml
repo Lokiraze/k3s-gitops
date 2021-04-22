@@ -11,7 +11,7 @@ spec:
     spec:
       # renovate: registryUrl=https://prometheus-community.github.io/helm-charts
       chart: kube-prometheus-stack
-      version: 13.13.1
+      version: 15.1.3
       sourceRef:
         kind: HelmRepository
         name: prometheus-community-charts
@@ -42,105 +42,108 @@ spec:
           - __meta_kubernetes_pod_node_name
           targetLabel: kubernetes_node
     grafana:
-      image:
-        tag: 7.4.1
-      deploymentStrategy:
-        type: Recreate
-      persistence:
-        enabled: false
-        storageClassName: "nfs-client"
-        size: 10Gi
-        accessModes:
-        - ReadWriteOnce
-      # extraContainers: |
-      #   - name: renderer
-      #     image: grafana/grafana-image-renderer:latest
-      env:
-        GF_EXPLORE_ENABLED: true
-        GF_PANELS_DISABLE_SANITIZE_HTML: true
-        GF_LOG_FILTERS: rendering:debug
-      ingress:
-        enabled: true
-        annotations:
-          kubernetes.io/ingress.class: "internal"
-      sidecar:
-        image:
-          tag: 1.10.5
-        datasources:
-          enabled: true
-          # Disable for thanos
-          defaultDatasourceEnabled: true
-        dashboards:
-          enabled: true
-          searchNamespace: ALL
-      additionalDataSources:
-        - name: influxdb-pfsense
-          type: influxdb
-          access: proxy
-          url: http://influxdb:8086
-          database: pfsense
-        - name: influxdb-home-assistant
-          type: influxdb
-          access: proxy
-          url: http://influxdb:8086
-          database: home_assistant
-        - name: influxdb-unraid-tower
-          type: influxdb
-          access: proxy
-          url: http://influxdb:8086
-          database: unraid_tower
-      plugins:
-      - natel-discrete-panel
-      - pr0ps-trackmap-panel
-      - grafana-piechart-panel
-      - vonage-status-panel
-      - grafana-worldmap-panel
-      - grafana-clock-panel
-      dashboardProviders:
-        dashboardproviders.yaml:
-          apiVersion: 1
-          providers:
-          - name: 'default'
-            orgId: 1
-            folder: ''
-            type: file
-            disableDeletion: false
-            allowUiUpdates: true
-            editable: true
-            options:
-              path: /var/lib/grafana/dashboards/default
-      dashboards:
-        default:
-          nginx-dashboard:
-            url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
-            datasource: Prometheus
-          pfsense-dashboard:
-            url: https://raw.githubusercontent.com/VictorRobellini/pfSense-Dashboard/master/pfSense-Grafana-Dashboard.json
-            datasource: influxdb-pfsense
-          unraid-tower-dashboard:
-            gnetId: 7233
-            revision: 1
-            datasource: influxdb-unraid-tower
-          # version-checker:
-          #   gnetId: 12833
-          #   revision: 1
-          #   datasource: Prometheus
-      grafana.ini:
-        paths:
-          data: /var/lib/grafana/data
-          logs: /var/log/grafana
-          plugins: /var/lib/grafana/plugins
-          provisioning: /etc/grafana/provisioning
-        analytics:
-          check_for_updates: true
-        log:
-          mode: console
-        grafana_net:
-          url: https://grafana.net
+      enabled: false
+      # image:
+      #   tag: 7.4.1
+      # deploymentStrategy:
+      #   type: Recreate
+      # persistence:
+      #   enabled: false
+      #   storageClassName: "nfs-client"
+      #   size: 10Gi
+      #   accessModes:
+      #   - ReadWriteOnce
+      # # extraContainers: |
+      # #   - name: renderer
+      # #     image: grafana/grafana-image-renderer:latest
+      # env:
+      #   GF_EXPLORE_ENABLED: true
+      #   GF_PANELS_DISABLE_SANITIZE_HTML: true
+      #   GF_LOG_FILTERS: rendering:debug
+      # ingress:
+      #   enabled: true
+      #   annotations:
+      #     kubernetes.io/ingress.class: "internal"
+      # sidecar:
+      #   image:
+      #     tag: 1.10.5
+      #   datasources:
+      #     enabled: true
+      #     # Disable for thanos
+      #     defaultDatasourceEnabled: true
+      #   dashboards:
+      #     enabled: true
+      #     searchNamespace: ALL
+      # additionalDataSources:
+      #   - name: influxdb-pfsense
+      #     type: influxdb
+      #     access: proxy
+      #     url: http://influxdb:8086
+      #     database: pfsense
+      #   - name: influxdb-home-assistant
+      #     type: influxdb
+      #     access: proxy
+      #     url: http://influxdb:8086
+      #     database: home_assistant
+      #   - name: influxdb-unraid-tower
+      #     type: influxdb
+      #     access: proxy
+      #     url: http://influxdb:8086
+      #     database: unraid_tower
+      # plugins:
+      # - natel-discrete-panel
+      # - pr0ps-trackmap-panel
+      # - grafana-piechart-panel
+      # - vonage-status-panel
+      # - grafana-worldmap-panel
+      # - grafana-clock-panel
+      # dashboardProviders:
+      #   dashboardproviders.yaml:
+      #     apiVersion: 1
+      #     providers:
+      #     - name: 'default'
+      #       orgId: 1
+      #       folder: ''
+      #       type: file
+      #       disableDeletion: false
+      #       allowUiUpdates: true
+      #       editable: true
+      #       options:
+      #         path: /var/lib/grafana/dashboards/default
+      # dashboards:
+      #   default:
+      #     nginx-dashboard:
+      #       url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
+      #       datasource: Prometheus
+      #     pfsense-dashboard:
+      #       url: https://raw.githubusercontent.com/VictorRobellini/pfSense-Dashboard/master/pfSense-Grafana-Dashboard.json
+      #       datasource: influxdb-pfsense
+      #     unraid-tower-dashboard:
+      #       gnetId: 7233
+      #       revision: 1
+      #       datasource: influxdb-unraid-tower
+      #     # version-checker:
+      #     #   gnetId: 12833
+      #     #   revision: 1
+      #     #   datasource: Prometheus
+      # grafana.ini:
+      #   paths:
+      #     data: /var/lib/grafana/data
+      #     logs: /var/log/grafana
+      #     plugins: /var/lib/grafana/plugins
+      #     provisioning: /etc/grafana/provisioning
+      #   analytics:
+      #     check_for_updates: true
+      #   log:
+      #     mode: console
+      #   grafana_net:
+      #     url: https://grafana.net
     kube-state-metrics:
       image: 
         repository: raspbernetes/kube-state-metrics
         tag: v1.9.7
+    kubeApiServer:
+      enabled: true
     kubeEtcd:
       enabled: false
     kubeControllerManager:
@@ -150,6 +153,7 @@ spec:
     kubeProxy:
       enabled: false
     kubelet:
+      enabled: true
       serviceMonitor:
         metricRelabelings:
         - action: replace
