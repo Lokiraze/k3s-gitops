@@ -43,6 +43,9 @@ spec:
       enabled: true
       nodeSelector:
         kubernetes.io/arch: amd64
+    exporter:
+      nodeSelector:
+        kubernetes.io/arch: amd64
     notary:
       enabled: false
     trivy:
