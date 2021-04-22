@@ -27,19 +27,28 @@ spec:
         s3:
           region: "us-east-1"
           bucket: docker-registry
+    portal:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+    core:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+    jobservice:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+    registry:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+    chartmusem:
+      enabled: true
+      nodeSelector:
+        kubernetes.io/arch: amd64
     notary:
+      enabled: false
+    trivy:
       enabled: false
     metrics:
       enabled: true
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/arch
-              operator: In
-              values:
-              - amd64
   valuesFrom:
     - kind: Secret
       name: harbor-values
