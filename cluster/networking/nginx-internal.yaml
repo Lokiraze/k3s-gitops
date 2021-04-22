@@ -44,9 +44,9 @@ spec:
         proxy-body-size: "50m"
         use-forwarded-headers: "true"
       metrics:
-        enabled: false
+        enabled: true
         serviceMonitor:
-          enabled: false
+          enabled: true
           namespace: networking
         prometheusRule:
           enabled: false
