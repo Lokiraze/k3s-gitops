@@ -35,9 +35,9 @@ spec:
       externalTrafficPolicy: Local
     prometheus:
       service:
-        enabled: false
+        enabled: true
       monitor:
-        enabled: false
+        enabled: true
   valuesFrom:
     - kind: Secret
       name: coredns-values
