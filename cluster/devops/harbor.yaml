@@ -20,6 +20,9 @@ spec:
       type: ingress
       tls:
         certSource: none
+      ingress:
+        annotations:
+          kubernetes.io/ingress.class: "internal"
     persistence:
       imageChartStorage:
         disableredirect: true
