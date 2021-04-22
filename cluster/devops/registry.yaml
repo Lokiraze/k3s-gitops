@@ -1,55 +1,55 @@
----
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
-kind: HelmRelease
-metadata:
-  name: docker-registry
-  namespace: devops
-spec:
-  interval: 5m
-  chart:
-    spec:
-      # renovate: registryUrl=https://helm.twun.io
-      chart: docker-registry
-      version: 1.10.1
-      sourceRef:
-        kind: HelmRepository
-        name: twuni-charts
-        namespace: flux-system
-      interval: 5m
-  values:
-    storage: s3
-    s3:
-      region: "us-east-1"
-      bucket: docker-registry
-      encrypt: false
-      secure: true
-    configData:
-      auth:
-        token:
-          realm: https://sso.lokiraze.dev/auth//realms/home/protocol/docker-v2/auth
-          service: docker-registry
-          issuer: https://sso.lokiraze.dev/auth//realms/home
-          rootcertbundle: /root-cert-bundle/localhost_trust_chain.pem
-    ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: "nginx"
-        nginx.ingress.kubernetes.io/proxy-body-size: "0"
-        nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-        nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-    service:
-      annotations:
-        prometheus.io/probe: "true"
-        prometheus.io/protocol: http
-    extraVolumes:
-      - name: docker-registry-auth-token-rootcertbundle
-        secret:
-          secretName: docker-registry-auth-token-rootcertbundle
-    extraVolumeMounts:
-      - mountPath: /root-cert-bundle
-        name: docker-registry-auth-token-rootcertbundle
-        readOnly: true
-  valuesFrom:
-    - kind: Secret
-      name: registry-values
-      optional: false
+# ---
+# apiVersion: helm.toolkit.fluxcd.io/v2beta1
+# kind: HelmRelease
+# metadata:
+#   name: docker-registry
+#   namespace: devops
+# spec:
+#   interval: 5m
+#   chart:
+#     spec:
+#       # renovate: registryUrl=https://helm.twun.io
+#       chart: docker-registry
+#       version: 1.10.1
+#       sourceRef:
+#         kind: HelmRepository
+#         name: twuni-charts
+#         namespace: flux-system
+#       interval: 5m
+#   values:
+#     storage: s3
+#     s3:
+#       region: "us-east-1"
+#       bucket: docker-registry
+#       encrypt: false
+#       secure: true
+#     configData:
+#       auth:
+#         token:
+#           realm: https://sso.lokiraze.dev/auth//realms/home/protocol/docker-v2/auth
+#           service: docker-registry
+#           issuer: https://sso.lokiraze.dev/auth//realms/home
+#           rootcertbundle: /root-cert-bundle/localhost_trust_chain.pem
+#     ingress:
+#       enabled: true
+#       annotations:
+#         kubernetes.io/ingress.class: "nginx"
+#         nginx.ingress.kubernetes.io/proxy-body-size: "0"
+#         nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+#         nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+#     service:
+#       annotations:
+#         prometheus.io/probe: "true"
+#         prometheus.io/protocol: http
+#     extraVolumes:
+#       - name: docker-registry-auth-token-rootcertbundle
+#         secret:
+#           secretName: docker-registry-auth-token-rootcertbundle
+#     extraVolumeMounts:
+#       - mountPath: /root-cert-bundle
+#         name: docker-registry-auth-token-rootcertbundle
+#         readOnly: true
+#   valuesFrom:
+#     - kind: Secret
+#       name: registry-values
+#       optional: false
