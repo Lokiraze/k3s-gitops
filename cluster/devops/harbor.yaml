@@ -39,7 +39,7 @@ spec:
     registry:
       nodeSelector:
         kubernetes.io/arch: amd64
-    chartmusem:
+    chartmuseum:
       enabled: true
       nodeSelector:
         kubernetes.io/arch: amd64
