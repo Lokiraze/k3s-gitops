@@ -57,7 +57,6 @@ spec:
           type: prometheus
           url: http://prometheus-operated:9090
           access: proxy
-          isDefault: true
         - name: influxdb-pfsense
           type: influxdb
           access: proxy
