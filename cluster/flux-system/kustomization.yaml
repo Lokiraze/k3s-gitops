@@ -16,4 +16,4 @@ resources:
 - helm-repositories/nicholaswilde-charts.yaml
 - helm-repositories/prometheus-community-charts.yaml
 - helm-repositories/sealed-secrets-chart.yaml
-- helm-repositories/twuni-chart.yaml
+- helm-repositories/twuni-charts.yaml
