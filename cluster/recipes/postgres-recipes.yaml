@@ -1,0 +1,35 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: postgres-recipes
+  namespace: recipes
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://charts.bitnami.com/bitnami/
+      chart: postgresql
+      version: 10.3.18
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami-charts
+        namespace: flux-system
+      interval: 5m
+  values:
+    image:
+      repository: postgres
+      tag: 13.2-alpine
+    persistence:
+      enabled: true
+      storageClass: longhorn
+      mountPath: /var/lib/postgresql
+    securityContext:
+      runAsUser: 70
+    containerSecurityContext:
+      runAsUser: 70
+    postgresqlDataDir: /var/lib/postgresql/data
+  valuesFrom:
+    - kind: Secret
+      name: postgres-recipes-values
+      optional: false
