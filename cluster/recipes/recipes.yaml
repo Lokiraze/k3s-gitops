@@ -33,11 +33,12 @@ spec:
       DEBUG: "0"
       ALLOWED_HOSTS: "*"
       DB_ENGINE: django.db.backends.postgresql_psycopg2
-      DB_OPTIONS: '{"sslmode":"require"}'
+      #DB_OPTIONS: '{"sslmode":"require"}'
       POSTGRES_HOST: postgres-recipes-postgresql
       POSTGRES_PORT: "5432"
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
+      TIMEZONE: "America/Phoenix"
     ingress:
       enabled: true
       annotations:
