@@ -34,7 +34,7 @@ spec:
       ALLOWED_HOSTS: "*"
       DB_ENGINE: django.db.backends.postgresql_psycopg2
       DB_OPTIONS: '{"sslmode":"require"}'
-      POSTGRES_HOST: postgresql.cluster.local.
+      POSTGRES_HOST: postgres-recipes-postgresql
       POSTGRES_PORT: "5432"
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
