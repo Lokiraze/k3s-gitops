@@ -45,7 +45,7 @@ spec:
         nginx.ingress.kubernetes.io/proxy-body-size: "8000m"
       #  nginx.ingress.kubernetes.io/auth-url: "https://ingress-auth.${CLUSTER_DOMAIN}/auth"
       #  nginx.ingress.kubernetes.io/auth-signin: "https://ingress-auth.${CLUSTER_DOMAIN}/start?rd=$scheme://$host$request_uri"
-      ingress.kubernetes.io/ssl-redirect: "true"
+        ingress.kubernetes.io/ssl-redirect: "true"
     additionalContainers:
     - name: nginx
       image: nginx:1.20.0
