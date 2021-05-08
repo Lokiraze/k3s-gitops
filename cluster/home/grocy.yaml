@@ -25,7 +25,7 @@ spec:
   values:
     image:
       repository: linuxserver/grocy
-      tag: v3.0.1-ls89
+      tag: v3.0.1-ls101
     persistence:
       config:
         enabled: true
