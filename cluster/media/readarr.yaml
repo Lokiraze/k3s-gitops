@@ -35,8 +35,6 @@ spec:
       runAsUser: 1000
     env:
       TZ: "America/Phoenix"
-      PUID: "1000"
-      PGID: "100"
     persistence:
       config:
         enabled: true
