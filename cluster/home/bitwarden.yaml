@@ -1,46 +1,46 @@
----
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
-kind: HelmRelease
-metadata:
-  name: bitwarden
-  namespace: home
-spec:
-  releaseName: bitwarden
-  interval: 5m
-  chart:
-    spec:
-      # renovate: registryUrl=https://k8s-at-home.com/charts/
-      chart: bitwardenrs
-      version: 2.1.11
-      sourceRef:
-        kind: HelmRepository
-        name: k8s-at-home
-        namespace: flux-system
-      interval: 5m
-  dependsOn:
-    - name: sealed-secrets
-      namespace: kube-system
-    - name: ingress-nginx-external
-      namespace: networking
-  values:
-    nameOverride: bitwarden
-    fullnameOverride: bitwarden
-    image:
-      repository: bitwardenrs/server
-      tag: 1.21.0-alpine
-    bitwardenrs:
-      signupsAllowed: true
-    ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: "external"
-        kubernetes.io/tls-acme: "true"
-    persistence:
-      enabled: true
-      storageClass: longhorn
-      accessMode: ReadWriteOnce
-      size: 1Gi
-  valuesFrom:
-    - kind: Secret
-      name: bitwarden-values
-      optional: false
+# ---
+# apiVersion: helm.toolkit.fluxcd.io/v2beta1
+# kind: HelmRelease
+# metadata:
+#   name: bitwarden
+#   namespace: home
+# spec:
+#   releaseName: bitwarden
+#   interval: 5m
+#   chart:
+#     spec:
+#       # renovate: registryUrl=https://k8s-at-home.com/charts/
+#       chart: bitwardenrs
+#       version: 2.1.11
+#       sourceRef:
+#         kind: HelmRepository
+#         name: k8s-at-home
+#         namespace: flux-system
+#       interval: 5m
+#   dependsOn:
+#     - name: sealed-secrets
+#       namespace: kube-system
+#     - name: ingress-nginx-external
+#       namespace: networking
+#   values:
+#     nameOverride: bitwarden
+#     fullnameOverride: bitwarden
+#     image:
+#       repository: bitwardenrs/server
+#       tag: 1.21.0-alpine
+#     bitwardenrs:
+#       signupsAllowed: true
+#     ingress:
+#       enabled: true
+#       annotations:
+#         kubernetes.io/ingress.class: "external"
+#         kubernetes.io/tls-acme: "true"
+#     persistence:
+#       enabled: true
+#       storageClass: longhorn
+#       accessMode: ReadWriteOnce
+#       size: 1Gi
+#   valuesFrom:
+#     - kind: Secret
+#       name: bitwarden-values
+#       optional: false
