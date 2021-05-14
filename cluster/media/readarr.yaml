@@ -44,7 +44,7 @@ spec:
         storageClass: longhorn
       media:
         enabled: true
-        existingClaim: nfs-media-bboks-pvc
+        existingClaim: nfs-media-books-pvc
     additionalVolumes:
       - name: downloads
         persistentVolumeClaim:
