@@ -36,12 +36,13 @@ spec:
         kubernetes.io/ingress.class: "internal"
         kubernetes.io/tls-acme: "true"
     persistence:
-      enabled: true
-      emptydir:
+      config:
         enabled: true
-      storageClass: longhorn
-      accessMode: ReadWriteOnce
-      size: 1Gi
+        emptydir:
+          enabled: true
+        storageClass: longhorn
+        accessMode: ReadWriteOnce
+        size: 1Gi
   valuesFrom:
     - kind: Secret
       name: vaultwarden-values
