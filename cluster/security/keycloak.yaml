@@ -31,7 +31,7 @@ spec:
       enabled: true
       image:
         repository: postgres
-        tag: 9.6-alpine
+        tag: 12.7-alpine
       persistence:
         enabled: true
         storageClass: longhorn
