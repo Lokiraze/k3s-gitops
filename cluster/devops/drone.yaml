@@ -8,11 +8,11 @@ spec:
   interval: 5m
   chart:
     spec:
-      chart: drone-charts
+      chart: drone
       version: 1.6.1
       sourceRef:
         kind: HelmRepository
-        name: drone
+        name: drone-charts
         namespace: flux-system
       interval: 5m
   dependsOn:
