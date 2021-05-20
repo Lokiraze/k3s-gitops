@@ -1,36 +1,36 @@
-# ---
-# apiVersion: helm.toolkit.fluxcd.io/v2beta1
-# kind: HelmRelease
-# metadata:
-#   name: oauth2-proxy
-#   namespace: security
-# spec:
-#   releaseName: oauth2-proxy
-#   interval: 5m
-#   chart:
-#     spec:
-#       # renovate: registryUrl=https://k8s-at-home.com/charts/
-#       chart: oauth2-proxy
-#       version: 5.0.5
-#       sourceRef:
-#         kind: HelmRepository
-#         name: k8s-at-home
-#         namespace: flux-system
-#       interval: 5m
-#   dependsOn:
-#     - name: sealed-secrets
-#       namespace: kube-system
-#     - name: ingress-nginx-external
-#       namespace: networking
-#   values:
-#     image:
-#       repository: quay.io/oauth2-proxy/oauth2-proxy
-#       tag: v7.1.3
-#     ingress:
-#       enabled: true
-#       annotations:
-#         kubernetes.io/ingress.class: "external"
-#   valuesFrom:
-#     - kind: Secret
-#       name: oauth2-proxy-values
-#       optional: false
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: oauth2-proxy
+  namespace: security
+spec:
+  releaseName: oauth2-proxy
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://k8s-at-home.com/charts/
+      chart: oauth2-proxy
+      version: 5.0.5
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-at-home
+        namespace: flux-system
+      interval: 5m
+  dependsOn:
+    - name: sealed-secrets
+      namespace: kube-system
+    - name: ingress-nginx-external
+      namespace: networking
+  values:
+    image:
+      repository: quay.io/oauth2-proxy/oauth2-proxy
+      tag: v7.1.3
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: "external"
+  valuesFrom:
+    - kind: Secret
+      name: oauth2-proxy-values
+      optional: false
