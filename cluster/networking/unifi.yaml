@@ -47,13 +47,13 @@ spec:
     controllerService:
       enabled: true
       type: LoadBalancer
-      loadBalancerIP: 192.168.1.82
+      loadBalancerIP: 192.168.69.82
       annotations:
         metallb.universe.tf/allow-shared-ip: unifi
     stunService:
       enabled: true
       type: LoadBalancer
-      loadBalancerIP: 192.168.1.82
+      loadBalancerIP: 192.168.69.82
       annotations:
         metallb.universe.tf/allow-shared-ip: unifi
     discoveryService:
