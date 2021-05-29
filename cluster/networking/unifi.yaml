@@ -33,6 +33,13 @@ spec:
       storageClass: longhorn
     timezone: "America/Phoenix"
     runAsRoot: false
+    podAnnotations:
+      k8s.v1.cni.cncf.io/networks: |
+        [{
+          "name":"macvlan-static",
+          "namespace": "networking",
+          "ips": ["192.168.68.120"]
+        }]
     ingress:
       enabled: true
       annotations:
