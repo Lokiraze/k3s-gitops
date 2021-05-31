@@ -124,10 +124,7 @@ echo "---" >> "${GENERATED_SECRETS}"
 sed -i '/^[[:space:]]*$/d' "${GENERATED_SECRETS}"
 
 # Validate w/ kubeseal
-if ! kubeseal --validate --controller-name=sealed-secrets <"${GENERATED_SECRETS}" >/dev/null 2>&1; then
-    echo "[ERROR] The controller will not be able to decrypt this secret ${GENERATED_SECRETS}. Aborting."
-    exit 1
-fi
+# 
 
 
 # Validate Yaml
