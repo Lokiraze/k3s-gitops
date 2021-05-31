@@ -30,7 +30,7 @@ spec:
       enabled: true
     timezone: "America/Phoenix"
     persistence:
-      config:
+      data:
         enabled: true
         storageClass: longhorn   
     ingress:
