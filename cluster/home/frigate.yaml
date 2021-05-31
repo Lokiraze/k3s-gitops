@@ -2,10 +2,10 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: grocy
+  name: frigate
   namespace: home
 spec:
-  releaseName: grocy
+  releaseName: frigate
   interval: 5m
   chart:
     spec:
