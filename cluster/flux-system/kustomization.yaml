@@ -4,6 +4,7 @@ resources:
 - gotk-components.yaml
 - gotk-sync.yaml
 - helm-repositories/bitnami.yaml
+- helm-repositories/blakeshome-charts.yaml
 - helm-repositories/cetic.yaml
 - helm-repositories/codecentric.yaml
 - helm-repositories/coredns-charts.yaml
