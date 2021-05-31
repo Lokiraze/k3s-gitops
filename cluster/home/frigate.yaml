@@ -28,6 +28,7 @@ spec:
       tag: stable-armv7
     coral:
       enabled: true
+    shmSize: 3Gi
     timezone: "America/Phoenix"
     persistence:
       data:
