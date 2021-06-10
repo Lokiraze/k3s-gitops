@@ -46,7 +46,7 @@ spec:
       media:
         enabled: true
         existingClaim: nfs-media-movies-pvc
-      custom-mount:
+      downloads:
         enabled: true
         type: custom
         mountPath: "/downloads"
