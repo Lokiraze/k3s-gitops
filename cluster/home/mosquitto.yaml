@@ -23,7 +23,7 @@ spec:
   values:
     image:
       repository: eclipse-mosquitto
-      tag: 1.6.14
+      tag: 1.6.15
     service:
       type: LoadBalancer
       loadBalancerIP: 192.168.69.4
