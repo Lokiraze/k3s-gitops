@@ -11,7 +11,7 @@ spec:
     spec:
       # renovate: registryUrl=https://k8s-at-home.com/charts/
       chart: bazarr
-      version: 9.0.0
+      version: 8.1.0
       sourceRef:
         kind: HelmRepository
         name: k8s-at-home
@@ -53,6 +53,13 @@ spec:
           - name: tv
             persistentVolumeClaim:
               claimName: nfs-media-tv-pvc
+    additionalVolumes:
+      - name: tv
+        persistentVolumeClaim:
+          claimName: nfs-media-tv-pvc
+    additionalVolumeMounts:
+      - name: tv
+        mountPath: "/tv"
     resources:
       requests:
         memory: 350Mi
