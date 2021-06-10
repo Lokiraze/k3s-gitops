@@ -11,7 +11,7 @@ spec:
     spec:
       # renovate: registryUrl=https://k8s-at-home.com/charts/
       chart: vaultwarden
-      version: 1.0.1
+      version: 2.0.0
       sourceRef:
         kind: HelmRepository
         name: k8s-at-home
@@ -31,10 +31,11 @@ spec:
     env:
       SIGNUPS_ALLOWED: true
     ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: "internal"
-        kubernetes.io/tls-acme: "true"
+      main:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: "internal"
+          kubernetes.io/tls-acme: "true"
     persistence:
       config:
         enabled: true
