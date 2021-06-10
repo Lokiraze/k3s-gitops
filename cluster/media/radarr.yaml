@@ -11,7 +11,7 @@ spec:
     spec:
       # renovate: registryUrl=https://k8s-at-home.com/charts/
       chart: radarr
-      version: 11.1.0
+      version: 12.0.0
       sourceRef:
         kind: HelmRepository
         name: k8s-at-home
@@ -27,9 +27,10 @@ spec:
       repository: ghcr.io/k8s-at-home/radarr
       tag: v3.2.2.5080
     ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: "internal"
+      main:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: "internal"
     podSecurityContext:
       runAsGroup: 100
       runAsUser: 1000
@@ -45,13 +46,14 @@ spec:
       media:
         enabled: true
         existingClaim: nfs-media-movies-pvc
-    additionalVolumes:
-      - name: downloads
-        persistentVolumeClaim:
-          claimName: nfs-media-downloads-pvc
-    additionalVolumeMounts:
-      - name: downloads
+      custom-mount:
+        enabled: true
+        type: custom
         mountPath: "/downloads"
+        volumeSpec:
+          - name: downloads
+            persistentVolumeClaim:
+              claimName: nfs-media-downlaods-pvc
     resources:
       requests:
         memory: 350Mi
