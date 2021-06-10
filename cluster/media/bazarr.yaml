@@ -11,7 +11,7 @@ spec:
     spec:
       # renovate: registryUrl=https://k8s-at-home.com/charts/
       chart: bazarr
-      version: 8.1.0
+      version: 9.0.0
       sourceRef:
         kind: HelmRepository
         name: k8s-at-home
@@ -27,9 +27,10 @@ spec:
       repository: ghcr.io/k8s-at-home/bazarr
       tag: v0.9.5
     ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: "internal"
+      main:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: "internal"
     env:
       TZ: "America/Phoenix"
     podSecurityContext:
@@ -44,13 +45,14 @@ spec:
       media:
         enabled: true
         existingClaim: nfs-media-movies-pvc
-    additionalVolumes:
-      - name: tv
-        persistentVolumeClaim:
-          claimName: nfs-media-tv-pvc
-    additionalVolumeMounts:
-      - name: tv
+      custom-mount:
+        enabled: true
+        type: custom
         mountPath: "/tv"
+        volumeSpec:
+          - name: tv
+            persistentVolumeClaim:
+              claimName: nfs-media-tv-pvc
     resources:
       requests:
         memory: 350Mi
