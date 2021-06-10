@@ -29,6 +29,7 @@ spec:
     ingress:
       main:
         enabled: true
+        ingressClassName: "internal"
         annotations:
           kubernetes.io/ingress.class: "internal"
     podSecurityContext:
@@ -50,6 +51,7 @@ spec:
         enabled: true
         type: custom
         mountPath: "/downloads"
+        readOnly: false
         volumeSpec:
           - name: downloads
             persistentVolumeClaim:
