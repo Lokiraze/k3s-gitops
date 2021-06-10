@@ -11,7 +11,7 @@ spec:
     spec:
       # renovate: registryUrl=https://k8s-at-home.com/charts/
       chart: sonarr
-      version: 11.1.0
+      version: 12.0.0
       sourceRef:
         kind: HelmRepository
         name: k8s-at-home
@@ -27,9 +27,11 @@ spec:
       repository: ghcr.io/k8s-at-home/sonarr
       tag: v3.0.6.1196
     ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: "internal"
+      main:
+        enabled: true
+        ingressClassName: "internal"
+        annotations:
+          kubernetes.io/ingress.class: "internal"
     podSecurityContext:
       runAsGroup: 100
       runAsUser: 1000
@@ -45,13 +47,15 @@ spec:
       media:
         enabled: true
         existingClaim: nfs-media-tv-pvc
-    additionalVolumes:
-      - name: downloads
-        persistentVolumeClaim:
-          claimName: nfs-media-downloads-pvc
-    additionalVolumeMounts:
-      - name: downloads
+      downloads:
+        enabled: true
+        type: custom
         mountPath: "/downloads"
+        readOnly: false
+        volumeSpec:
+          name: downloads
+          persistentVolumeClaim:
+            claimName: nfs-media-downloads-pvc
     affinity:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
