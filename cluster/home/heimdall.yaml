@@ -11,7 +11,7 @@ spec:
     spec:
       # renovate: registryUrl=https://k8s-at-home.com/charts/
       chart: heimdall
-      version: 6.4.0
+      version: 7.2.0
       sourceRef:
         kind: HelmRepository
         name: k8s-at-home
@@ -27,9 +27,11 @@ spec:
       repository: linuxserver/heimdall
       tag: version-2.2.2
     ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: "external"
+      main:
+        enabled: true
+        ingressClassName: "external"
+        annotations:
+          kubernetes.io/ingress.class: "external"
     env:
       TZ: "America/Phoenix"
       PUID: "1000"
