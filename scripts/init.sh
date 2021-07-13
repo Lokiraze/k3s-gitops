@@ -50,7 +50,7 @@ installFlux() {
   fi
 }
 
-installFlux
+#installFlux
 
 
 message "all done!"
