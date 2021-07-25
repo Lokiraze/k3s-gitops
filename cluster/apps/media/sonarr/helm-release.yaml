@@ -34,7 +34,7 @@ spec:
                 pathType: Prefix
         tls:
           - hosts:
-              - "tv.${SECRET_DOMAIN}"
+            - "tv.${SECRET_DOMAIN}"
     podSecurityContext:
       runAsUser: 568
       runAsGroup: 568
