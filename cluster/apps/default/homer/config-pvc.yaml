@@ -9,4 +9,4 @@ spec:
   storageClassName: openebs-hostpath
   resources:
     requests:
-      storage: 128Mix
+      storage: 128Mi
