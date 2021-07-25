@@ -21,7 +21,8 @@ spec:
     interval: "5m"
     logLevel: debug
     sources:
-    - sources
+    - service
+    - ingress
     provider: coredns
     coredns:
       etcdEndpoints: http://etcd:2379
