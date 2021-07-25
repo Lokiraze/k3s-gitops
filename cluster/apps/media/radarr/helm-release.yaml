@@ -34,7 +34,7 @@ spec:
                 pathType: Prefix
         tls:
           - hosts:
-              - "movies.${SECRET_DOMAIN"
+              - "movies.${SECRET_DOMAIN}"
     podSecurityContext:
       runAsGroup: 100
       runAsUser: 1000
