@@ -26,9 +26,9 @@ spec:
       externalTrafficPolicy: Local
     prometheus:
       service:
-        enabled: true
+        enabled: false
       monitor:
-        enabled: true
+        enabled: false
     servers:
     - zones:
       - zone: "${SECRET_DOMAIN}."
