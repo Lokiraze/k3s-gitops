@@ -35,12 +35,13 @@ spec:
           - hosts:
               - "read.${SECRET_DOMAIN}"
     podSecurityContext:
-      runAsGroup: 100
-      runAsUser: 1000
+      runAsUser: 568
+      runAsGroup: 568
+      fsGroup: 568
     env:
       TZ: "America/Phoenix"
-      PUID: "1000"
-      PGID: "100"
+      PUID: "568"
+      PGID: "568"
     persistence:
       config:
         enabled: true
