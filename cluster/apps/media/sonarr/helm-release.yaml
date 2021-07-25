@@ -36,12 +36,11 @@ spec:
           - hosts:
               - "tv.${SECRET_DOMAIN}"
     podSecurityContext:
-      runAsGroup: 100
-      runAsUser: 1000
+      runAsUser: 568
+      runAsGroup: 568
+      fsGroup: 568
     env:
       TZ: "America/Phoenix"
-      PUID: "1000"
-      PGID: "100"
     persistence:
       config:
         enabled: true
