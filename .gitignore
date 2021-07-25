@@ -25,3 +25,9 @@ all.yml
 backups/
 secrets/apply_backup.sh
 secrets/localhost_*
+
+# Editors
+.vscode/
+Thumbs.db
+# vscode-sops
+.decrypted~*.yaml
