@@ -21,6 +21,7 @@ spec:
       replicaCount: 1
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      publishService: true
       service:
         type: LoadBalancer
         loadBalancerIP: "${INTERNAL_NGINX_LB}"
