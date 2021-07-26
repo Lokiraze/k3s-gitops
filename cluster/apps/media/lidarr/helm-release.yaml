@@ -52,7 +52,7 @@ spec:
         volumeSpec:
           nfs:
             server: 192.168.1.50
-            path: /mnt/user/media/music"
+            path: "/mnt/user/media/music"
       downloads:
         enabled: true
         type: custom
