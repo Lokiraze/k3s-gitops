@@ -51,6 +51,12 @@ spec:
           nfs:
             server: 192.168.1.50
             path: "/mnt/user/media/movies"
+          mountOptions:
+          - tcp
+          - intr
+          - hard
+          - noatime
+          - nodiratime
       downloads:
         enabled: true
         type: custom
