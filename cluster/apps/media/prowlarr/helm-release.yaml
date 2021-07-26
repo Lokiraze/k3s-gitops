@@ -24,17 +24,16 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: "internal"
         annotations:
           kubernetes.io/ingress.class: "internal"
         hosts:
-          - host: "prowlarr.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
+        - host: "prowlarr.${SECRET_DOMAIN}"
+          paths:
+          - path: /
+            pathType: Prefix
         tls:
-          - hosts:
-              - "prowlarr.${SECRET_DOMAIN}"
+        - hosts:
+          - "prowlarr.${SECRET_DOMAIN}"
     podSecurityContext:
       runAsUser: 568
       runAsGroup: 568

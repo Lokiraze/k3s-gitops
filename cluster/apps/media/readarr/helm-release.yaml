@@ -24,17 +24,16 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: "internal"
         annotations:
           kubernetes.io/ingress.class: "internal"
         hosts:
-          - host: "books.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
+        - host: "books.${SECRET_DOMAIN}"
+          paths:
+          - path: /
+            pathType: Prefix
         tls:
-          - hosts:
-              - "books.${SECRET_DOMAIN}"
+        - hosts:
+          - "books.${SECRET_DOMAIN}"
     env:
       TZ: "America/Phoenix"
     podSecurityContext:
