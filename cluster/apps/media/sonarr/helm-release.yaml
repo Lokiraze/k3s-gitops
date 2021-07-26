@@ -26,6 +26,11 @@ spec:
         enabled: true
         annotations:
           kubernetes.io/ingress.class: "internal"
+          nginx.ingress.kubernetes.io/proxy-connect-timeout: "360"
+          nginx.ingress.kubernetes.io/proxy-send-timeout: "360"
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "360"
+          nginx.ingress.kubernetes.io/proxy-body-size: 100m
+          nginx.ingress.kubernetes.io/client-body-buffer-size: 100m
         hosts:
         - host: "tv.${SECRET_DOMAIN}"
           paths:
