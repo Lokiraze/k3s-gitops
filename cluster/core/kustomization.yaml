@@ -3,6 +3,5 @@ kind: Kustomization
 resources:
 - namespaces
 - metallb-system
-- openebs
 - cert-manager
 - system-upgrade
