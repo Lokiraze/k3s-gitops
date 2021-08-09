@@ -7,4 +7,4 @@ resources:
 - jetstack-charts.yaml
 - k8s-at-home-charts.yaml
 - metallb-charts.yaml
-- openebs-charts.yaml
+- rook-ceph-charts.yaml
