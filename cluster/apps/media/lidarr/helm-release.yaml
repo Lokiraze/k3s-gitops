@@ -47,11 +47,7 @@ spec:
         existingClaim: lidarr-config
       media:
         enabled: true
-        type: custom
-        volumeSpec:
-          nfs:
-            server: 192.168.1.50
-            path: "/mnt/user/media/music"
+        existingClaim: nfs-media-music-pvc
       downloads:
         enabled: true
         type: custom

@@ -51,11 +51,7 @@ spec:
         existingClaim: sonarr-config
       media:
         enabled: true
-        type: custom
-        volumeSpec:
-          nfs:
-            server: 192.168.1.50
-            path: "/mnt/user/media/tvshows"
+        existingClaim: nfs-media-tv-pvc
       downloads:
         enabled: true
         type: custom
