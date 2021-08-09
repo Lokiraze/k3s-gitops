@@ -51,17 +51,7 @@ spec:
         existingClaim: radarr-config
       media:
         enabled: true
-        type: custom
-        volumeSpec:
-          nfs:
-            server: 192.168.1.50
-            path: "/mnt/user/media/movies"
-          mountOptions:
-            - tcp
-            - intr
-            - hard
-            - noatime
-            - nodiratime
+        existingClaim: nfs-media-movies-pvc
       downloads:
         enabled: true
         type: custom
