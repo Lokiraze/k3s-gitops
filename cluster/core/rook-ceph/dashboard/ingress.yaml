@@ -4,8 +4,6 @@ kind: Ingress
 metadata:
   name: rook-ceph-mgr-dashboard
   namespace: rook-ceph
-  annotations:
-    kubernetes.io/ingress.class: "internal"
   labels:
     app.kubernetes.io/instance: rook-ceph-mgr-dashboard
     app.kubernetes.io/name: rook-ceph-mgr-dashboard
