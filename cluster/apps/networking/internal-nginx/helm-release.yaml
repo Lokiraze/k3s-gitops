@@ -29,6 +29,7 @@ spec:
         externalTrafficPolicy: Local
       config:
         ssl-protocols: "TLSv1.3 TLSv1.2"
+        use-proxy-protocol: "false"
         proxy-body-size: "100m"
         use-forwarded-headers: "true"
       metrics:
