@@ -32,13 +32,13 @@ spec:
           nginx.ingress.kubernetes.io/proxy-body-size: 100m
           nginx.ingress.kubernetes.io/client-body-buffer-size: 100m
         hosts:
-        - host: "choose.${SECRET_DOMAIN}"
-          paths:
-          - path: /
-            pathType: Prefix
+          - host: "choose.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
         tls:
-        - hosts:
-          - "choose.${SECRET_DOMAIN}"
+          - hosts:
+              - "choose.${SECRET_DOMAIN}"
     env:
       TZ: "America/Phoenix"
     persistence:
