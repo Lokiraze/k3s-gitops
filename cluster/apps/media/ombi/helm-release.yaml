@@ -39,15 +39,8 @@ spec:
         tls:
         - hosts:
           - "choose.${SECRET_DOMAIN}"
-    podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
     env:
       TZ: "America/Phoenix"
-      PUID: 568
-      PGUID: 568
-      GUID: 568
     persistence:
       config:
         enabled: true
