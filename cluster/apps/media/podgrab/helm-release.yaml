@@ -22,6 +22,8 @@ spec:
       repository: ghcr.io/akhilrex/podgrab
       tag: 1.0.0
     ingress:
+      annotations:
+        kubernetes.io/ingress.class: "internal"
       hosts: 
         - host: "podcasts.${SECRET_DOMAIN}"
           paths:
