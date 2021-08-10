@@ -1,0 +1,62 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: unifi
+  namespace: network
+spec:
+  interval: 5m
+  releaseName: unifi
+  chart:
+    spec:
+      # renovate: registryUrl=https://k8s-at-home.com/charts/
+      chart: unifi
+      version: 2.0.4
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-at-home-charts
+        namespace: flux-system
+      interval: 5m
+  values:
+    image:
+      repository: jacobalberty/unifi
+      tag: v6.2.26
+    persistence:
+      enabled: true
+      existingClaim: unifi-pvc
+    timezone: "America/Phoenix"
+    runAsRoot: false
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: "internal"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      hosts:
+        - "unifi.${SECRET_DOMAIN}"
+      tls:
+        - hosts:
+            - "unifi.${SECRET_DOMAIN}"
+          secretName: unifi-cert
+    guiService:
+      type: LoadBalancer
+      loadBalancerIP: 192.168.69.82
+      annotations:
+        metallb.universe.tf/allow-shared-ip: unifi
+    controllerService:
+      type: LoadBalancer
+      externalTrafficPolicy: Local
+      loadBalancerIP: 192.168.69.82
+      annotations:
+        metallb.universe.tf/allow-shared-ip: unifi
+    stunService:
+      type: LoadBalancer
+      externalTrafficPolicy: Local
+      loadBalancerIP: "${UNIFI_LB}"
+      annotations:
+        metallb.universe.tf/allow-shared-ip: unifi
+    discoveryService:
+      type: LoadBalancer
+      externalTrafficPolicy: Local
+      loadBalancerIP: 192.168.69.82
+      annotations:
+        metallb.universe.tf/allow-shared-ip: unifi
