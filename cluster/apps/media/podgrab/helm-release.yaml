@@ -36,3 +36,7 @@ spec:
       config:
         enabled: true
         existingClaim: podgrab-config
+      assets:
+        enabled: true
+        mountPath: /assets
+        existingClaim: nfs-media-podcasts-pvc
