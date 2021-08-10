@@ -3,6 +3,8 @@ kind: Kustomization
 resources:
 - coredns
 - etcd
+- external
 - external-dns
+- external-nginx
 - internal-nginx
 - wildcard-certificate
