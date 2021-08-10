@@ -18,6 +18,9 @@ spec:
       interval: 5m
   values:
     nameOverride: external-dns
+    image:
+        repository: raspbernetes/external-dns
+        tag: 1a8e2310ca97a3758d85a3a435e491911a486e7d
     interval: "5m"
     logLevel: debug
     sources:
