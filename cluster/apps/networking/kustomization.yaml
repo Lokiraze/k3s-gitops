@@ -7,4 +7,5 @@ resources:
 - external-dns
 - external-nginx
 - internal-nginx
+- unifi
 - wildcard-certificate
