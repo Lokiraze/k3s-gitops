@@ -3,7 +3,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: unifi
-  namespace: network
+  namespace: networking
 spec:
   interval: 5m
   releaseName: unifi
@@ -36,27 +36,23 @@ spec:
       tls:
         - hosts:
             - "unifi.${SECRET_DOMAIN}"
-          secretName: unifi-cert
     guiService:
       type: LoadBalancer
-      loadBalancerIP: 192.168.69.82
+      loadBalancerIP: "${UNIFI_LB}"
       annotations:
         metallb.universe.tf/allow-shared-ip: unifi
     controllerService:
       type: LoadBalancer
-      externalTrafficPolicy: Local
-      loadBalancerIP: 192.168.69.82
+      loadBalancerIP: "${UNIFI_LB}"
       annotations:
         metallb.universe.tf/allow-shared-ip: unifi
     stunService:
       type: LoadBalancer
-      externalTrafficPolicy: Local
       loadBalancerIP: "${UNIFI_LB}"
       annotations:
         metallb.universe.tf/allow-shared-ip: unifi
     discoveryService:
       type: LoadBalancer
-      externalTrafficPolicy: Local
-      loadBalancerIP: 192.168.69.82
+      loadBalancerIP: "${UNIFI_LB}"
       annotations:
         metallb.universe.tf/allow-shared-ip: unifi
