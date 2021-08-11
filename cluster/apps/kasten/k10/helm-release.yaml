@@ -26,6 +26,10 @@ spec:
       persistence:
         storageClass: rook-ceph-block
     clusterName: k8s
+    auth:
+      basicAuth:
+        enabled: true
+        htpasswd: "${KASTEN_AUTH}"
     ingress:
       create: true
       host: "k10.${SECRET_DOMAIN}"
