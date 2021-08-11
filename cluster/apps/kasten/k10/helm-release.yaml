@@ -3,7 +3,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: k10
-  namespace: kasten-io
+  namespace: kasten
 spec:
   releaseName: k10
   interval: 5m
@@ -25,9 +25,6 @@ spec:
     global:
       persistence:
         storageClass: rook-ceph-block
-    auth:
-      tokenAuth:
-        enabled: true
     clusterName: k8s
     ingress:
       create: true
