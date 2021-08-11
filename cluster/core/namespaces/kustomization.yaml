@@ -3,9 +3,9 @@ kind: Kustomization
 resources:
 - cert-manager.yaml
 - home.yaml
-- kasten.yaml
 - media.yaml
 - metallb-system.yaml
 - networking.yaml
 - rook-ceph.yaml
 - security.yaml
+- velero.yaml
