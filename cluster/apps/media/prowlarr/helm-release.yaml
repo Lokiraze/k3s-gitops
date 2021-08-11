@@ -45,6 +45,8 @@ spec:
       fsGroup: 568
     env:
       TZ: "America/Phoenix"
+    podAnnotations:
+      backup.velero.io/backup-volumes: config
     persistence:
       config:
         enabled: true

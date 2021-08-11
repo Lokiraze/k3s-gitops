@@ -25,6 +25,8 @@ spec:
       DOMAIN: https://passwords.${SECRET_DOMAIN}
       SIGNUPS_ALLOWED: "true"
       ADMIN_TOKEN: ${VAULTWARDEN_ADMIN_TOKEN}
+    podAnnotations:
+      backup.velero.io/backup-volumes: config
     persistence:
       config:
         enabled: true
