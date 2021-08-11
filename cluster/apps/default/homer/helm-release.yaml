@@ -49,6 +49,8 @@ spec:
           - "none"
         ingress:
           enabled: true
+          annotations:
+            kubernetes.io/ingress.class: "internal"
           hosts:
             - host: home-editor.${SECRET_DOMAIN}
               paths:
