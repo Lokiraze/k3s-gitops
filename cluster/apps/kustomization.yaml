@@ -4,6 +4,7 @@ resources:
 - default
 - home
 - media
+- monitoring
 - networking
 - pv
 - security

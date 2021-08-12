@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - bitnami-charts.yaml
 - coredns-charts.yaml
+- influxdata-charts.yaml
 - ingress-nginx-charts.yaml
 - jetstack-charts.yaml
 - k8s-at-home-charts.yaml
