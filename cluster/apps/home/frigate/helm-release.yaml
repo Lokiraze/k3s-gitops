@@ -30,8 +30,6 @@ spec:
       data:
         enabled: "true"
         existingClaim: frigate-config
-      usb:
-        enabled: true
     ingress:
       enabled: true
       annotations:
