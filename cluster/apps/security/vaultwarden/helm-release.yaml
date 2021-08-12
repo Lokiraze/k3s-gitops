@@ -36,7 +36,6 @@ spec:
         enabled: true
         annotations:
           kubernetes.io/ingress.class: "external"
-          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
         hosts:
         - host: passwords.${SECRET_DOMAIN}
           paths:
