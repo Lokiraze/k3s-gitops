@@ -57,12 +57,7 @@ spec:
       downloads:
         enabled: true
         type: custom
-        mountPath: "/downloads"
-        readOnly: false
-        volumeSpec:
-          nfs:
-            server: 192.168.1.50
-            path: "/mnt/user/downloads"
+        existingClaim: nfs-media-downloads-pvc
     resources:
       requests:
         memory: 350Mi
