@@ -56,7 +56,7 @@ spec:
     config: |
       mqtt: 
         host: eclipse-mosquitto
-        topix_prefix: frigate
+        topic_prefix: frigate
       database:
         path: /data/frigate.db
       detectors:
