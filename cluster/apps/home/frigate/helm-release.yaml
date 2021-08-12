@@ -90,3 +90,63 @@ spec:
           height: 2160
           width: 3840
           fps: 15
+        garage:
+          ffmpeg:
+            inputs:
+              - path: ${GARAGE_CAMERA}
+                roles:
+                  - detect
+                  - rtmp
+          snapshots:
+            enabled: true
+          height: 2160
+          width: 3840
+          fps: 15
+        backyard_pathway_1:
+          ffmpeg:
+            inputs:
+              - path: ${BACKYARD_PATHWAY_CAMERA_1}
+                roles:
+                  - detect
+                  - rtmp
+          snapshots:
+            enabled: true
+          height: 2160
+          width: 3840
+          fps: 15
+        side_alley_1:
+          ffmpeg:
+            inputs:
+              - path: ${SIDE_ALLEY_CAMERA_1}
+                roles:
+                  - detect
+                  - rtmp
+          snapshots:
+            enabled: true
+          height: 2160
+          width: 3840
+          fps: 15
+        side_alley_2:
+          ffmpeg:
+            inputs:
+              - path: ${SIDE_ALLEY_CAMERA_2}
+                roles:
+                  - detect
+                  - rtmp
+          snapshots:
+            enabled: true
+          height: 2160
+          width: 3840
+          fps: 15
+        backyard_2:
+          ffmpeg:
+            inputs:
+              - path: ${BACKYARD_CAMERA_2}
+                roles:
+                  - detect
+                  - rtmp
+          snapshots:
+            enabled: true
+          height: 2160
+          width: 3840
+          fps: 15
