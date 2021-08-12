@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - mosquitto
   - node-red
+  - zwavejs2mqtt
