@@ -11,7 +11,7 @@ spec:
     spec:
       # renovate: registryUrl=https://blakeblackshear.github.io/blakeshome-charts/
       chart: frigate
-      version: 5.0.1
+      version: 5.0.2
       sourceRef:
         kind: HelmRepository
         name: blakeshome-charts
@@ -21,10 +21,11 @@ spec:
     image:
       repository: blakeblackshear/frigate
       tag: stable-amd64
+    env:
+      TZ: America/Phoenix
     coral:
       enabled: true
     shmSize: 3Gi
-    timezone: "America/Phoenix"
     persistence:
       data:
         enabled: "true"
@@ -36,10 +37,7 @@ spec:
       annotations:
         kubernetes.io/ingress.class: "internal"
       hosts:
-        - host: cctv.${SECRET_DOMAIN}
-          paths:
-            - path: /
-              pathType: Prefix
+        - cctv.${SECRET_DOMAIN}
       tls:
         - hosts:
             - "cctv.${SECRET_DOMAIN}"
