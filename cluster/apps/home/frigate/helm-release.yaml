@@ -28,7 +28,9 @@ spec:
     persistence:
       data:
         enabled: "true"
-        existingClaim: frigate-config 
+        existingClaim: frigate-config
+      usb:
+        enabled: true
     ingress:
       main:
         enabled: true
