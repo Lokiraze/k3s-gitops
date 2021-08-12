@@ -30,6 +30,14 @@ spec:
         enabled: true
         annotations:
           kubernetes.io/ingress.class: "internal"
+        hosts:
+          - host: food.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - "food.${SECRET_DOMAIN}"
     env:
       TZ: America/Phoenix
     resources:
