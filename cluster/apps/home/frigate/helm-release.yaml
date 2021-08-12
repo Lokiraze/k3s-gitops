@@ -93,7 +93,7 @@ spec:
         garage:
           ffmpeg:
             inputs:
-              - path: ${GARAGE_CAMERA}
+              - path: "${GARAGE_CAMERA}"
                 roles:
                   - detect
                   - rtmp
