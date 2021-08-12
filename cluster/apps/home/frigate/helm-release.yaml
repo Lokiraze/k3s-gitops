@@ -32,18 +32,17 @@ spec:
       usb:
         enabled: true
     ingress:
-      main:
-        enabled: true
-        annotations:
-          kubernetes.io/ingress.class: "internal"
-        hosts:
-          - host: cctv.${SECRET_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-        tls:
-          - hosts:
-              - "cctv.${SECRET_DOMAIN}"
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: "internal"
+      hosts:
+        - host: cctv.${SECRET_DOMAIN}
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - hosts:
+            - "cctv.${SECRET_DOMAIN}"
     affinity:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
