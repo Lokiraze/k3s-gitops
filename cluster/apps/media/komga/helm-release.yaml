@@ -42,9 +42,7 @@ spec:
         existingClaim: komga-config
       data:
         enabled: true
-        type: custom
         existingClaim: manga-pvc
-        subPath: /manga
     resources:
       requests:
         memory: 350Mi
