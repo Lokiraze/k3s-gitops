@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nfs-media-books-pvc
+  name: calibre-pvc
   namespace: media
 spec:
   accessModes:

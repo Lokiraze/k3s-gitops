@@ -43,10 +43,8 @@ spec:
       books:
         enabled: true
         type: custom
-        volumeSpec:
-          nfs:
-            server: 192.168.1.50
-            path: "/mnt/user/media/books"
+        existingClaim: calibre-pvc
+        subPath: "/calibre/Calibre Library"
     resources:
       requests:
         memory: 350Mi
