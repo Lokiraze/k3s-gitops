@@ -70,6 +70,7 @@ spec:
           - experimental
           - -fflags
           - +genpts+discardcorrupt
+          - -rtsp_transport
           - -use_wallclock_as_timestamps
           - "1"
       cameras:
