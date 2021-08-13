@@ -62,14 +62,13 @@ spec:
         input_args:
           - -avoid_negative_ts
           - make_zero
-          - -fflags
-          - nobuffer
           - -flags
           - low_delay
           - -strict
           - experimental
           - -fflags
           - +genpts+discardcorrupt
+          - -rtsp_transport
           - tcp
           - -stimeout
           - "5000000"
