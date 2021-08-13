@@ -70,8 +70,6 @@ spec:
           - experimental
           - -fflags
           - +genpts+discardcorrupt
-          - -rw_timeout
-          - "5000000"
           - tcp
           - -stimeout
           - "5000000"
