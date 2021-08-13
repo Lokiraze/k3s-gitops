@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - calibre-web
 - downloads-pvc.yaml
+- komga
 - lidarr
 - ombi
 - podgrab
