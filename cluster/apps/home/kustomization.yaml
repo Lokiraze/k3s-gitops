@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - grocy
   - frigate
+  - home-assistant
   - mosquitto
   - node-red
   - zwavejs2mqtt
