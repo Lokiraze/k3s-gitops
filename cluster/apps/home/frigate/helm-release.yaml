@@ -137,16 +137,4 @@ spec:
             enabled: true
           height: 2160
           width: 3840
-          fps: 15
-        backyard_2:
-          ffmpeg:
-            inputs:
-              - path: ${BACKYARD_CAMERA_2}
-                roles:
-                  - detect
-                  - rtmp
-          snapshots:
-            enabled: true
-          height: 2160
-          width: 3840
-          fps: 15
+          fps: 15 
