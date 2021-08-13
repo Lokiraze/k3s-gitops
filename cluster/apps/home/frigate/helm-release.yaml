@@ -70,7 +70,8 @@ spec:
           - experimental
           - -fflags
           - +genpts+discardcorrupt
-          - -rtsp_transport
+          - -rw_timeout
+          - "5000000"
           - -use_wallclock_as_timestamps
           - "1"
       cameras:
