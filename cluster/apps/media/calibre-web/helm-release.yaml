@@ -43,7 +43,7 @@ spec:
       books:
         enabled: true
         type: custom
-        existingClaim: calibre-pvc
+        existingClaim: nfs-media-books-pvc
         subPath: "/calibre/Calibre Library"
     resources:
       requests:

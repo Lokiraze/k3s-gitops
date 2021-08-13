@@ -42,7 +42,8 @@ spec:
         existingClaim: komga-config
       data:
         enabled: true
-        existingClaim: manga-pvc
+        existingClaim: nfs-media-books-pvc
+        subPath: /manga
     resources:
       requests:
         memory: 350Mi
