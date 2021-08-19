@@ -33,7 +33,7 @@ spec:
     nodes:
       - name: "k8s-phoenix"
         devices:
-          - name: sdd
+          - name: sdf
           - name: sde
       - name: "k8s-odin"
         devices:
