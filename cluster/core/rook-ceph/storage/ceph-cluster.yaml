@@ -6,7 +6,7 @@ metadata:
 spec:
   cephVersion:
     # see the "Cluster Settings" section below for more details on which image of ceph to run
-    image: quay.io/ceph/ceph:v16.2.5
+    image: quay.io/ceph/ceph:v16.2.6
   dataDirHostPath: /var/lib/rook
   mon:
     count: 3
