@@ -19,7 +19,7 @@ spec:
   values:
     image:
       repository: ghcr.io/home-assistant/home-assistant
-      tag: 2021.8.8
+      tag: 2021.10.6
     env:
       TZ: "America/Phoenix"
     hostNetwork: true
@@ -58,7 +58,7 @@ spec:
         enabled: true
         image:
           repository: ghcr.io/k8s-at-home/code-server
-          tag: 3.11.1
+          tag: v3.12.0
         workingDir: "/config"
         args:
           - --auth

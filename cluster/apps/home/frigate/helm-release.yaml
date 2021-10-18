@@ -20,7 +20,7 @@ spec:
   values:
     image:
       repository: blakeblackshear/frigate
-      tag: stable-amd64
+      tag: 0.9.1-amd64
     env:
       TZ: America/Phoenix
     coral:
@@ -85,9 +85,10 @@ spec:
                   - rtmp
           snapshots:
             enabled: true
-          height: 2160
-          width: 3840
-          fps: 5
+          detect:
+            height: 2160
+            width: 3840
+            fps: 5
         garage:
           ffmpeg:
             inputs:
@@ -97,9 +98,10 @@ spec:
                   - rtmp
           snapshots:
             enabled: true
-          height: 2160
-          width: 3840
-          fps: 5
+          detect:
+            height: 2160
+            width: 3840
+            fps: 5
         backyard_pathway_1:
           ffmpeg:
             inputs:
@@ -109,9 +111,10 @@ spec:
                   - rtmp
           snapshots:
             enabled: true
-          height: 2160
-          width: 3840
-          fps: 5
+          detect:
+            height: 2160
+            width: 3840
+            fps: 5
         side_alley_1:
           ffmpeg:
             inputs:
@@ -121,9 +124,10 @@ spec:
                   - rtmp
           snapshots:
             enabled: true
-          height: 2160
-          width: 3840
-          fps: 5
+          detect:
+            height: 2160
+            width: 3840
+            fps: 5
         side_alley_2:
           ffmpeg:
             inputs:
@@ -133,6 +137,7 @@ spec:
                   - rtmp
           snapshots:
             enabled: true
-          height: 2160
-          width: 3840
-          fps: 5 
+          detect:
+            height: 2160
+            width: 3840
+            fps: 5 
