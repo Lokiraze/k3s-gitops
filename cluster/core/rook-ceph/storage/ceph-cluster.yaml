@@ -28,7 +28,6 @@ spec:
     useAllDevices: false
     onlyApplyOSDPlacement: false
     config:
-      metadataDevice:
       osdsPerDevice: "1"
     nodes:
       - name: "k8s-phoenix"
