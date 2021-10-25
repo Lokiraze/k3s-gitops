@@ -33,15 +33,15 @@ spec:
         hosts:
           - host: "tv.${SECRET_DOMAIN}"
             paths:
-            - path: /
-              pathType: Prefix
+              - path: /
+                pathType: Prefix
         tls:
           - hosts:
             - "tv.${SECRET_DOMAIN}"
-    podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
+    # podSecurityContext:
+    #   runAsUser: 568
+    #   runAsGroup: 568
+    #   fsGroup: 568
     env:
       TZ: "America/Phoenix"
     podAnnotations:
