@@ -23,7 +23,7 @@ spec:
       tag: v3.0.6.1342
     ingress:
       main:
-        enabled: true
+        enabled: false
         annotations:
           kubernetes.io/ingress.class: "internal"
           nginx.ingress.kubernetes.io/proxy-connect-timeout: "360"
@@ -45,8 +45,6 @@ spec:
       fsGroup: 568
     env:
       TZ: "America/Phoenix"
-    podAnnotations:
-      backup.velero.io/backup-volumes: config
     persistence:
       config:
         enabled: true
@@ -54,18 +52,3 @@ spec:
       media:
         enabled: true
         existingClaim: nfs-media-tv-pvc
-      downloads:
-        enabled: true
-        type: custom
-        mountPath: "/downloads"
-        readOnly: false
-        volumeSpec:
-          nfs:
-            server: 192.168.1.50
-            path: "/mnt/user/downloads"
-    resources:
-      requests:
-        memory: 350Mi
-        cpu: 50m
-      limits:
-        memory: 500Mi
