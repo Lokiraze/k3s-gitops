@@ -1,66 +1,66 @@
----
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
-kind: HelmRelease
-metadata:
-  name: sonarr
-  namespace: media
-spec:
-  releaseName: sonarr
-  interval: 5m
-  chart:
-    spec:
-      # renovate: registryUrl=https://k8s-at-home.com/charts/
-      chart: sonarr
-      version: 13.0.0
-      sourceRef:
-        kind: HelmRepository
-        name: k8s-at-home-charts
-        namespace: flux-system
-      interval: 5m
-  values:
-    image:
-      repository: ghcr.io/k8s-at-home/sonarr
-      tag: v3.0.6.1342
-    ingress:
-      main:
-        enabled: true
-        annotations:
-          kubernetes.io/ingress.class: "internal"
-          nginx.ingress.kubernetes.io/proxy-connect-timeout: "360"
-          nginx.ingress.kubernetes.io/proxy-send-timeout: "360"
-          nginx.ingress.kubernetes.io/proxy-read-timeout: "360"
-          nginx.ingress.kubernetes.io/proxy-body-size: 100m
-          nginx.ingress.kubernetes.io/client-body-buffer-size: 100m
-        hosts:
-        - host: "tv.${SECRET_DOMAIN}"
-          paths:
-          - path: /
-            pathType: Prefix
-        tls:
-        - hosts:
-          - "tv.${SECRET_DOMAIN}"
-    podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
-    env:
-      TZ: "America/Phoenix"
-    podAnnotations:
-      backup.velero.io/backup-volumes: config
-    persistence:
-      config:
-        enabled: true
-        existingClaim: sonarr-config
-      media:
-        enabled: true
-        existingClaim: nfs-media-tv-pvc
-      downloads:
-        enabled: true
-        type: custom
-        existingClaim: nfs-media-downloads-pvc
-    resources:
-      requests:
-        memory: 350Mi
-        cpu: 50m
-      limits:
-        memory: 500Mi
+# ---
+# apiVersion: helm.toolkit.fluxcd.io/v2beta1
+# kind: HelmRelease
+# metadata:
+#   name: sonarr
+#   namespace: media
+# spec:
+#   releaseName: sonarr
+#   interval: 5m
+#   chart:
+#     spec:
+#       # renovate: registryUrl=https://k8s-at-home.com/charts/
+#       chart: sonarr
+#       version: 13.0.0
+#       sourceRef:
+#         kind: HelmRepository
+#         name: k8s-at-home-charts
+#         namespace: flux-system
+#       interval: 5m
+#   values:
+#     image:
+#       repository: ghcr.io/k8s-at-home/sonarr
+#       tag: v3.0.6.1342
+#     ingress:
+#       main:
+#         enabled: true
+#         annotations:
+#           kubernetes.io/ingress.class: "internal"
+#           nginx.ingress.kubernetes.io/proxy-connect-timeout: "360"
+#           nginx.ingress.kubernetes.io/proxy-send-timeout: "360"
+#           nginx.ingress.kubernetes.io/proxy-read-timeout: "360"
+#           nginx.ingress.kubernetes.io/proxy-body-size: 100m
+#           nginx.ingress.kubernetes.io/client-body-buffer-size: 100m
+#         hosts:
+#         - host: "tv.${SECRET_DOMAIN}"
+#           paths:
+#           - path: /
+#             pathType: Prefix
+#         tls:
+#         - hosts:
+#           - "tv.${SECRET_DOMAIN}"
+#     podSecurityContext:
+#       runAsUser: 568
+#       runAsGroup: 568
+#       fsGroup: 568
+#     env:
+#       TZ: "America/Phoenix"
+#     podAnnotations:
+#       backup.velero.io/backup-volumes: config
+#     persistence:
+#       config:
+#         enabled: true
+#         existingClaim: sonarr-config
+#       media:
+#         enabled: true
+#         existingClaim: nfs-media-tv-pvc
+#       downloads:
+#         enabled: true
+#         type: custom
+#         existingClaim: nfs-media-downloads-pvc
+#     resources:
+#       requests:
+#         memory: 350Mi
+#         cpu: 50m
+#       limits:
+#         memory: 500Mi
