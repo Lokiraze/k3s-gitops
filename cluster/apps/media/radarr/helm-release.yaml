@@ -56,7 +56,7 @@ spec:
         existingClaim: nfs-media-movies-pvc
       downloads:
         enabled: true
-        type: custom
+        type: pvc
         existingClaim: nfs-media-downloads-pvc
     resources:
       requests:
