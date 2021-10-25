@@ -5,7 +5,6 @@ metadata:
   name: sonarr
   namespace: media
 spec:
-  releaseName: sonarr
   interval: 5m
   chart:
     spec:
