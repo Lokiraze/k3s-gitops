@@ -44,7 +44,7 @@ spec:
         enabled: true
         type: pvc
         existingClaim: nfs-media-books-pvc
-        subPath: "/calibre/Calibre Library"
+        subPath: "calibre/Calibre Library"
     resources:
       requests:
         memory: 350Mi
