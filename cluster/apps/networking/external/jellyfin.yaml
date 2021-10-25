@@ -2,7 +2,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: jellyfin
-  namespace: default
   annotations:
     kubernetes.io/ingress.class: external
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "360"
