@@ -5,7 +5,6 @@ resources:
 - downloads-pvc.yaml
 - komga
 - lidarr
-- ombi
 - podgrab
 - prowlarr
 - radarr
