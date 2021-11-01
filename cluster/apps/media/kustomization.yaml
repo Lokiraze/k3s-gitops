@@ -3,7 +3,9 @@ kind: Kustomization
 resources:
 - downloads-pvc.yaml
 - lidarr
+- ombi
 - podgrab
 - prowlarr
 - radarr
+- readarr
 - sonarr
