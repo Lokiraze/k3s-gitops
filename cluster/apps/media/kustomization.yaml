@@ -7,4 +7,5 @@ resources:
 - podgrab
 - prowlarr
 - radarr
+- readarr
 - sonarr
