@@ -43,7 +43,7 @@ spec:
       data:
         enabled: true
         existingClaim: nfs-media-books-pvc
-        subPath: /manga
+        subPath: manga
     resources:
       requests:
         memory: 350Mi
