@@ -36,6 +36,7 @@ spec:
         enabled: true
         annotations:
           kubernetes.io/ingress.class: "internal"
+          nginx.org/websocket-services: node-red
         hosts:
           - host: automation.${SECRET_DOMAIN}
             paths:
