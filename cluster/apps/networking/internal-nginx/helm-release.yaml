@@ -32,6 +32,7 @@ spec:
         use-proxy-protocol: "false"
         proxy-body-size: "100m"
         use-forwarded-headers: "true"
+        proxy-ignore-client-abort: "on"
       metrics:
         enabled: false
         serviceMonitor:
