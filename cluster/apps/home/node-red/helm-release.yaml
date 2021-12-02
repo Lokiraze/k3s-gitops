@@ -20,7 +20,7 @@ spec:
   values:
     image:
       repository: nodered/node-red
-      tag: 2.1.3
+      tag: 2.1.4
     env:
       TZ: America/Phoenix
     podSecurityContext:
