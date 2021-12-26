@@ -22,8 +22,9 @@ spec:
       repository: jacobalberty/unifi
       tag: v6.5.55
     persistence:
-      enabled: true
-      existingClaim: unifi-pvc
+      data:
+        enabled: true
+        existingClaim: unifi-pvc
     env:
       TZ: "America/Phoenix"
     runAsRoot: false
