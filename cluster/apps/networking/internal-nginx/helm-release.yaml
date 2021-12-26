@@ -17,7 +17,7 @@ spec:
         namespace: flux-system
   values:
     controller:
-      ingressClass: internal
+      ingressClassName: internal
       replicaCount: 1
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
