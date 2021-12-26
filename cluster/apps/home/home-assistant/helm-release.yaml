@@ -70,8 +70,7 @@ spec:
           - "/config/.vscode"
         ingress:
           enabled: true
-          annotations:
-            kubernetes.io/ingress.class: "internal"
+          ingressClassName: internal
           hosts:
             - host: "hass-config.${SECRET_DOMAIN}"
               paths:
