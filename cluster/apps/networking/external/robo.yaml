@@ -3,9 +3,8 @@ kind: Ingress
 metadata:
   name: roborock
   namespace: default
-  annotations:
-    kubernetes.io/ingress.class: internal
 spec:
+  ingressClassName: internal
   rules:
   - host: "robo.${SECRET_DOMAIN}"
     http:

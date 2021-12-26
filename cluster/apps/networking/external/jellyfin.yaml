@@ -4,13 +4,13 @@ metadata:
   name: jellyfin
   namespace: default
   annotations:
-    kubernetes.io/ingress.class: external
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "360"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "360"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "360"
     nginx.ingress.kubernetes.io/proxy-body-size: 100m
     nginx.ingress.kubernetes.io/client-body-buffer-size: 100m
 spec:
+  ingressClassName: external
   rules:
   - host: "media.${SECRET_DOMAIN}"
     http:
