@@ -51,7 +51,7 @@ spec:
             port: 8443
             protocol: HTTPS
           controller:
-            enabled: true
+            enabled: false
             port: 8080
             protocol: TCP
           portal-local:
@@ -67,7 +67,7 @@ spec:
             port: 6789
             protocol: TCP
       udp:
-        enabled: true
+        enabled: false
         type: LoadBalancer
         loadBalancerIP: "${UNIFI_UDP_LB}"
         ports:
