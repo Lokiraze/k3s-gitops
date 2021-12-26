@@ -11,7 +11,7 @@ spec:
     spec:
       # renovate: registryUrl=https://k8s-at-home.com/charts/
       chart: unifi
-      version: 2.0.4
+      version: 4.5.0
       sourceRef:
         kind: HelmRepository
         name: k8s-at-home-charts
@@ -24,35 +24,56 @@ spec:
     persistence:
       enabled: true
       existingClaim: unifi-pvc
-    timezone: "America/Phoenix"
+    env:
+      TZ: "America/Phoenix"
     runAsRoot: false
     ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: "internal"
-        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-      hosts:
-        - "unifi.${SECRET_DOMAIN}"
-      tls:
-        - hosts:
-            - "unifi.${SECRET_DOMAIN}"
-    guiService:
-      type: LoadBalancer
-      loadBalancerIP: "${UNIFI_LB}"
-      annotations:
-        metallb.universe.tf/allow-shared-ip: unifi
-    controllerService:
-      type: LoadBalancer
-      loadBalancerIP: "${UNIFI_LB}"
-      annotations:
-        metallb.universe.tf/allow-shared-ip: unifi
-    stunService:
-      type: LoadBalancer
-      loadBalancerIP: "${UNIFI_LB}"
-      annotations:
-        metallb.universe.tf/allow-shared-ip: unifi
-    discoveryService:
-      type: LoadBalancer
-      loadBalancerIP: "${UNIFI_LB}"
-      annotations:
-        metallb.universe.tf/allow-shared-ip: unifi
+      main: 
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: "internal"
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        hosts:
+          - host: "unifi.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - "unifi.${SECRET_DOMAIN}"
+    service:
+      main:
+        type: LoadBalancer
+        loadBalancerIP: "${UNIFI_LB}"
+        ports:
+          http:
+            port: 8443
+            protocol: HTTPS
+          controller:
+            enabled: true
+            port: 8080
+            protocol: TCP
+          portal-local:
+            enabled: false
+            port: 8880
+            protocol: HTTP
+          portal-https:
+            enabled: false
+            port: 8843
+            protocol: HTTPS
+          speedtest:
+            enabled: false
+            port: 6789
+            protocol: TCP
+          stun: 
+            enabled: true
+            port: 3478
+            protocol: UDP
+          syslog:
+            enabled: false
+            port: 5514
+            protocol: UDP
+          discovery:
+            enabled: true
+            port: 10001
+            protocol: UDP
