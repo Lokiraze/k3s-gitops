@@ -31,8 +31,8 @@ spec:
     ingress:
       main: 
         enabled: true
+        ingressClassName: internal
         annotations:
-          kubernetes.io/ingress.class: "internal"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
         hosts:
           - host: "unifi.${SECRET_DOMAIN}"
