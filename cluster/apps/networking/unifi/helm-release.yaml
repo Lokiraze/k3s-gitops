@@ -46,6 +46,9 @@ spec:
       main:
         type: LoadBalancer
         loadBalancerIP: "${UNIFI_LB}"
+        externalTrafficPolicy: Local
+        annotations:
+          metallb.universe.tf/allow-shared-ip: unifi
         ports:
           http:
             port: 8443
@@ -54,7 +57,7 @@ spec:
             enabled: true
             port: 8080
             protocol: TCP
-          portal-local:
+          portal-http:
             enabled: false
             port: 8880
             protocol: HTTP
@@ -81,7 +84,10 @@ spec:
       udp:
         enabled: true
         type: LoadBalancer
-        loadBalancerIP: "${UNIFI_UDP_LB}"
+        loadBalancerIP: "${UNIFI_LB}"
+        externalTrafficPolicy: Local
+        annotations:
+          metallb.universe.tf/allow-shared-ip: unifi
         ports:
           stun: 
             enabled: true
