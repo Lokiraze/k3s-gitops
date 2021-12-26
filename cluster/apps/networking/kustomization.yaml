@@ -5,7 +5,7 @@ resources:
 - etcd
 #- external
 - external-dns
-#- external-nginx
+- external-nginx
 - internal-nginx
 - unifi
 - wildcard-certificate
