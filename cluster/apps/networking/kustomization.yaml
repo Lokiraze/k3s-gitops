@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
 - coredns
 - etcd
-- external
+#- external
 - external-dns
 #- external-nginx
 #- internal-nginx
