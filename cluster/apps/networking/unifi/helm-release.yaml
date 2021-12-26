@@ -51,7 +51,7 @@ spec:
             port: 8443
             protocol: HTTPS
           controller:
-            enabled: false
+            enabled: true
             port: 8080
             protocol: TCP
           portal-local:
@@ -66,11 +66,6 @@ spec:
             enabled: false
             port: 6789
             protocol: TCP
-      udp:
-        enabled: false
-        type: LoadBalancer
-        loadBalancerIP: "${UNIFI_UDP_LB}"
-        ports:
           stun: 
             enabled: false
             port: 3478
@@ -81,5 +76,22 @@ spec:
             protocol: UDP
           discovery:
             enabled: false
+            port: 10001
+            protocol: UDP
+      udp:
+        enabled: true
+        type: LoadBalancer
+        loadBalancerIP: "${UNIFI_UDP_LB}"
+        ports:
+          stun: 
+            enabled: true
+            port: 3478
+            protocol: UDP
+          syslog:
+            enabled: false
+            port: 5514
+            protocol: UDP
+          discovery:
+            enabled: true
             port: 10001
             protocol: UDP
