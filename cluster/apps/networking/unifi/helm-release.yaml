@@ -72,7 +72,7 @@ spec:
         loadBalancerIP: "${UNIFI_UDP_LB}"
         ports:
           stun: 
-            enabled: true
+            enabled: false
             port: 3478
             protocol: UDP
           syslog:
@@ -80,6 +80,6 @@ spec:
             port: 5514
             protocol: UDP
           discovery:
-            enabled: true
+            enabled: false
             port: 10001
             protocol: UDP
