@@ -6,6 +6,6 @@ resources:
 #- external
 - external-dns
 #- external-nginx
-#- internal-nginx
+- internal-nginx
 - unifi
 - wildcard-certificate
