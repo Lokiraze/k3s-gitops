@@ -9,4 +9,3 @@ resources:
 - pv
 - security
 - system-upgrade
-- velero
