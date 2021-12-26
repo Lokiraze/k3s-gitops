@@ -17,7 +17,11 @@ spec:
         namespace: flux-system
   values:
     controller:
-      ingressClassName: internal
+      ingressClassResource:
+        name: internal
+        enabled: true
+        default: true
+        controllerValue: "k8s.io/ingress-nginx"
       replicaCount: 1
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
