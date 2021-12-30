@@ -9,7 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET, HEAD, OPTIONS"
     nginx.ingress.kubernetes.io/cors-allow-headers: "Origin, X-Requested-With, Content-Type, Accept, Authorization"
 spec:
-  ingressClassName: internal
+  ingressClassName: external
   rules:
   - host: "${SECRET_DOMAIN}"
     http:
