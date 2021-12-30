@@ -19,7 +19,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: synaspe-service
+            name: synapse-service
             port: 
               number: 8008
   tls:
