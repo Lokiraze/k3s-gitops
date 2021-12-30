@@ -21,7 +21,7 @@ spec:
         name: external
         enabled: true
         default: false
-        controllerValue: "k8s.io/ingress-nginx"
+        controllerValue: "k8s.io/external-ingress-nginx"
       replicaCount: 1
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
