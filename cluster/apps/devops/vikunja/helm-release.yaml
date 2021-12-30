@@ -35,7 +35,8 @@ spec:
     additionalContainers:
       api:
         env:
-          timezone: America/Phoenix
+          - name: VIKUNJA_SERVICE_TIMEZONE
+            value: America/Phoenix
     env:
       TZ: "America/Phoenix"
     persistence:
