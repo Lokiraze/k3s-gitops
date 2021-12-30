@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: home
+spec:
+  selector:
+    matchLabels:
+      app: synapse
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: synapse
+    spec:
+      containers:
+      - image: matrixdotorg/synapse:v1.25.0
+        name: synapse
+        args: ["generate"]
+        env:
+        - name: SYNAPSE_SERVER_NAME
+          value: "lokiraze.dev"
+        - name: SYNAPSE_REPORT_STATS
+          value: "no"
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        ports:
+          - containerPort: 8008
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: synapse-data
