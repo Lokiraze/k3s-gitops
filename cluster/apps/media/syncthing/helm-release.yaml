@@ -1,0 +1,68 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: syncthing
+  namespace: media
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://k8s-at-home.com/charts/
+      chart: syncthing
+      version: 3.2.0
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-at-home-charts
+        namespace: flux-system
+      interval: 5m
+  values:
+    image:
+      repository: syncthing/syncthing
+      tag: 1.18.2
+    service:
+      listen:
+        enabled: true
+        type: LoadBalancer
+        loadBalancerIP: "${SYNCTHING_LB}"
+        externalTrafficPolicy: Local
+        annotations:
+          metallb.universe.tf/allow-shared-ip: unifi
+        ports:
+          listen:
+            enabled: true
+            port: 22000
+            protocol: TCP
+            targetPort: 22000
+      discovery:
+        enabled: true
+        type: LoadBalancer
+        loadBalancerIP: "${SYNCTHING_LB}"
+        externalTrafficPolicy: Local
+        annotations:
+          metallb.universe.tf/allow-shared-ip: unifi
+        ports:
+          discovery:
+            enabled: true
+            port: 21027
+            protocol: UDP
+            targetPort: 21027
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: internal
+        hosts:
+          - host: "sync.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+            - "sync.${SECRET_DOMAIN}"
+    env:
+      TZ: "America/Phoenix"
+    resources:
+      requests:
+        memory: 350Mi
+      limits:
+        memory: 1500Mi
