@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: synaspe-ingress
+  namespace: home
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "360"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "360"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "360"
+    nginx.ingress.kubernetes.io/proxy-body-size: 100M
+    nginx.ingress.kubernetes.io/client-body-buffer-size: 100M
+spec:
+  ingressClassName: internal
+  rules:
+  - host: "matrix.${SECRET_DOMAIN}"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: synaspe-service
+            port: 
+              number: 8008
+  tls:
+  - hosts:
+    - "matrix.${SECRET_DOMAIN}"
