@@ -14,7 +14,7 @@ spec:
   - host: "${SECRET_DOMAIN}"
     http:
       paths:
-      - path: /
+      - path: /.well-known/matrix/
         pathType: Prefix
         backend:
           service:
