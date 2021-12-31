@@ -17,6 +17,7 @@ spec:
         namespace: flux-system
   values:
     controller:
+      ingressClassByName: true
       ingressClassResource:
         name: external
         enabled: true
