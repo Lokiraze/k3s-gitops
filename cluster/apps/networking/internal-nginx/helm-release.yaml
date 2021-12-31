@@ -18,6 +18,7 @@ spec:
   values:
     controller:
 #      watchIngressWithoutClass: true
+      ingressClassByName: true
       ingressClassResource:
         name: internal
         enabled: true
