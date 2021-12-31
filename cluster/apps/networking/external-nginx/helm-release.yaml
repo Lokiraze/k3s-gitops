@@ -37,6 +37,7 @@ spec:
         use-proxy-protocol: "false"
         proxy-body-size: "100m"
         use-forwarded-headers: "true"
+        http-redirect-code: "301"
       metrics:
         enabled: false
         serviceMonitor:
