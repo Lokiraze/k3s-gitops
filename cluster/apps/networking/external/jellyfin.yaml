@@ -10,7 +10,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: 100m
     nginx.ingress.kubernetes.io/client-body-buffer-size: 100m
 spec:
-  ingressClassName: internal
+  ingressClassName: external
   rules:
   - host: "media.${SECRET_DOMAIN}"
     http:
