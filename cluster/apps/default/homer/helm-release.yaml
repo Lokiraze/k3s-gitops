@@ -23,7 +23,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: external
+        ingressClassName: internal
         hosts:
         - host: "homer.${SECRET_DOMAIN}"
           paths:
