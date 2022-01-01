@@ -25,13 +25,13 @@ spec:
         enabled: true
         ingressClassName: external
         hosts:
-        - host: "${SECRET_DOMAIN}"
+        - host: "homer.${SECRET_DOMAIN}"
           paths:
           - path: /
             pathType: Prefix
         tls:
         - hosts:
-          - "${SECRET_DOMAIN}"
+          - "homer.${SECRET_DOMAIN}"
     persistence:
       config:
         enabled: true

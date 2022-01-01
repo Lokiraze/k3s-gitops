@@ -21,6 +21,13 @@ spec:
             name: delegation-service
             port: 
               number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: delegation-service
+            port: 
+              number: 80
   tls:
   - hosts:
     - "${SECRET_DOMAIN}"
