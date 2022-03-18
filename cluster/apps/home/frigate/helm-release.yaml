@@ -34,7 +34,9 @@ spec:
       enabled: true
       ingressClassName: internal
       hosts:
-        - cctv.${SECRET_DOMAIN}
+        - host: cctv.${SECRET_DOMAIN}
+          paths:
+            - "/"
       tls:
         - hosts:
             - "cctv.${SECRET_DOMAIN}"
