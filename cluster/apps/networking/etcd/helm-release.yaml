@@ -19,7 +19,7 @@ spec:
     replicaCount: 1
     auth:
       rbac:
-        enabled: false
+        create: false
     persistence:
       enabled: false
     metrics:
