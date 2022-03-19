@@ -33,6 +33,8 @@ spec:
     ingress:
       enabled: true
       ingressClassName: internal
+      annotations:
+        kubernetes.io/ingress.class: internal
       hosts:
         - host: cctv.${SECRET_DOMAIN}
           paths:
