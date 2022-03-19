@@ -51,6 +51,13 @@ spec:
               operator: In
               values:
               - google-coral
+    extraVolumes:
+      - name: media
+        persistentVolumeClain:
+          claimName: frigate-media
+    extraVolumeMounts:
+      - name: media
+        mountPath: /media
     config: |
       mqtt: 
         host: eclipse-mosquitto
