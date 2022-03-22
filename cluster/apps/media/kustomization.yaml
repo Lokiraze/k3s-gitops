@@ -4,6 +4,7 @@ resources:
 - audiobookshelf
 - downloads-pvc.yaml
 - calibre-web
+- kavita
 - komga
 - lidarr
 - ombi
