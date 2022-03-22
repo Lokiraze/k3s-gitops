@@ -3,7 +3,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: kavita
-  namespace: home
+  namespace: media
   labels:
     app.kubernetes.io/name: kavita
     app.kubernetes.io/instance: kavita

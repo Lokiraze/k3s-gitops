@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kavita
-  namespace: home
+  namespace: media
   labels:
     app.kubernetes.io/name: kavita
     app.kubernetes.io/instance: kavita
