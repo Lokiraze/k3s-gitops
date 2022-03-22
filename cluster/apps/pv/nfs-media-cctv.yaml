@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: nfs-media-tv-pv
+  name: nfs-media-cctv-pv
 spec:
-  storageClassName: nfs-media-tv
+  storageClassName: nfs-media-cctv
   capacity:
     storage: 1Mi
   accessModes:
@@ -12,7 +12,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: 192.168.1.50
-    path: "/mnt/user/media/tvshows"
+    path: "/mnt/user/cctv/frigate"
   mountOptions:
   - tcp
   - intr
