@@ -32,8 +32,13 @@ spec:
         existingClaim: frigate-config
       media:
         enabled: true
-        existingClaim: nfs-cctv-media
-        mountPath: /media
+        type: custom
+        mountPath: "/media"
+        readOnly: false
+        volumeSpec:
+          nfs:
+            server: 192.168.1.50
+            path: "/mnt/user/cctv/frigate"
       usb:
         enabled: true
         type: hostPath
