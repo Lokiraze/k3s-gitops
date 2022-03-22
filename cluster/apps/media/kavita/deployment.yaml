@@ -36,7 +36,7 @@ spec:
               mountPath: /kavita/config
             - name: media
               mountPath: /manga
-              subPath: /manga
+              subPath: manga
           resources:
             requests:
               cpu: 250m
