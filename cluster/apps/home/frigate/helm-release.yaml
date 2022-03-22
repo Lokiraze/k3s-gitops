@@ -9,12 +9,12 @@ spec:
   interval: 5m
   chart:
     spec:
-      # renovate: registryUrl=https://blakeblackshear.github.io/blakeshome-charts/
+      # renovate: registryUrl=https://k8s-at-home.com/charts/
       chart: frigate
-      version: 6.3.0
+      version: 8.0.0
       sourceRef:
         kind: HelmRepository
-        name: blakeshome-charts
+        name: k8s-at-home-charts
         namespace: flux-system
       interval: 5m
   values:
@@ -23,25 +23,39 @@ spec:
       tag: 0.10.1-amd64
     env:
       TZ: America/Phoenix
-    coral:
-      enabled: true
-    shmSize: 3Gi
+    securityContext:
+      privileged: true
     persistence:
       data:
-        enabled: "true"
+        enabled: true
+        mountPath: /data
         existingClaim: frigate-config
+      media:
+        enabled: true
+        existingClaim: nfs-cctv-media
+        mountPath: /media
+      usb:
+        enabled: true
+        type: hostPath
+        hostPath: /dev/bus/usb
+      cache: 
+        enabled: true
+        type: emptyDir
+        medium: Memory
+        sizeLimit: 3Gi
+        mountPath: /dev/shm
     ingress:
-      enabled: true
-      ingressClassName: internal
-      annotations:
-        kubernetes.io/ingress.class: internal
-      hosts:
-        - host: cctv.${SECRET_DOMAIN}
-          paths:
-            - "/"
-      tls:
-        - hosts:
-            - "cctv.${SECRET_DOMAIN}"
+      main:
+        enabled: true
+        ingressClassName: internal
+        hosts:
+          - host: cctv.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - "cctv.${SECRET_DOMAIN}"
     affinity:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
@@ -51,103 +65,100 @@ spec:
               operator: In
               values:
               - google-coral
-    extraVolumes:
-      - name: media
-        persistentVolumeClain:
-          claimName: frigate-media
-    extraVolumeMounts:
-      - name: media
-        mountPath: /media
-    config: |
-      mqtt: 
-        host: eclipse-mosquitto
-        topic_prefix: frigate
-      database:
-        path: /data/frigate.db
-      detectors:
-        coral:
-          type: edgetpu
-          device: usb
-      ffmpeg:
-        input_args:
-          - -avoid_negative_ts
-          - make_zero
-          - -flags
-          - low_delay
-          - -strict
-          - experimental
-          - -fflags
-          - +genpts+discardcorrupt
-          - -rtsp_transport
-          - tcp
-          - -stimeout
-          - "5000000"
-          - -use_wallclock_as_timestamps
-          - "1"
-      cameras:
-        # ---
-        porch:
-          ffmpeg:
-            inputs:
-              - path: ${PORCH_CAMERA}
-                roles:
-                  - detect
-                  - rtmp
-          snapshots:
-            enabled: true
-          detect:
-            height: 2160
-            width: 3840
-            fps: 5
-        garage:
-          ffmpeg:
-            inputs:
-              - path: "${GARAGE_CAMERA}"
-                roles:
-                  - detect
-                  - rtmp
-          snapshots:
-            enabled: true
-          detect:
-            height: 2160
-            width: 3840
-            fps: 5
-        backyard_pathway_1:
-          ffmpeg:
-            inputs:
-              - path: ${BACKYARD_PATHWAY_CAMERA_1}
-                roles:
-                  - detect
-                  - rtmp
-          snapshots:
-            enabled: true
-          detect:
-            height: 2160
-            width: 3840
-            fps: 5
-        side_alley_1:
-          ffmpeg:
-            inputs:
-              - path: ${SIDE_ALLEY_CAMERA_1}
-                roles:
-                  - detect
-                  - rtmp
-          snapshots:
-            enabled: true
-          detect:
-            height: 2160
-            width: 3840
-            fps: 5
-        side_alley_2:
-          ffmpeg:
-            inputs:
-              - path: ${SIDE_ALLEY_CAMERA_2}
-                roles:
-                  - detect
-                  - rtmp
-          snapshots:
-            enabled: true
-          detect:
-            height: 2160
-            width: 3840
-            fps: 5 
+    configmap:
+      config:
+        enabled: true
+        data:
+          config.yml: |
+            mqtt: 
+              host: eclipse-mosquitto
+              topic_prefix: frigate
+            database:
+              path: /data/frigate.db
+            detectors:
+              coral:
+                type: edgetpu
+                device: usb
+            ffmpeg:
+              input_args:
+                - -avoid_negative_ts
+                - make_zero
+                - -flags
+                - low_delay
+                - -strict
+                - experimental
+                - -fflags
+                - +genpts+discardcorrupt
+                - -rtsp_transport
+                - tcp
+                - -stimeout
+                - "5000000"
+                - -use_wallclock_as_timestamps
+                - "1"
+            cameras:
+              # ---
+              porch:
+                ffmpeg:
+                  inputs:
+                    - path: ${PORCH_CAMERA}
+                      roles:
+                        - detect
+                        - rtmp
+                snapshots:
+                  enabled: true
+                detect:
+                  height: 2160
+                  width: 3840
+                  fps: 5
+              garage:
+                ffmpeg:
+                  inputs:
+                    - path: "${GARAGE_CAMERA}"
+                      roles:
+                        - detect
+                        - rtmp
+                snapshots:
+                  enabled: true
+                detect:
+                  height: 2160
+                  width: 3840
+                  fps: 5
+              backyard_pathway_1:
+                ffmpeg:
+                  inputs:
+                    - path: ${BACKYARD_PATHWAY_CAMERA_1}
+                      roles:
+                        - detect
+                        - rtmp
+                snapshots:
+                  enabled: true
+                detect:
+                  height: 2160
+                  width: 3840
+                  fps: 5
+              side_alley_1:
+                ffmpeg:
+                  inputs:
+                    - path: ${SIDE_ALLEY_CAMERA_1}
+                      roles:
+                        - detect
+                        - rtmp
+                snapshots:
+                  enabled: true
+                detect:
+                  height: 2160
+                  width: 3840
+                  fps: 5
+              side_alley_2:
+                ffmpeg:
+                  inputs:
+                    - path: ${SIDE_ALLEY_CAMERA_2}
+                      roles:
+                        - detect
+                        - rtmp
+                snapshots:
+                  enabled: true
+                detect:
+                  height: 2160
+                  width: 3840
+                  fps: 5 
