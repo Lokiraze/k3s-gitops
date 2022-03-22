@@ -35,6 +35,8 @@ spec:
               - "audiobooks.${SECRET_DOMAIN}"
     env:
       TZ: "America/Phoenix"
+      AUDIOBOOKSHELF_UID: 568
+      AUDIOBOOKSHELF_GID: 568
     persistence:
       config:
         enabled: true
