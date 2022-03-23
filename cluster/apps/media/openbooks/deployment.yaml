@@ -24,7 +24,7 @@ spec:
         - name: openbooks
           image: docker.io/evanbuss/openbooks:sha-8639492
           imagePullPolicy: IfNotPresent
-          command: ["--persist"]
+   #       command: ["--persist"]
           env:
             - name: TZ
               value: America/Phoenix
