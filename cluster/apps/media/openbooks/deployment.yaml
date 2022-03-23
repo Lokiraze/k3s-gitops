@@ -1,0 +1,49 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openbooks
+  namespace: media
+  labels:
+    app.kubernetes.io/name: openbooks
+    app.kubernetes.io/instance: openbooks
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: openbooks
+      app.kubernetes.io/instance: openbooks
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: openbooks
+        app.kubernetes.io/instance: openbooks
+    spec:
+      containers:
+        - name: openbooks
+          image: docker.io/evanbuss/openbooks:sha-8639492
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: America/Phoenix
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: media
+              mountPath: /books
+              subPath: raw
+          resources:
+            requests:
+              cpu: 250m
+              memory: 100Mi
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
+      volumes:
+        - name: media
+          persistentVolumeClaim:
+            claimName: nfs-media-books-pvc
+

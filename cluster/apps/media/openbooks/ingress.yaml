@@ -1,0 +1,25 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: openbooks
+  namespace: media
+  labels:
+    app.kubernetes.io/name: openbooks
+    app.kubernetes.io/instance: openbooks
+spec:
+  ingressClassName: internal
+  rules:
+    - host: "openbook.${SECRET_DOMAIN}"
+      http:
+        paths:
+          - backend:
+              service:
+                name: openbooks
+                port:
+                  number: 5000
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - "openbook.${SECRET_DOMAIN}"

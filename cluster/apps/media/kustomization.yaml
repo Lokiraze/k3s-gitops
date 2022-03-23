@@ -8,6 +8,7 @@ resources:
 - komga
 - lidarr
 - ombi
+- openbooks
 - podgrab
 - prowlarr
 - radarr
