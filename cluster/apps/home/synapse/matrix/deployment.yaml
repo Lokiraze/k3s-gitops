@@ -15,7 +15,7 @@ spec:
         app: synapse
     spec:
       containers:
-      - image: matrixdotorg/synapse:v1.54.0
+      - image: matrixdotorg/synapse:v1.56.0
         name: synapse
         env:
         - name: SYNAPSE_SERVER_NAME
