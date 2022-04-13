@@ -70,6 +70,10 @@ spec:
               operator: In
               values:
               - google-coral
+            - key: kubernetes.io/arch
+              operator: In
+              values: 
+                - amd64
     configmap:
       config:
         enabled: true
