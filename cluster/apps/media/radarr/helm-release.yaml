@@ -24,7 +24,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: internal
+       # ingressClassName: internal
         annotations:
           nginx.ingress.kubernetes.io/proxy-connect-timeout: "360"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "360"
