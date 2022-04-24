@@ -22,7 +22,7 @@ spec:
       ingressClassResource:
         name: internal
         enabled: true
-        default: false
+        default: true
         controllerValue: "k8s.io/internal-ingress-nginx"
       replicaCount: 1
       hostNetwork: true
