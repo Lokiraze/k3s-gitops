@@ -18,6 +18,7 @@ spec:
   values:
     controller:
 #      watchIngressWithoutClass: true
+      electionID: ingress-controller-leader-internal
       ingressClassByName: true
       ingressClass: internal
       ingressClassResource:
