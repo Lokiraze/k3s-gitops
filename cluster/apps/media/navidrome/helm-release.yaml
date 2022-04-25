@@ -38,7 +38,7 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: navidrome-data
+        existingClaim: navidrone-data
       media:
         enabled: true
         existingClaim: nfs-media-music-pvc
