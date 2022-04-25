@@ -35,11 +35,10 @@ spec:
               - "music.${SECRET_DOMAIN}"
     env:
       TZ: "America/Phoenix"
-      ND_MUSICFOLDER: "/media"
     persistence:
       config:
         enabled: true
         existingClaim: navidrone-data
-      media:
+      music:
         enabled: true
         existingClaim: nfs-media-music-pvc
