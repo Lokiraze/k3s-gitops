@@ -21,6 +21,8 @@ spec:
     image:
       repository: ghcr.io/akhilrex/podgrab
       tag: 1.0.0
+    env:
+      CHECK_FREQUENCY: "240"
     ingress:
       ingressClassName: internal
       hosts: 
