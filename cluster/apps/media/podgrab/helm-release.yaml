@@ -18,6 +18,8 @@ spec:
         namespace: flux-system
       interval: 5m
   values:
+    strategy:
+      type: Recreate
     image:
       repository: ghcr.io/akhilrex/podgrab
       tag: 1.0.0
