@@ -26,7 +26,10 @@ spec:
     env:
       CHECK_FREQUENCY: "240"
     ingress:
+      enabled: true
       ingressClassName: internal
+      annotations:
+        kubernetes.io/ingress.class: internal
       hosts: 
         - host: "podcasts.${SECRET_DOMAIN}"
           paths:
