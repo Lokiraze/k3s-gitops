@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: kavita
-          image: docker.io/kizaing/kavita:0.5.2
+          image: docker.io/kizaing/kavita:0.5.3
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
