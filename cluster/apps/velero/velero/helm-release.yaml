@@ -55,7 +55,7 @@ spec:
     kubectl:
       image:
         repository: kubesphere/kubectl
-        tag: v1.22.0
+        tag: v1.22.9
     upgradeCRDs: false
     cleanUpCRDs: false
     credentials:
