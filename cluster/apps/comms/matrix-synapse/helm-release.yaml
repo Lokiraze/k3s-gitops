@@ -23,7 +23,7 @@ spec:
     serverName: ${SECRET_DOMAIN}
     publicServerName: matrix.${SECRET_DOMAIN}
     wellknown:
-      enabled: false
+      enabled: true
 
     workers:
       media_repository:
