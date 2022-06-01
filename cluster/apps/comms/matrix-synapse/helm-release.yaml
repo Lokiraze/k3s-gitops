@@ -45,6 +45,8 @@ spec:
         repository: postgres
         tag: 14.3
       postgresqlDataDir: /var/lib/postgresql/data
+      persistence:
+        mountPath: /var/lib/postgresql
 
     redis:
       enabled: true
