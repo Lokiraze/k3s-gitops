@@ -31,6 +31,11 @@ spec:
 
     ingress:
       enabled: true
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-connect-timeout: "360"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "360"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "360"
+        nginx.ingress.kubernetes.io/proxy-body-size: 0
       className: external
       tls:
         - hosts:
