@@ -60,7 +60,7 @@ spec:
 
     signingkey:
       job:
-        enabled: false
+        enabled: true
 
     persistence:
       enabled: false
