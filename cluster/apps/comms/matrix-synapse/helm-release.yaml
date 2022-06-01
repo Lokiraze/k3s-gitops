@@ -41,6 +41,8 @@ spec:
       postgresqlPassword: ${MATRIX_POSTGRESQL_PASSWORD}
       image:
         debug: true
+      volumePermissions:
+        enabled: true
       master:
         affinity:
           nodeAffinity:
