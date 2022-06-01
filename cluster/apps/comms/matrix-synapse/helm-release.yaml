@@ -37,12 +37,12 @@ spec:
             - matrix.${SECRET_DOMAIN}
 
     postgresql:
-      enabled: true
+      enabled: false
       postgresqlPassword: ${MATRIX_POSTGRESQL_PASSWORD}
       image:
         repository: postgres
         tag: 14.3
-      postgresqlDataDir: /var/lib/postgresql/data
+      postgresqlDataDir: /var/lib/postgresql/
       persistence:
         mountPath: /var/lib/postgresql
 
