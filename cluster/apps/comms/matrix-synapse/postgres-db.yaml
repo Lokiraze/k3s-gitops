@@ -1,0 +1,16 @@
+---
+apiVersion: kubegres.reactive-tech.io/v1
+kind: Kubegres
+metadata:
+  name: matrix-synapse-postgres
+  namespace: comms
+spec:
+  replicas: 1
+  image: docker.io/library/postgres:11.15
+  database:
+    size: 5Gi
+  env:
+    - name: POSTGRES_PASSWORD
+      value: ${MATRIX_POSTGRESQL_PASSWORD}
+    - name: POSTGRES_REPLICATION_PASSWORD
+      value: ${MATRIX_POSTGRESQL_PASSWORD}

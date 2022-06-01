@@ -39,11 +39,18 @@ spec:
             - matrix.${SECRET_DOMAIN}
 
     postgresql:
-      enabled: true
+      enabled: false
+
+    externalPostgresql:
+      host: matrix-synapse-postgres
+      port: 5432
+      username: synapse
+      password: ${MATRIX_POSTGRESQL_PASSWORD}
+      database: "synapse"
 
     redis:
       enabled: true
-      password: ${SECRET_MATRIX_REDIS_PASSWORD}
+      password: ${MATRIX_REDIS_PASSWORD}
 
     signingkey:
       job:
