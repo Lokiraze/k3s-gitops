@@ -37,14 +37,18 @@ spec:
             - matrix.${SECRET_DOMAIN}
 
     postgresql:
-      enabled: false
+      enabled: true
       postgresqlPassword: ${MATRIX_POSTGRESQL_PASSWORD}
-      image:
-        repository: postgres
-        tag: 14.3
-      postgresqlDataDir: /var/lib/postgresql/
-      persistence:
-        mountPath: /var/lib/postgresql
+      master:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: beta.kubernetes.io/arch
+                  operator: In
+                  values:
+                  - amd64
 
     redis:
       enabled: true
