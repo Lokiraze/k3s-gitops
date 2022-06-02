@@ -38,6 +38,7 @@ spec:
       className: external
       tls:
         - hosts:
+            - ${SECRET_DOMAIN}
             - matrix.${SECRET_DOMAIN}
 
     postgresql:
