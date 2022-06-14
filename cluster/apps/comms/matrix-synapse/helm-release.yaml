@@ -32,9 +32,13 @@ spec:
     ingress:
       enabled: true
       annotations:
+        nginx.ingress.kubernetes.io/use-regex: "true"
+        nginx.ingress.kubernetes.io/proxy-body-size: 10m
         nginx.ingress.kubernetes.io/proxy-connect-timeout: "360"
         nginx.ingress.kubernetes.io/proxy-send-timeout: "360"
         nginx.ingress.kubernetes.io/proxy-read-timeout: "360"
+        nginx.ingress.kubernetes.io/configuration-snippet: |
+          proxy_intercept_errors off;
       className: external
       tls:
         - hosts:
