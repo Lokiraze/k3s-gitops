@@ -20,7 +20,7 @@ spec:
   values:
     image:
       repository: influxdb
-      tag: 2.2.0-alpine
+      tag: 2.3.0-alpine
     service:
       type: LoadBalancer
       loadBalancerIP: "${INFLUXDB_LB}"
