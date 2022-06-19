@@ -20,7 +20,7 @@ spec:
   values:
     image:
       repository: advplyr/audiobookshelf
-      tag: 2.0.21
+      tag: 2.0.22
     ingress:
       main:
         enabled: true
