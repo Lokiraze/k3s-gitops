@@ -34,3 +34,4 @@ spec:
         devices:
           - name: sdd
           - name: sdc
+          - name: sdb
