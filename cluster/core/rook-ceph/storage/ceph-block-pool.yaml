@@ -8,4 +8,4 @@ spec:
   failureDomain: host
   replicated:
     size: 1
-    requireSafeReplicaSize: true
+    requireSafeReplicaSize: false
