@@ -24,14 +24,8 @@ spec:
     port: 7000
     ssl: false
   storage:
-    useAllNodes: false
+    useAllNodes: true
     useAllDevices: true
     onlyApplyOSDPlacement: false
     config:
       osdsPerDevice: "1"
-    nodes:
-      - name: "k8s-phoenix"
-        devices:
-          - name: sdd
-          - name: sdc
-          - name: sdb
