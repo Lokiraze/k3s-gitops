@@ -25,7 +25,7 @@ spec:
     ssl: false
   storage:
     useAllNodes: false
-    useAllDevices: false
+    useAllDevices: true
     onlyApplyOSDPlacement: false
     config:
       osdsPerDevice: "1"
