@@ -20,8 +20,8 @@ spec:
     image:
       repository: matrixdotorg/synapse
       tag: v1.61.0
-    serverName: ${SECRET_DOMAIN}
-    publicServerName: matrix.${SECRET_DOMAIN}
+    serverName: matrix.${SECRET_DOMAIN}
+    publicServerName: ${SECRET_DOMAIN}
     wellknown:
       enabled: true
 

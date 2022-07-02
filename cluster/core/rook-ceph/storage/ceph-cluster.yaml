@@ -34,7 +34,3 @@ spec:
         devices:
           - name: sdf
           - name: sde
-      - name: "k8s-odin"
-        devices:
-          - name: sda
-          - name: sdc
