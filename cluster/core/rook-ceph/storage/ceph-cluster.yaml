@@ -23,10 +23,15 @@ spec:
     enabled: true
     port: 7000
     ssl: false
-  removeOSDsIfOutAndSafeToRemove: true
   storage:
-    useAllNodes: true
+    useAllNodes: false
     useAllDevices: true
     onlyApplyOSDPlacement: false
     config:
       osdsPerDevice: "1"
+    nodes:
+      - name: "k8s-phoenix"
+        devices:
+          - name: sdd
+          - name: sdc
+          - name: sde
