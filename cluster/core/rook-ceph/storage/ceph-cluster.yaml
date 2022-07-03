@@ -33,3 +33,4 @@ spec:
       - name: "k8s-phoenix"
         devices:
           - name: sdc
+          - name: sde
