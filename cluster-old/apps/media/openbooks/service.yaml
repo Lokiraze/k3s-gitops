@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openbooks
+  namespace: media
+  labels:
+    app.kubernetes.io/name: openbooks
+    app.kubernetes.io/instance: openbooks
+spec:
+  selector:
+    app.kubernetes.io/instance: openbooks
+    app.kubernetes.io/name: openbooks
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http

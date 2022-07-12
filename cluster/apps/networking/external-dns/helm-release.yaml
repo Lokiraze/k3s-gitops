@@ -5,37 +5,42 @@ metadata:
   name: external-dns
   namespace: networking
 spec:
-  interval: 5m
+  interval: 15m
   chart:
     spec:
-      # renovate: registryUrl=https://charts.bitnami.com/bitnami
       chart: external-dns
-      version: 6.5.7
+      version: 1.10.0
       sourceRef:
         kind: HelmRepository
-        name: bitnami-charts
+        name: external-dns
         namespace: flux-system
-      interval: 5m
+      interval: 15m
+  install:
+    createNamespace: true
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
   values:
-    nameOverride: external-dns
-    image:
-        repository: raspbernetes/external-dns
-        tag: 1a8e2310ca97a3758d85a3a435e491911a486e7d
-    interval: "5m"
+    interval: 5m
     logLevel: debug
-    sources:
-    - service
-    - ingress
-    provider: coredns
-    coredns:
-      etcdEndpoints: http://etcd:2379
+    provider: digitalocean
+    env:
+      - name: DO_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: external-dns-cloud-credentials
+            key: api-key
+    extraArgs:
+      - --annotation-filter=external-dns/is-public in (true)
     policy: sync
+    sources:
+      - ingress
+    txtPrefix: "k8s."
+    txtOwnerId: "default"
     domainFilters:
-    - "${SECRET_DOMAIN}"
-    crd:
-      create: false
-      apiversion: externaldns.k8s.io/v1alpha1
-      kind: DNSEndpoint
+      - "${SECRET_DOMAIN}"
     resources:
       requests:
         memory: 100Mi
