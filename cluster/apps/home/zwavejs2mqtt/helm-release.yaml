@@ -22,13 +22,13 @@ spec:
       repository: zwavejs/zwavejs2mqtt
       tag: 6.13.0
     env:
-      TZ: America/Phoenix
+      TZ: "${TIMEZONE}"
     securityContext:
       privileged: true
     ingress:
       main:
         enabled: true
-        ingressClassName: internal
+        ingressClassName: nginx
         hosts:
           - host: &host "zwave.${SECRET_DOMAIN}"
             paths:
