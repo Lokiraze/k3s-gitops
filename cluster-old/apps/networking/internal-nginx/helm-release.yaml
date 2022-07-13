@@ -42,6 +42,8 @@ spec:
         use-forwarded-headers: "true"
         proxy-ignore-client-abort: "on"
         proxy-request-buffering: "off"
+      admissionWebhooks:
+        timeoutSeconds: 60
       metrics:
         enabled: false
         serviceMonitor:
