@@ -19,6 +19,9 @@ spec:
     - name: rook-ceph-operator
       namespace: rook-ceph
   values:
+    toolbox:
+      enabled: true
+      image: rook/ceph:1.9.7
     cephClusterSpec:
       cephVersion:
         image: quay.io/ceph/ceph:v16.2.9
