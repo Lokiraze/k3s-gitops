@@ -43,6 +43,7 @@ spec:
         proxy-ignore-client-abort: "on"
         proxy-request-buffering: "off"
       admissionWebhooks:
+        enabled: false
         timeoutSeconds: 60
       metrics:
         enabled: false
