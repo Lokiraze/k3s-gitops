@@ -5,7 +5,7 @@ namespace: home
 resources:
   - config-pvc.yaml
   - helm-release.yaml
-  - secrets.sops.yaml
+  - secret.sops.yaml
 configMapGenerator:
   - name: frigate
     files:
