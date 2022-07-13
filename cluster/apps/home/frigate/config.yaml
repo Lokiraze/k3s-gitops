@@ -29,7 +29,7 @@ cameras:
   porch:
     ffmpeg:
       inputs:
-        - path: "{PORCH_CAMERA}"
+        - path: "${PORCH_CAMERA}"
           roles:
             - detect
             - rtmp
