@@ -96,7 +96,7 @@ spec:
               limits:
                 memory: 4Gi
         storageClass:
-          enabled: true
+          enabled: false
           isDefault: false
           name: ceph-filesystem
           pool: data0
@@ -136,7 +136,7 @@ spec:
             bucket:
               interval: 60s
         storageClass:
-          enabled: true
+          enabled: false
           name: ceph-bucket
           reclaimPolicy: Delete
           parameters:
