@@ -5,5 +5,4 @@ KUBECONFIG=:"${REPO_ROOT}"/provision/kubeconfig:~/.kube/config kubectl config vi
   mv ~/.kube/config.tmp ~/.kube/config
 
 
-message "all done!"
 kubectl get nodes -o=wide
