@@ -20,7 +20,7 @@ spec:
       namespace: rook-ceph
   values:
     toolbox:
-      enabled: true
+      enabled: false
       image: rook/ceph:v1.9.7
     cephClusterSpec:
       cephVersion:
@@ -101,7 +101,7 @@ spec:
             activeStandby: true
             resources:
               requests:
-                cpu: 1000m
+                cpu: 100m
                 memory: 4Gi
               limits:
                 memory: 4Gi
@@ -137,7 +137,7 @@ spec:
             port: 80
             resources:
               requests:
-                cpu: 1000m
+                cpu: 100m
                 memory: 1Gi
               limits:
                 memory: 2Gi
