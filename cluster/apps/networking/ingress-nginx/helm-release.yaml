@@ -36,6 +36,8 @@ spec:
           metallb.universe.tf/loadBalancerIPs: |-
             ${METALLB_INGRESS_ADDR}
         externalTrafficPolicy: Local
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       publishService:
         enabled: true
       ingressClassResource:
