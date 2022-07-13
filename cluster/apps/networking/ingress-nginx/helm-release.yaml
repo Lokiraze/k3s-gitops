@@ -60,7 +60,7 @@ spec:
       metrics:
         enabled: false
       admissionWebhooks:
-        enabled: true
+        enabled: false
         timeSeconds: 60
       resources:
         requests:
