@@ -45,16 +45,6 @@ spec:
           - name: k8s-bahamut
             devices:
               - name: "sdb"
-      placement:
-        all:
-          nodeAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
-              nodeSelectorTerms:
-                - matchExpressions:
-                    - key: beta.kubernetes.io/arch
-                      operator: In
-                      values:
-                        - amd64
       resources:
         mon:
           requests:
