@@ -59,6 +59,9 @@ spec:
         default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
       metrics:
         enabled: false
+      admissionWebhooks:
+        enabled: true
+        timeSeconds: 60
       resources:
         requests:
           cpu: 10m
