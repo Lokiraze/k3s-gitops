@@ -21,7 +21,7 @@ spec:
   values:
     toolbox:
       enabled: true
-      image: rook/ceph:1.9.7
+      image: rook/ceph:v1.9.7
     cephClusterSpec:
       cephVersion:
         image: quay.io/ceph/ceph:v16.2.9
@@ -45,6 +45,13 @@ spec:
           - name: k8s-bahamut
             devices:
               - name: "sdb"
+      resources:
+        mon:
+          requests:
+            cpu: "500m"
+        osd:
+          requests:
+            cpu: "500m"
     ingress:
       dashboard:
         ingressClassName: "nginx"
