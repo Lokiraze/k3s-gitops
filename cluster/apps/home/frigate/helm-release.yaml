@@ -61,7 +61,7 @@ spec:
       config:
         enabled: true
         data:
-          config.yaml: |
+          config.yml: |
             mqtt:
               host: eclipse-mosquitto
               topic_prefix: frigate
