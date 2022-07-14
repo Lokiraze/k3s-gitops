@@ -5,7 +5,7 @@ namespace: media
 resources:
   - namespace.yaml
   - calibre-web
-  - jellyseerr
+  - ombi
   - lidarr
   - navidrome
   - prowlarr
