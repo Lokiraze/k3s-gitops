@@ -20,7 +20,7 @@ spec:
       backup.velero.io/backup-volumes: config
     image:
       repository: fallenbagel/jellyseerr
-      tag: 1.1.1
+      tag: develop
     env:
       TZ: "${TIMEZONE}"
       LOG_LEVEL: "info"
