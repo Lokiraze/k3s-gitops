@@ -160,13 +160,9 @@ spec:
         existingClaim: frigate-config
       media:
         enabled: true
-        type: custom
-        mountPath: "/media"
-        readOnly: false
-        volumeSpec:
-          nfs:
-            server: 192.168.1.50
-            path: "/mnt/user/cctv/frigate"
+        type: nfs
+        server: 192.168.1.50
+        path: "/mnt/user/cctv/frigate"
       cache:
         enabled: true
         type: emptyDir
@@ -175,10 +171,6 @@ spec:
         mountPath: /dev/shm
       usb:
         enabled: true
-        type: hostPath
-        hostPath: /dev/bus/usb
-        hostPathType: Directory
-        mountPath: /dev/bus/usb
     podAnnotations:
       configmap.reloader.stakater.com/reload: *app
     affinity:
