@@ -38,7 +38,7 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: navidrone-data
+        existingClaim: navidrome-data
       music:
         enabled: true
         type: nfs
