@@ -43,7 +43,7 @@ spec:
         enabled: true
         type: nfs
         server: 192.168.1.50
-        subPath: "/mnt/user/media/books/calibre/Calibre Library"
+        path: "/mnt/user/media/books/calibre/Calibre Library"
     resources:
       requests:
         memory: 350Mi
