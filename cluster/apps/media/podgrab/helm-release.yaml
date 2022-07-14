@@ -14,7 +14,7 @@ spec:
       version: 0.1.0
       sourceRef:
         kind: HelmRepository
-        name: nicholaswilde-charts
+        name: nicholaswilde
         namespace: flux-system
       interval: 5m
   values:
