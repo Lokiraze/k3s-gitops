@@ -32,7 +32,7 @@ spec:
           nginx.ingress.kubernetes.io/proxy-body-size: 100m
           nginx.ingress.kubernetes.io/client-body-buffer-size: 100m
         hosts:
-          - host: &host "{{ .ReleaseName }}.${SECRET_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${SECRET_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
