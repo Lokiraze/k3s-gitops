@@ -42,6 +42,10 @@ spec:
       TZ: "${TIMEZONE}"
     podAnnotations:
       backup.velero.io/backup-volumes: config
+    podSecurityContext:
+      runAsUser: 568
+      runAsGroup: 568
+      fsGroup: 568
     persistence:
       config:
         enabled: true
