@@ -61,18 +61,104 @@ spec:
       privileged: true
     configmap:
       config:
-        enabled: false
+        enabled: true
+        data: |
+          mqtt:
+            host: eclipse-mosquitto
+            topic_prefix: frigate
+          database:
+            path: /data/frigate.db
+          detectors:
+            coral:
+              type: edgetpu
+              device: usb
+          ffmpeg:
+            input_args:
+              - -avoid_negative_ts
+              - make_zero
+              - -flags
+              - low_delay
+              - -strict
+              - experimental
+              - -fflags
+              - +genpts+discardcorrupt
+              - -rtsp_transport
+              - tcp
+              - -stimeout
+              - "5000000"
+              - -use_wallclock_as_timestamps
+              - "1"
+          cameras:
+            # ---
+            porch:
+              ffmpeg:
+                inputs:
+                  - path: "${PORCH_CAMERA}"
+                    roles:
+                      - detect
+                      - rtmp
+              snapshots:
+                enabled: true
+              detect:
+                height: 2160
+                width: 3840
+                fps: 5
+            garage:
+              ffmpeg:
+                inputs:
+                  - path: "${GARAGE_CAMERA}"
+                    roles:
+                      - detect
+                      - rtmp
+              snapshots:
+                enabled: true
+              detect:
+                height: 2160
+                width: 3840
+                fps: 5
+            backyard_pathway_1:
+              ffmpeg:
+                inputs:
+                  - path: "${BACKYARD_PATHWAY_CAMERA_1}"
+                    roles:
+                      - detect
+                      - rtmp
+              snapshots:
+                enabled: true
+              detect:
+                height: 2160
+                width: 3840
+                fps: 5
+            side_alley_1:
+              ffmpeg:
+                inputs:
+                  - path: "${SIDE_ALLEY_CAMERA_1}"
+                    roles:
+                      - detect
+                      - rtmp
+              snapshots:
+                enabled: true
+              detect:
+                height: 2160
+                width: 3840
+                fps: 5
+            side_alley_2:
+              ffmpeg:
+                inputs:
+                  - path: "${SIDE_ALLEY_CAMERA_2}"
+                    roles:
+                      - detect
+                      - rtmp
+              snapshots:
+                enabled: true
+              detect:
+                height: 2160
+                width: 3840
+                fps: 5
     persistence:
       data:
         enabled: true
         existingClaim: frigate-config
-      config:
-        enabled: true
-        type: configMap
-        name: *app
-        subPath: config.yaml
-        mountPath: /config/config.yml
-        readOnly: true
       media:
         enabled: true
         type: custom
