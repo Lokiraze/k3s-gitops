@@ -29,8 +29,8 @@ spec:
           nginx.ingress.kubernetes.io/proxy-connect-timeout: "360"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "360"
           nginx.ingress.kubernetes.io/proxy-read-timeout: "360"
-          nginx.ingress.kubernetes.io/proxy-body-size: "0"
-          nginx.ingress.kubernetes.io/client-body-buffer-size: "0"
+          nginx.ingress.kubernetes.io/proxy-body-size: 1000m
+          nginx.ingress.kubernetes.io/client-body-buffer-size: 1000m
         hosts:
           - host: &host "movies.${SECRET_DOMAIN}"
             paths:
