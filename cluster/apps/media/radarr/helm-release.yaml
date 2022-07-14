@@ -39,10 +39,6 @@ spec:
         tls:
           - hosts:
               - *host
-    podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
     env:
       TZ: "${TIMEZONE}"
     podAnnotations:
@@ -53,11 +49,14 @@ spec:
         existingClaim: radarr-config
       media:
         enabled: true
-        existingClaim: nfs-media-movies-pvc
+        type: nfs
+        server: "${NFS_SERVER}"
+        path: "/mnt/user/media/movies"
       downloads:
         enabled: true
-        type: pvc
-        existingClaim: nfs-media-downloads-pvc
+        type: nfs
+        server: "${NFS_SERVER}"
+        path: "/mnt/user/downloads"
     resources:
       requests:
         memory: 350Mi
