@@ -44,12 +44,12 @@ spec:
       media:
         enabled: true
         type: nfs
-        server: "${NFS_SERVER}"
+        server: 192.168.1.50
         path: "/mnt/user/media/music"
       downloads:
         enabled: true
         type: nfs
-        server: "${NFS_SERVER}"
+        server: 192.168.1.50
         path: "/mnt/user/downloads"
     resources:
       requests:
