@@ -22,8 +22,8 @@ spec:
       repository: vaultwarden/server
       tag: 1.25.0
     envFrom:
-      secretRef:
-        name: *app
+      - secretRef:
+          name: *app
     env:
       TZ: "${TIMEZONE}"
       DOMAIN: https://passwords.${SECRET_DOMAIN}
