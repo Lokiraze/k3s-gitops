@@ -26,6 +26,11 @@ spec:
     envFrom:
       - secretRef:
           name: *app
+    service:
+      main:
+        ports:
+          rtmp:
+            enabled: true
     probes:
       liveness: &probes
         enabled: true
