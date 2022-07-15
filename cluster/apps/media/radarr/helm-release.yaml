@@ -21,6 +21,11 @@ spec:
     image:
       repository: ghcr.io/k8s-at-home/radarr
       tag: v4.1.0.6175
+    service:
+      main:
+        type: LoadBalancer
+        loadBalancerIP: 192.168.69.98
+        externalTrafficPolicy: Local
     ingress:
       main:
         enabled: true
