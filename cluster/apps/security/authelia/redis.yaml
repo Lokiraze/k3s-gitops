@@ -27,9 +27,7 @@ spec:
             privileged: false
             readOnlyRootFilesystem: true
           image: redis:alpine
-          args:
-            - --require-pass
-            - "${REDIS_PASSWORD}"
+          args: ["--requirepass", "$(REDIS_PASSWORD)"]
           env:
             - name: MASTER
               value: "true"
