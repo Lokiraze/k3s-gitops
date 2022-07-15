@@ -79,7 +79,7 @@ spec:
           subject: "[Authelia] {title}"
           startup_check_address: ${SMTP_USER}
     secret:
-      existingSecret: "authelia-secret"
+      existingSecret: "authelia"
       ldap:
         key: LDAP_ADMIN_PASSWORD
       smtp:
