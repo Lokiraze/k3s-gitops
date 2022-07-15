@@ -5,4 +5,3 @@ namespace: postgres
 resources:
   - namespace.yaml
   - operator
-  - operator-ui
