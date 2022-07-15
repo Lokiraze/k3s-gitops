@@ -29,7 +29,7 @@ spec:
           image: redis:alpine
           args:
             - --require-pass
-            - ${REDIS_PASSWORD}
+            - "${REDIS_PASSWORD}"
           env:
             - name: MASTER
               value: "true"
