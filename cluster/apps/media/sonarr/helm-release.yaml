@@ -20,6 +20,11 @@ spec:
     image:
       repository: ghcr.io/k8s-at-home/sonarr
       tag: v3.0.8.1507
+    service:
+      main:
+        type: LoadBalancer
+        loadBalancerIP: 192.168.69.99
+        externalTrafficPolicy: Local
     ingress:
       main:
         enabled: true
