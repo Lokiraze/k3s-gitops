@@ -36,10 +36,10 @@ spec:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: authelia-secret
+                  name: authelia
                   key: REDIS_PASSWORD
           ports:
-            - containerPort:g 6379
+            - containerPort: 6379
           readinessProbe:
             periodSeconds: 5
             tcpSocket:
