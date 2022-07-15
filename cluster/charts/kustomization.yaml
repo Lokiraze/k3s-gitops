@@ -17,6 +17,5 @@ resources:
   - metrics-server.yaml
   - nicholaswilde.yaml
   - rook-ceph.yaml
-  - stackgres.yaml
   - stakater.yaml
   - weaveworks-kured.yaml
