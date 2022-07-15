@@ -24,9 +24,12 @@ spec:
           - superuser
           - createdb
       databases:
-        tt-rss: postgres
+        authelia: postgres
       postgresql:
         version: "13"
+      volume:
+        size: "1Gi"
+        storageClass: ceph-block
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
