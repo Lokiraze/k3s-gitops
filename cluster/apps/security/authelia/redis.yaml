@@ -2,15 +2,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: &app authelia-redis
+  name: authelia-redis
 spec:
   selector:
     matchLabels:
-      app: *app
+      app: authelia-redis
   template:
     metadata:
       labels:
-        app: *app
+        app: authelia-redis
     spec:
       securityContext:
         fsGroup: 1000
@@ -39,15 +39,15 @@ spec:
                   name: authelia-secret
                   key: REDIS_PASSWORD
           ports:
-            - containerPort: &port 6379
+            - containerPort:g 6379
           readinessProbe:
             periodSeconds: 5
             tcpSocket:
-              port: *port
+              port: 6379
           livenessProbe:
             periodSeconds: 5
             tcpSocket:
-              port: *port
+              port: 6379
           volumeMounts:
             - mountPath: /data
               name: redis-data
@@ -65,12 +65,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: *app
+  name: authelia-redis
 spec:
   type: ClusterIP
   selector:
-    app: *app
+    app: authelia-redis
   ports:
     - name: tls
-      port: *port
-      targetPort: *port
+      port: 6379
+      targetPort: 6379
