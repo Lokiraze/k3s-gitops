@@ -6,7 +6,6 @@ resources:
   - namespace.yaml
   - calibre-web
   - ombi
-  - lidarr
   - navidrome
   - prowlarr
   - podgrab
