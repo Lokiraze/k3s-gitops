@@ -73,15 +73,12 @@ spec:
           subject: "[Authelia] {title}"
           startup_check_address: ${SMTP_USER}
     secret:
+      existingSecret: "authelia-secret"
       ldap:
-        key: LDAP_PASSWORD
-        value: ${LDAP_ADMIN_PASSWORD}
+        key: LDAP_ADMIN_PASSWORD
       smtp:
         key: SMTP_PASSWORD
-        value: ${SMTP_PASSWORD}
       storage:
         key: STORAGE_PASSWORD
-        value: ${STORAGE_PASSWORD}
       redis:
         key: REDIS_PASSWORD
-        value: ${REDIS_PASSWORD}
