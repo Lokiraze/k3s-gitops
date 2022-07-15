@@ -1,0 +1,87 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app authelia
+  namespace: security
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://charts.authelia.com
+      chart: authelia
+      version: 0.8.38
+      sourceRef:
+        kind: HelmRepository
+        name: authelia
+        namespace: flux-system
+      interval: 5m
+  values:
+    domain: "${SECRET_DOMAIN}"
+    ingress:
+      enabled: true
+      className: nginx
+      tls:
+        enabled: true
+        secret: authelia-cert
+      annotations:
+        kubernetes.io/tls-acme: "true"
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+      subdomain: auth
+    configMap:
+      enabled: true
+      access_control:
+        default_policy: one_factor
+      storage:
+        postgres:
+          enabled: true
+          host: authelia-postgres-postgresql
+          port: 5432
+          database: authelia
+          username: authelia
+          sslmode: disable
+      session:
+        redis:
+          enabled: true
+          enabledSecret: true
+          username: ""
+          host: authelia-redis
+          port: 6379
+          database_index: 0
+      authentication_backend:
+        password_reset:
+          disable: false
+        ldap:
+          implementation: custom
+          url: "ldap://${NFS_SERVER}:3890"
+          username_attribute: uid
+          additional_users_dn: ou=people
+          additional_groups_dn: ou=groups
+          base_dn: ${LDAP_BASE_DN}
+          user: uid=${LDAP_ADMIN_USERNAME},ou=people,${LDAP_BASE_DN}
+          users_filter: "(&({username_attribute}={input})(objectClass=person))"
+          groups_filter: "(member={dn})"
+      notifier:
+        smtp:
+          enabled: true
+          enabledSecret: true
+          username: ${SMTP_USER}
+          host: ${SMTP_DOMAIN}
+          port: 587
+          sender: ${SMTP_USER}
+          identifier: localhost
+          subject: "[Authelia] {title}"
+          startup_check_address: ${SMTP_USER}
+    secret:
+      ldap:
+        key: LDAP_PASSWORD
+        value: ${LDAP_ADMIN_PASSWORD}
+      smtp:
+        key: SMTP_PASSWORD
+        value: ${SMTP_PASSWORD}
+      storage:
+        key: STORAGE_PASSWORD
+        value: ${STORAGE_PASSWORD}
+      redis:
+        key: REDIS_PASSWORD
+        value: ${REDIS_PASSWORD}
