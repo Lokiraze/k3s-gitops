@@ -27,6 +27,7 @@ spec:
       database: "authelia"
       existingSecret: "authelia"
       secretKeys:
+        adminPasswordKey: STORAGE_PASSWORD
         userPasswordKey: STORAGE_PASSWORD
     postgresqlDataDir: /data/pgdata
     metrics:
