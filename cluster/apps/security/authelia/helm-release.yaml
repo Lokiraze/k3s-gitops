@@ -45,7 +45,8 @@ spec:
           port: 5432
           database: authelia
           username: authelia
-          sslmode: disable
+          ssl:
+            mode: disable
       session:
         redis:
           enabled: true
