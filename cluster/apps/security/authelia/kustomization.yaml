@@ -4,4 +4,5 @@ kind: Kustomization
 resources:
   - postgres.yaml
   - redis.yaml
+  - helm-release.yaml
   - secret.sops.yaml
