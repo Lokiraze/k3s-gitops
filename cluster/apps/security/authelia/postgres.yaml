@@ -17,19 +17,17 @@ spec:
       interval: 5m
   # values yaml: https://github.com/bitnami/charts/blob/master/bitnami/postgresql/values.yaml
   values:
-    global:
-      postgresql:
-        auth:
-          postgresPassword: "${STORAGE_PASSWORD}"
     image:
       registry: docker.io # FIXME #1014
       repository: postgres
       tag: 14.4
       pullPolicy: IfNotPresent
-
     auth:
       username: "authelia"
       database: "authelia"
+      existingSecret: "authelia"
+      secretKeys:
+        userPasswordKey: STORAGE_PASSWORD
     postgresqlDataDir: /data/pgdata
     metrics:
       enabled: false
