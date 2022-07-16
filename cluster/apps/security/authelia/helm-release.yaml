@@ -64,7 +64,7 @@ spec:
           additional_users_dn: ou=people
           additional_groups_dn: ou=groups
           base_dn: ${SECRET_LDAP_BASE_DN}
-          user: uid=${LDAP_ADMIN_USERNAME},ou=people,${SECRET_LDAP_BASE_DN}
+          user: uid=${SECRET_LDAP_ADMIN_USERNAME},ou=people,${SECRET_LDAP_BASE_DN}
           users_filter: "(&({username_attribute}={input})(objectClass=person))"
           groups_filter: "(member={dn})"
       notifier:
