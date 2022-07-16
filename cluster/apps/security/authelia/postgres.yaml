@@ -28,7 +28,8 @@ spec:
       pullPolicy: IfNotPresent
 
     auth:
-      database: "postgres"
+      username: "authelia"
+      database: "authelia"
     postgresqlDataDir: /data/pgdata
     metrics:
       enabled: false
