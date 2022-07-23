@@ -24,7 +24,7 @@ spec:
       image: rook/ceph:v1.9.7
     cephClusterSpec:
       cephVersion:
-        image: quay.io/ceph/ceph:v16.2.9
+        image: quay.io/ceph/ceph:v16.2.10
       dashboard:
         enabled: true
         urlPrefix: /
