@@ -21,11 +21,6 @@ spec:
     image:
       repository: ghcr.io/k8s-at-home/radarr
       tag: v4.1.0.6175
-    service:
-      main:
-        type: LoadBalancer
-        loadBalancerIP: 192.168.69.98
-        externalTrafficPolicy: Local
     ingress:
       main:
         enabled: true
@@ -34,8 +29,12 @@ spec:
           nginx.ingress.kubernetes.io/proxy-connect-timeout: "360"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "360"
           nginx.ingress.kubernetes.io/proxy-read-timeout: "360"
-          nginx.ingress.kubernetes.io/proxy-body-size: 1000m
-          nginx.ingress.kubernetes.io/client-body-buffer-size: 1000m
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: http://authelia.security.svc.cluster.local/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: https://auth.${SECRET_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
         hosts:
           - host: &host "movies.${SECRET_DOMAIN}"
             paths:
