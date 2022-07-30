@@ -4,7 +4,6 @@ kind: Kustomization
 namespace: home
 resources:
   - namespace.yaml
-  - frigate
   - home-assistant
   - mosquitto
   - zwavejs2mqtt
