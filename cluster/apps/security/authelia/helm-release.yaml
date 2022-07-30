@@ -37,7 +37,25 @@ spec:
     configMap:
       enabled: true
       access_control:
-        default_policy: one_factor
+        default_policy: deny
+        networks:
+          - name: private
+            networks:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+        rules:
+          - domain:
+              - login.${SECRET_DOMAIN}
+            policy: bypass
+          - domain:
+              - prowlarr.${SECRET_DOMAIN}
+              - zwave.${SECRET_DOMAIN}
+            subject: ["groups:users"]
+            policy: deny
+          - domain:
+              - "*.${SECRET_DOMAIN}"
+            policy: one_factor
       storage:
         postgres:
           enabled: true
