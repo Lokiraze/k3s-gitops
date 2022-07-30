@@ -17,26 +17,23 @@ spec:
       interval: 5m
   # values yaml: https://github.com/bitnami/charts/blob/master/bitnami/postgresql/values.yaml
   values:
-    image:
-      registry: docker.io # FIXME #1014
-      repository: postgres
-      tag: 14.4
-      pullPolicy: IfNotPresent
     auth:
       username: "authelia"
       database: "authelia"
       password: ${SECRET_AUTH_POSTGRES_PASSWORD}
       postgresPassword: ${SECRET_AUTH_POSTGRES_PASSWORD}
-    postgresqlDataDir: /data/pgdata
     metrics:
       enabled: false
     primary:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
       persistence:
         enabled: true
-        mountPath: /data/
         storageClass: ceph-block
-    volumePermissions:
-      enabled: true
-      image:
-        repository: bitnami/minideb
-        tag: buster
