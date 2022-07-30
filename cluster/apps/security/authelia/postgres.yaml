@@ -35,3 +35,8 @@ spec:
         enabled: true
         mountPath: /data/
         storageClass: ceph-block
+    volumePermissions:
+      enabled: true
+      image:
+        repository: alpine
+        tag: 3.15.5
