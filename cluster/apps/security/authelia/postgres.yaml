@@ -25,14 +25,11 @@ spec:
     auth:
       username: "authelia"
       database: "authelia"
-      existingSecret: "authelia"
-      secretKeys:
-        adminPasswordKey: STORAGE_PASSWORD
-        userPasswordKey: STORAGE_PASSWORD
+      password: ${SECRET_AUTH_POSTGRES_PASSWORD}
+      postgresPassword: ${SECRET_AUTH_POSTGRES_PASSWORD}
     postgresqlDataDir: /data/pgdata
     metrics:
       enabled: false
-
     primary:
       persistence:
         enabled: true

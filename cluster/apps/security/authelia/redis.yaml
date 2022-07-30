@@ -27,15 +27,10 @@ spec:
             privileged: false
             readOnlyRootFilesystem: true
           image: redis:alpine
-          args: ["--requirepass", "$(REDIS_PASSWORD)"]
+          args: ["--requirepass", "${SECRET_AUTH_REDIS_PASSWORD}"]
           env:
             - name: MASTER
               value: "true"
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: authelia
-                  key: REDIS_PASSWORD
           ports:
             - containerPort: 6379
           readinessProbe:
