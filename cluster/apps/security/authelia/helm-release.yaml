@@ -65,7 +65,7 @@ spec:
               - prowlarr.${SECRET_DOMAIN}
               - stash.${SECRET_DOMAIN}
               - zwave.${SECRET_DOMAIN}
-            subject: ["groups:users"]
+            subject: ["group:users"]
             policy: deny
           - domain:
               - "*.${SECRET_DOMAIN}"
