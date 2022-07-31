@@ -1,9 +1,7 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: networking
 resources:
-  - frigate
-  - jellyfin
-  - robo
-  - stash
+  - endpoints.yaml
+  - ingress.yaml
+  - service.yaml
