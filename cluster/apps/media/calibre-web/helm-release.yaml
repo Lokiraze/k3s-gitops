@@ -42,7 +42,7 @@ spec:
       books:
         enabled: true
         type: nfs
-        server: 192.168.1.50
+        server: ${NFS_SERVER}
         path: "/mnt/user/media/books/calibre/Calibre Library"
     resources:
       requests:

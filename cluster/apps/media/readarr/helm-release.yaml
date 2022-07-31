@@ -55,12 +55,12 @@ spec:
       media:
         enabled: true
         type: nfs
-        server: 192.168.1.50
+        server: ${NFS_SERVER}
         path: "/mnt/user/media/books"
       downloads:
         enabled: true
         type: nfs
-        server: 192.168.1.50
+        server: ${NFS_SERVER}
         path: "/mnt/user/downloads"
     resources:
       requests:

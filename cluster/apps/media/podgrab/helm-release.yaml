@@ -51,5 +51,5 @@ spec:
         enabled: true
         mountPath: /assets
         type: nfs
-        server: 192.168.1.50
+        server: ${NFS_SERVER}
         path: "/mnt/user/media/podcasts"
