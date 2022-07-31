@@ -28,9 +28,6 @@ spec:
       WHISPARR__BRANCH: nightly
       WHISPARR__APPLICATION_URL: "https://{{ .Release.Name }}.${SECRET_DOMAIN}"
       WHISPARR__LOG_LEVEL: info
-    envFrom:
-      - secretRef:
-          name: *app
     service:
       main:
         ports:
