@@ -29,10 +29,9 @@ spec:
       className: nginx
       tls:
         enabled: true
-        secret: authelia-cert
+        secret: "networking/${SECRET_DOMAIN/./-}-tls"
       annotations:
         kubernetes.io/tls-acme: "true"
-        cert-manager.io/cluster-issuer: letsencrypt-prod
       subdomain: auth
     configMap:
       enabled: true
