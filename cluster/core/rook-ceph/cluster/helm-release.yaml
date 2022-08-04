@@ -21,7 +21,7 @@ spec:
   values:
     toolbox:
       enabled: false
-      image: rook/ceph:v1.9.7
+      image: rook/ceph:v1.9.8
     cephClusterSpec:
       cephVersion:
         image: quay.io/ceph/ceph:v16.2.9
