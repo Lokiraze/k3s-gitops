@@ -20,7 +20,7 @@ spec:
   values:
     image:
       repository: linuxserver/ombi
-      tag: 4.16.12
+      tag: 4.22.5
     ingress:
       main:
         enabled: true
