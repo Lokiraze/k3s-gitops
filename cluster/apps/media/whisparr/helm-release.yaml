@@ -61,3 +61,10 @@ spec:
         path: "/mnt/user/media/other"
         mountPath: /media
         readOnly: false
+      downloads:
+        enabled: true
+        type: nfs
+        server: ${NFS_SERVER}
+        path: "/mnt/user/downloads"
+        mountPath: /downloads
+        readOnly: false
