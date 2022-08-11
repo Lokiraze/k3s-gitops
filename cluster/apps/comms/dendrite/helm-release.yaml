@@ -26,6 +26,10 @@ spec:
           nginx.ingress.kubernetes.io/default-backend: "dendrite"
           nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
         hosts:
+          - host: ${SECRET_DOMAIN}
+            paths:
+              - path: /.well-known
+                pathType: Prefix
           - host: matrix.${SECRET_DOMAIN}
             paths:
               - path: /
@@ -33,6 +37,7 @@ spec:
         ingressClassName: nginx
         tls:
           - hosts:
+              - ${SECRET_DOMAIN}
               - matrix.${SECRET_DOMAIN}
     dendrite:
       polylithEnabled: false
