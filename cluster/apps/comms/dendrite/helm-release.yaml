@@ -22,6 +22,7 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
           external-dns/is-public: "true"
+          nginx.ingress.kubernetes.io/proxy-read-timeout: 600
         hosts:
           - host: matrix.${SECRET_DOMAIN}
             paths:
