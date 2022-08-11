@@ -27,9 +27,16 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
+          - host: ${SECRET_DOMAIN}
+            paths:
+              - path: /.well-known
+                pathType: Prefix
+              - path: /_matrix
+                pathType: Prefix
         ingressClassName: nginx
         tls:
           - hosts:
+              - ${SECRET_DOMAIN}
               - matrix.${SECRET_DOMAIN}
     dendrite:
       polylithEnabled: false
