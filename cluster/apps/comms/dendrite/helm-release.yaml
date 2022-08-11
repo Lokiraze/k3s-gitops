@@ -32,8 +32,6 @@ spec:
             paths:
               - path: /.well-known
                 pathType: Prefix
-              - path: /_matrix
-                pathType: Prefix
         ingressClassName: nginx
         tls:
           - hosts:
