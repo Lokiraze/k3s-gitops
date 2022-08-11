@@ -24,6 +24,8 @@ spec:
     publicServerName: matrix.${SECRET_DOMAIN}
     wellknown:
       enabled: true
+      image:
+        repository: sebp/lighttpd
 
     workers:
       media_repository:
