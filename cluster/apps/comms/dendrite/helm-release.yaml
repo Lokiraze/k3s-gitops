@@ -1,0 +1,47 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: dendrite
+  namespace: default
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://k8s-at-home.com/charts/
+      chart: dendrite
+      version: 6.2.0
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-at-home
+        namespace: flux-system
+  values:
+    ingress:
+      main:
+        enabled: true
+        annotations:
+          external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+          external-dns/is-public: "true"
+        hosts:
+          - host: matrix.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+        ingressClassName: nginx
+        tls:
+          - hosts:
+              - matrix.${SECRET_DOMAIN}
+    dendrite:
+      polylithEnabled: false
+      matrix_key_secret:
+        existingSecret: dendrite-matrix-key
+      global:
+        server_name: ${SECRET_DOMAIN}
+        well_known_server_name: matrix.${SECRET_DOMAIN}:443
+        well_known_client_name: https://matrix.${SECRET_DOMAIN}/
+    clientapi:
+      config:
+        registration_disabled: true
+        registration_shared_secret: ${SECRET_MATRIX_REGISTRATION}
+    postgresql:
+      enabled: false

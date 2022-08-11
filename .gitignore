@@ -35,6 +35,7 @@ backups/
 *.agekey
 *.pub
 *.key
+*.pem
 github-deploy-key*
 
 # Ansible
