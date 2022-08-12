@@ -61,6 +61,12 @@ spec:
         server_name: ${SECRET_DOMAIN}
         well_known_server_name: matrix.${SECRET_DOMAIN}:443
         well_known_client_name: https://matrix.${SECRET_DOMAIN}:443
+        mscs:
+          - msc2946
+          - msc2444
+        presence:
+          enable_outbound: true
+          enable_inbound: true
       logging:
         - type: std
           level: debug
