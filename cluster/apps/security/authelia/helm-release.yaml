@@ -75,6 +75,11 @@ spec:
               - private
             policy: bypass
           - domain:
+              - "${SECRET_DOMAIN}"
+            policy: bypass
+            resources:
+              - '^/.well-known([/?].*)?$'
+          - domain:
               - "*.${SECRET_DOMAIN}"
               - "${SECRET_DOMAIN}"
             policy: one_factor
