@@ -46,46 +46,6 @@ spec:
               url: "https://gmail.com"
             - name: Slack
               url: "https://slack.com/signin"
-        - name: Cloud
-          links:
-            - name: Box
-              url: "https://box.com"
-            - name: Dropbox
-              url: "https://dropbox.com"
-            - name: Drive
-              url: "https://drive.google.com"
-        - name: Design
-          links:
-            - name: Awwwards
-              url: "https://awwwards.com"
-            - name: Dribbble
-              url: "https://dribbble.com"
-            - name: Muz.li
-              url: "https://medium.muz.li/"
-        - name: Dev
-          links:
-            - name: Codepen
-              url: "https://codepen.io/"
-            - name: Devdocs
-              url: "https://devdocs.io"
-            - name: Devhints
-              url: "https://devhints.io"
-        - name: Lifestyle
-          links:
-            - name: Design Milk
-              url: "https://design-milk.com/category/interior-design/"
-            - name: Dwell
-              url: "https://www.dwell.com/"
-            - name: Freshome
-              url: "https://www.mymove.com/freshome/"
-        - name: Media
-          links:
-            - name: Spotify
-              url: "http://browse.spotify.com"
-            - name: Trakt
-              url: "http://trakt.tv"
-            - name: YouTube
-              url: "https://youtube.com/feed/subscriptions"
         - name: Reading
           links:
             - name: Instapaper
@@ -108,17 +68,19 @@ spec:
         ingressClassName: "nginx"
         annotations:
           cert-manager.io/cluster-issuer: "letsencrypt-production"
+          external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+          external-dns/is-public: "true"
           hajimari.io/enable: "true"
           hajimari.io/icon: "weather-sunset"
           nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
         hosts:
-          - host: "hajimari.${SECRET_DOMAIN}"
+          - host: "${SECRET_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
         tls:
           - hosts:
-              - "hajimari.${SECRET_DOMAIN}"
+              - "${SECRET_DOMAIN}"
             secretName: "hajimari-tls"
     persistence:
       data:
