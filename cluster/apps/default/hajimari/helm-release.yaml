@@ -28,6 +28,7 @@ spec:
       tag: v0.2.0
     hajimari:
       defaultEnable: false
+      title: "Lokiraze"
       namespaceSelector:
         matchNames:
           - default
