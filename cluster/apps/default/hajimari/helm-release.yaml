@@ -55,8 +55,22 @@ spec:
               url: "https://www.instapaper.com/u"
             - name: Medium
               url: "http://medium.com"
-            - name: Reddit
-              url: "http://reddit.com"
+        - name: Reddit
+          links:
+            - name: "/r/sysadmin"
+              url: "https://www.reddit.com/r/sysadmin/"
+            - name: "/r/selfhosted"
+              url: "https://www.reddit.com/r/selfhosted/"
+            - name: "/r/jellyfin"
+              url: "https://reddit.com/r/jellyfin"
+            - name: "/r/blackpeopletwitter"
+              url: "https://reddit.com/r/blackpeopletwitter"
+            - name: "/r/programming"
+              url: "https://reddit.com/r/programming"
+            - name: "/r/hacking"
+              url: "https://reddit.com/r/hacking"
+            - name: "/r/oscp"
+              url: "https://reddit.com/r/oscp"
         - name: Tech
           links:
             - name: Hacker News
