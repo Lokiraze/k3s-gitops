@@ -34,11 +34,19 @@ spec:
         hosts:
           - host: ${SECRET_DOMAIN}
             paths:
-              - path: /.well-known
+              - path: /.well-known/matrix/
+                pathType: Prefix
+              - path: /.well-known/matrix/server
+                pathType: Prefix
+              - path: /.well-known/matrix/client
                 pathType: Prefix
           - host: matrix.${SECRET_DOMAIN}
             paths:
               - path: /
+                pathType: Prefix
+              - path: /.well-known/matrix/server
+                pathType: Prefix
+              - path: /.well-known/matrix/client
                 pathType: Prefix
         ingressClassName: nginx
         tls:
