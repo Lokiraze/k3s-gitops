@@ -64,12 +64,19 @@ spec:
               - '^/api([/?].*)?$'
           - domain:
               - prowlarr.${SECRET_DOMAIN}
+              - whisparr.${SECRET_DOMAIN}
               - stash.${SECRET_DOMAIN}
               - zwave.${SECRET_DOMAIN}
             subject: ["group:users"]
             policy: deny
           - domain:
+              - "${SECRET_DOMAIN}"
+            networks:
+              - private
+            policy: bypass
+          - domain:
               - "*.${SECRET_DOMAIN}"
+              - "${SECRET_DOMAIN}"
             policy: one_factor
       storage:
         postgres:
