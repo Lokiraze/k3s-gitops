@@ -13,6 +13,10 @@ metadata:
     hajimari.io/enable: "true"
     hajimari.io/icon: "multimedia"
     hajimari.io/group: "media"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header Accept-Encoding "";
+      sub_filter '</head>' '<link rel="stylesheet" type="text/css" href="https://theme-park.${SECRET_DOMAIN}/css/base/jellyfin/aquamarine.css"></head>';
+      sub_filter_once on;
 spec:
   ingressClassName: nginx
   rules:
