@@ -68,5 +68,7 @@ spec:
       config:
         registration_disabled: true
         registration_shared_secret: ${SECRET_MATRIX_REGISTRATION}
+    podAnnotations:
+      secret.reloader.stakater.com/reload: "dendrite-config"
     postgresql:
       enabled: false
