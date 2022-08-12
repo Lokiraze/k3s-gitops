@@ -49,12 +49,6 @@ spec:
               url: "https://gmail.com"
             - name: Slack
               url: "https://slack.com/signin"
-        - name: Reading
-          links:
-            - name: Instapaper
-              url: "https://www.instapaper.com/u"
-            - name: Medium
-              url: "http://medium.com"
         - name: Reddit
           links:
             - name: "/r/sysadmin"
