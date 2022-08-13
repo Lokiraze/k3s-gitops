@@ -61,7 +61,7 @@ spec:
               imagePullPolicy: IfNotPresent
               env:
                 - name: TZ
-                  value: "Europe/London"
+                  value: "${TIMEZONE}"
                 # TODO(recyclarr): Remove once new version is pushed
                 - name: XDG_CONFIG_HOME
                   value: /config
