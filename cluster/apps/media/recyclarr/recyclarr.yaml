@@ -1,0 +1,61 @@
+sonarr:
+    # Sonarr
+  - base_url: http://sonarr.media.svc:8989
+    api_key: ${SONARR_API_KEY}
+
+    # Quality definitions from the guide to sync to Sonarr. Choice: anime, series, hybrid
+    quality_definition: hybrid
+
+    # Release profiles from the guide to sync to Sonarr. Types: anime, series
+    # You can optionally add tags and make negative scores strictly ignored
+    release_profiles:
+      - trash_ids:
+          - d428eda85af1df8904b4bbe4fc2f537c # Anime 1
+          - 6cd9e10bb5bb4c63d2d7cd3279924c7b # Anime 2
+        strict_negative_scores: true
+        tags: [anime]
+      - trash_ids:
+          - EBC725268D687D588A20CBC5F97E538B # Low Quality Groups
+          - 1B018E0C53EC825085DD911102E2CA36 # Release Sources (Streaming Service)
+          - 71899E6C303A07AF0E4746EFF9873532 # P2P Groups + Repack/Proper
+        strict_negative_scores: false
+        tags: [tv]
+      - trash_ids: [76e060895c5b8a765c310933da0a5357] # Optionals
+        filter:
+          include:
+            - cec8880b847dd5d31d29167ee0112b57 # Golden Rule - No x265
+            - 6f2aefa61342a63387f2a90489e90790 # Dislike Retags
+            - 19cd5ecc0a24bf493a75e80a51974cdd # Dislike Retag Groups
+# Configuration specific to Radarr.
+radarr:
+  # Radarr
+  - base_url: http://radarr.media.svc:7878
+    api_key: ${RADARR_API_KEY}
+
+    # Which quality definition in the guide to sync to Radarr. Only choice right now is 'movie'
+    quality_definition:
+      type: movie
+      preferred_ratio: 0.5
+
+    # Set to 'true' to automatically remove custom formats from Radarr when they are removed from
+    # the guide or your configuration. This will NEVER delete custom formats you manually created!
+    delete_old_custom_formats: true
+
+    custom_formats:
+      # A list of custom formats to sync to Radarr. Must match the "name" in the importable JSON.
+      # Do NOT use the heading names here, those do not work! These are case-insensitive.
+      - names:
+          - BR-DISK
+          - EVO (no WEB-DL)
+          - LQ
+          - x265 (720/1080p)
+          - 3D
+        quality_profiles:
+          - name: HD-1080p
+          - name: HD-720p2
+            score: -1000
+      - names:
+          - TrueHD ATMOS
+          - DTS X
+        quality_profiles:
+          - name: SD

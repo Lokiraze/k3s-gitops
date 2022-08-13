@@ -12,5 +12,6 @@ resources:
   - podgrab
   - radarr
   - readarr
+  - recyclarr
   - sonarr
   - whisparr
