@@ -9,6 +9,7 @@ resources:
   - emberstack.yaml
   - external-dns.yaml
   - hajimari.yaml
+  - harbor.yaml
   - ingress-nginx.yaml
   - jetstack.yaml
   - k8s-at-home.yaml
@@ -18,7 +19,6 @@ resources:
   - nicholaswilde.yaml
   - rook-ceph.yaml
   - stakater.yaml
-  - twuni.yaml
   - weaveworks-kured.yaml
   - zalando-postgres-operator.yaml
   - zalando-postgres-operator-ui.yaml
