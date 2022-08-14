@@ -146,6 +146,16 @@ spec:
               - openid
               - email
               - profile
+          - id: ${SECRET_HARBOR_CLIENT_ID}
+            secret: ${SECRET_HARBOR_CLIENT_SECRET}
+            description: Harbor
+            redirect_uris:
+              - https://harbor.${SECRET_DOMAIN}/oidc/callback
+            scopes:
+              - openid
+              - email
+              - profile
+              - offline_access
 
     secret:
       ldap:
