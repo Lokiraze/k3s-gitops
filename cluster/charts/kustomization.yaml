@@ -18,6 +18,7 @@ resources:
   - nicholaswilde.yaml
   - rook-ceph.yaml
   - stakater.yaml
+  - twuni.yaml
   - weaveworks-kured.yaml
   - zalando-postgres-operator.yaml
   - zalando-postgres-operator-ui.yaml
