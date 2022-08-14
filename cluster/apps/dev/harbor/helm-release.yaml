@@ -63,7 +63,7 @@ spec:
       imageChartStorage:
         type: s3
         s3:
-          region: home
+          region: us-west-1
           bucket: docker-registry
           regionendpoint: ${SECRET_MINIO_URL}
           accesskey: ${SECRET_ACCESS_KEY}
