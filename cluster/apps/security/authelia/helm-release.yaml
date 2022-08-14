@@ -124,6 +124,18 @@ spec:
           identifier: localhost
           subject: "[Authelia] {title}"
           startup_check_address: ${SECRET_SMTP_USER}
+      identity_provider:
+        oidc:
+          enabled: true
+          cors:
+            endpoints:
+              - authorization
+              - token
+              - revocation
+              - introspection
+              - userinfo
+            allowed_origins:
+              - https://${SECRET_DOMAIN}
     secret:
       ldap:
         key: LDAP_PASSWORD
@@ -137,3 +149,7 @@ spec:
       redis:
         key: REDIS_PASSWORD
         value: ${SECRET_AUTH_REDIS_PASSWORD}
+      oidcPrivateKey:
+        value: ${SECRET_AUTH_OIDC_PRIVATE_KEY}
+      oidcHMACSecret:
+        value: ${SECRET_AUTH_OIDC_HMAC}
