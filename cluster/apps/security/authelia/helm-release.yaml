@@ -136,6 +136,17 @@ spec:
               - userinfo
             allowed_origins:
               - https://${SECRET_DOMAIN}
+        clients:
+          - id: ${SECRET_VIKUNJA_CLIENT_ID}
+            secret: ${SECRET_VIKUNJA_CLIENT_SECRET}
+            description: Vikunja
+            redirect_uris:
+              - https://todo.${SECRET_DOMAIN}/auth/openid/
+            scopes:
+              - openid
+              - email
+              - profile
+
     secret:
       ldap:
         key: LDAP_PASSWORD

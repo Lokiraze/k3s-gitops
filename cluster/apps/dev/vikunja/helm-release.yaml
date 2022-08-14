@@ -37,6 +37,20 @@ spec:
         env:
           - name: VIKUNJA_SERVICE_TIMEZONE
             value: ${TIMEZONE}
+          - name: VIKUNJA_AUTH_OPENID_ENABLED
+            value: true
+          - name: VIKUNJA_AUTH_OPENID_ENABLED
+            value: true
+          - name: VIKUNJA_AUTH_OPENID_REDIRECTURL
+            value: https://todo.${SECRET_DOMAIN}/auth/openid/
+          - name: VIKUNJA_AUTH_OPENID_PROVIDERS_0_NAME
+            value: Authelia
+          - name: VIKUNJA_AUTH_OPENID_PROVIDERS_0_AUTHURL
+            value: https://auth.${SECRET_DOMAIN}
+          - name: VIKUNJA_AUTH_OPENID_PROVIDERS_0_CLIENTID
+            value: ${SECRET_VIKUNJA_CLIENT_ID}
+          - name: VIKUNJA_AUTH_OPENID_PROVIDERS_0_CLIENTSECRET
+            value: ${SECRET_VIKUNJA_CLIENT_SECRET}
     env:
       TZ: ${TIMEZONE}
     persistence:
