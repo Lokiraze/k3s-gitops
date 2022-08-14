@@ -23,7 +23,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: internal
+        ingressClassName: nginx
         hosts:
           - host: "todo.${SECRET_DOMAIN}"
             paths:
