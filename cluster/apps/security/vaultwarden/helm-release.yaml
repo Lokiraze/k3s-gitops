@@ -43,6 +43,7 @@ spec:
           hajimari.io/icon: "security"
           external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
           external-dns/is-public: "true"
+          nginx.ingress.kubernetes.io/proxy-body-size: "0"
         hosts:
           - host: &host passwords.${SECRET_DOMAIN}
             paths:
