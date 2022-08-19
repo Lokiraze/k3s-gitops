@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: media
 resources:
   - namespace.yaml
+  - podcasts-pv.yaml
   - calibre-web
   - ombi
   - lidarr

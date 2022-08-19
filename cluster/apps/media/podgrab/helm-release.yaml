@@ -52,6 +52,4 @@ spec:
       assets:
         enabled: true
         mountPath: /assets
-        type: nfs
-        server: ${NFS_SERVER}
-        path: "/mnt/user/media/podcasts"
+        existingClaim: nfs-media-podcasts-pvc
