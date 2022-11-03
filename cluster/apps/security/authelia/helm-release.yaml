@@ -115,7 +115,7 @@ spec:
           groups_filter: "(member={dn})"
       notifier:
         smtp:
-          enabled: true
+          enabled: false
           enabledSecret: true
           username: ${SECRET_SMTP_USER}
           host: ${SECRET_SMTP_HOST}
