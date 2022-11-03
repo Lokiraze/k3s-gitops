@@ -50,6 +50,7 @@ spec:
               - auth.${SECRET_DOMAIN}
               - requests.${SECRET_DOMAIN}
               - media.${SECRET_DOMAIN}
+              - music.${SECRET_DOMAIN}
             policy: bypass
           - domain:
               - movies.${SECRET_DOMAIN}
