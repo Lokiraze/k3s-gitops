@@ -114,6 +114,8 @@ spec:
           users_filter: "(&({username_attribute}={input})(objectClass=person))"
           groups_filter: "(member={dn})"
       notifier:
+        filesystem:
+          enabled: true
         smtp:
           enabled: false
           enabledSecret: true
@@ -124,6 +126,7 @@ spec:
           identifier: localhost
           subject: "[Authelia] {title}"
           startup_check_address: ${SECRET_SMTP_USER}
+
       identity_provider:
         oidc:
           enabled: true
