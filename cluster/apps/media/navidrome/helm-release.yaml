@@ -44,6 +44,7 @@ spec:
               - *host
     env:
       TZ: "${TIMEZONE}"
+      ND_REVERSEPROXYWHITELIST: 0.0.0.0/0
     persistence:
       config:
         enabled: true
