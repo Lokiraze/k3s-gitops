@@ -23,8 +23,7 @@ spec:
       tag: v7.2.95
     persistence:
       data:
-        enabled: false
-        existingClaim: unifi-pvc
+        enabled: true
     env:
       TZ: "${TIMEZONE}"
     runAsRoot: false
