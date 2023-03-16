@@ -20,7 +20,7 @@ spec:
       nameOverride: *app
     image:
       repository: ghcr.io/onedr0p/whisparr-nightly
-      tag: 0.1.0.53@sha256:5de39017b811dbb695a0cef25d1c80221a00f44e6bc59f98e3dfae021fae25bb
+      tag: 0.1.0.53@sha256:5a6ce55522afa84195cd723447f987f63a19009a37e2779b861a65aec940572b
     env:
       TZ: "${TIMEZONE}"
       WHISPARR__INSTANCE_NAME: Whisparr
