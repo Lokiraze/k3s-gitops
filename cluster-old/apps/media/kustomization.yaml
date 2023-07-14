@@ -1,18 +1,18 @@
+---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: media
 resources:
-- audiobookshelf
-- downloads-pvc.yaml
-- calibre-web
-- kavita
-- komga
-- lidarr
-- navidrome
-- ombi
-- openbooks
-- podgrab
-- prowlarr
-- radarr
-- readarr
-- sonarr
-- syncthing
+  - namespace.yaml
+  - podcasts-pv.yaml
+  - calibre-web
+  - ombi
+  - lidarr
+  - navidrome
+  - prowlarr
+  - podgrab
+  - radarr
+  - readarr
+  - recyclarr
+  - sonarr
+  - whisparr

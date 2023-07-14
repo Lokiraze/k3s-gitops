@@ -6,10 +6,8 @@ metadata:
   namespace: networking
 spec:
   accessModes:
-  - ReadWriteOnce
-
+    - ReadWriteOnce
   resources:
     requests:
       storage: 8Gi
-
-  storageClassName: rook-ceph-block
+  storageClassName: ceph-block

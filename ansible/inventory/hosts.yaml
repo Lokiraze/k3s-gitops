@@ -1,0 +1,28 @@
+---
+kubernetes:
+  children:
+    master:
+      hosts:
+        k8s-summoner:
+          ansible_user: lokiraze
+          ansible_host: 192.168.1.15
+    worker:
+      hosts:
+        k8s-odin:
+          ansible_user: lokiraze
+          ansible_host: 192.168.1.14
+        k8s-shiva:
+          ansible_user: lokiraze
+          ansible_host: 192.168.1.12
+        k8s-ramuh:
+          ansible_user: lokiraze
+          ansible_host: 192.168.1.10
+        k8s-ifrit:
+          ansible_user: lokiraze
+          ansible_host: 192.168.1.11
+        k8s-phoenix:
+          ansible_user: lokiraze
+          ansible_host: 192.168.1.16
+        k8s-bahamut:
+          ansible_user: lokiraze
+          ansible_host: 192.168.1.17

@@ -10,20 +10,22 @@ spec:
     spec:
       # renovate: registryUrl=https://ananace.gitlab.io/charts
       chart: matrix-synapse
-      version: 2.3.1
+      version: 2.7.7
       sourceRef:
         kind: HelmRepository
-        name: ananace-charts
+        name: ananace
         namespace: flux-system
       interval: 5m
   values:
     image:
       repository: matrixdotorg/synapse
-      tag: v1.64.0
+      tag: v1.71.0
     serverName: ${SECRET_DOMAIN}
     publicServerName: matrix.${SECRET_DOMAIN}
     wellknown:
       enabled: true
+      image:
+        repository: sebp/lighttpd
 
     workers:
       media_repository:
@@ -32,6 +34,8 @@ spec:
     ingress:
       enabled: true
       annotations:
+        external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+        external-dns/is-public: "true"
         nginx.ingress.kubernetes.io/use-regex: "true"
         nginx.ingress.kubernetes.io/proxy-body-size: 10m
         nginx.ingress.kubernetes.io/proxy-connect-timeout: "360"
@@ -39,7 +43,7 @@ spec:
         nginx.ingress.kubernetes.io/proxy-read-timeout: "360"
         nginx.ingress.kubernetes.io/configuration-snippet: |
           proxy_intercept_errors off;
-      className: external
+      className: nginx
       tls:
         - hosts:
             - ${SECRET_DOMAIN}
@@ -47,6 +51,7 @@ spec:
 
     postgresql:
       enabled: true
+      postgresqlPassword: ${SECRET_MATRIX_POSTGRES_PASSWORD}
       image:
         debug: true
       volumePermissions:
@@ -56,27 +61,27 @@ spec:
           nodeAffinity:
             requiredDuringSchedulingIgnoredDuringExecution:
               nodeSelectorTerms:
-              - matchExpressions:
-                - key: beta.kubernetes.io/arch
-                  operator: In
-                  values:
-                  - amd64
+                - matchExpressions:
+                    - key: beta.kubernetes.io/arch
+                      operator: In
+                      values:
+                        - amd64
 
     redis:
       enabled: true
-      password: ${MATRIX_REDIS_PASSWORD}
+      password: ${SECRET_MATRIX_REDIS_PASSWORD}
       auth:
-        password: ${MATRIX_REDIS_PASSWORD}
+        password: ${SECRET_MATRIX_REDIS_PASSWORD}
       master:
         affinity:
           nodeAffinity:
             requiredDuringSchedulingIgnoredDuringExecution:
               nodeSelectorTerms:
-              - matchExpressions:
-                - key: beta.kubernetes.io/arch
-                  operator: In
-                  values:
-                  - amd64
+                - matchExpressions:
+                    - key: beta.kubernetes.io/arch
+                      operator: In
+                      values:
+                        - amd64
 
     signingkey:
       job:

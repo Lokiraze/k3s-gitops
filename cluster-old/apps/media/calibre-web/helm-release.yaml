@@ -2,19 +2,19 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: calibre-web
+  name: &app calibre-web
   namespace: media
 spec:
-  releaseName: calibre-web
+  releaseName: *app
   interval: 5m
   chart:
     spec:
       # renovate: registryUrl=https://k8s-at-home.com/charts/
       chart: calibre-web
-      version: 8.3.2
+      version: 8.4.2
       sourceRef:
         kind: HelmRepository
-        name: k8s-at-home-charts
+        name: k8s-at-home
         namespace: flux-system
       interval: 5m
   values:
@@ -24,26 +24,26 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: internal
+        ingressClassName: nginx
         hosts:
-          - host: "read.${SECRET_DOMAIN}"
+          - host: &host "read.${SECRET_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
         tls:
           - hosts:
-              - "read.${SECRET_DOMAIN}"
+              - *host
     env:
-      TZ: "America/Phoenix"
+      TZ: "${TIMEZONE}"
     persistence:
       config:
         enabled: true
         existingClaim: calibre-web-config
       books:
         enabled: true
-        type: pvc
-        existingClaim: nfs-media-books-pvc
-        subPath: "calibre/Calibre Library"
+        type: nfs
+        server: ${NFS_SERVER}
+        path: "/mnt/user/media/books/calibre/Calibre Library"
     resources:
       requests:
         memory: 350Mi
