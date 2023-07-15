@@ -67,7 +67,3 @@ spec:
       config:
         enabled: true
         existingClaim: prowlarr-config
-    resources:
-      requests:
-        cpu: 15m
-        memory: 204M

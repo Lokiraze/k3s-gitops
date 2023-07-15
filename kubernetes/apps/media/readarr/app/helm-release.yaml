@@ -75,7 +75,3 @@ spec:
         type: nfs
         server: "${NFS_SERVER}"
         path: "/mnt/user/downloads/"
-    resources:
-      requests:
-        cpu: 15m
-        memory: 204M

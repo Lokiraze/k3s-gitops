@@ -66,9 +66,3 @@ spec:
         type: nfs
         server: "${NFS_SERVER}"
         path: "/mnt/user/media/books/calibre/Calibre Library"
-    resources:
-      requests:
-        cpu: 15m
-        memory: 204M
-      limits:
-        memory: 380M
