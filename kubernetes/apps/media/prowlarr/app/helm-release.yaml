@@ -32,10 +32,10 @@ spec:
       tag: 1.7.1.3684
     env:
       TZ: "${TIMEZONE}"
-      RADARR__INSTANCE_NAME: Prowlarr
-      RADARR__PORT: &port 80
-      RADARR__APPLICATION_URL: "https://{{ .Release.Name }}.${SECRET_DOMAIN}"
-      RADARR__LOG_LEVEL: info
+      PROWLARR__INSTANCE_NAME: Prowlarr
+      PROWLARR__PORT: &port 80
+      PROWLARR__APPLICATION_URL: "https://{{ .Release.Name }}.${SECRET_DOMAIN}"
+      PROWLARR__LOG_LEVEL: info
     service:
       main:
         ports:
