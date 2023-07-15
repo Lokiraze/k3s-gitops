@@ -75,7 +75,7 @@ spec:
       mode: kubernetes
     bgpControlPlane:
       enabled: true
-    k8sServiceHost: "192.168.69.1"
+    k8sServiceHost: "192.168.1.15"
     k8sServicePort: 6443
     ipv4NativeRoutingCIDR: "10.42.0.0/16"
     kubeProxyReplacement: strict
