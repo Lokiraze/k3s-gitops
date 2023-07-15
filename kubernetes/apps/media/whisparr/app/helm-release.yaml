@@ -33,7 +33,7 @@ spec:
     env:
       TZ: "${TIMEZONE}"
       PUID: 568
-      PGUID: 568
+      PGID: 568
       WHISPARR__INSTANCE_NAME: Whisparr
       WHISPARR__PORT: &port 80
       WHISPARR__BRANCH: nightly
