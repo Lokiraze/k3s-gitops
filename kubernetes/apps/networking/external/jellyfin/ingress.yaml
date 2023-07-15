@@ -1,0 +1,34 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: &app jellyfin
+  namespace: networking
+  labels:
+    app.kubernetes.io/name: *app
+    app.kubernetes.io/instance: *app
+  annotations:
+    external-dns/is-public: "true"
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "multimedia"
+    hajimari.io/group: "media"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header Accept-Encoding "";
+      sub_filter '</head>' '<link rel="stylesheet" type="text/css" href="https://theme-park.${SECRET_DOMAIN}/css/base/jellyfin/aquamarine.css"></head>';
+      sub_filter_once on;
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: &host "media.${SECRET_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: *app
+                port:
+                  number: 8096
+  tls:
+    - hosts:
+        - *host

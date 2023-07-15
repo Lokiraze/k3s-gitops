@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: &app jellyfin
+  namespace: networking
+  labels:
+    app.kubernetes.io/name: *app
+    app.kubernetes.io/instance: *app
+spec:
+  ports:
+    - name: http
+      port: &port 8096
+      protocol: TCP
+      targetPort: *port
