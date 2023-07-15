@@ -48,6 +48,7 @@ spec:
               command:
                 - /app/recyclarr
               args:
+                - sync
                 - sonarr
                 - --config
                 - /config/recyclarr.yaml
@@ -70,6 +71,7 @@ spec:
               command:
                 - /app/recyclarr
               args:
+                - sync
                 - radarr
                 - --config
                 - /config/recyclarr.yaml
