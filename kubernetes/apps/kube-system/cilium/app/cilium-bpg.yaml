@@ -7,11 +7,8 @@ spec: # CiliumBGPPeeringPolicySpec
     matchLabels:
       kubernetes.io/os: linux
  virtualRouters: # []CiliumBGPVirtualRouter
- - localASN: "64513"
+ - localASN: 64513
    exportPodCIDR: true
-   serviceSelector:
-    matchExpressions:
-      - { key: thisFakeSelector, operator: NotIn, values: [ 'will-match-and-announce-all-services' ] }
    neighbors: # []CiliumBGPNeighbor
     - peerAddress: "192.168.1.1"
-      peerASN: "64512"
+      peerASN: 64512
