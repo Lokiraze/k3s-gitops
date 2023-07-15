@@ -10,5 +10,5 @@ spec: # CiliumBGPPeeringPolicySpec
  - localASN: 64513
    exportPodCIDR: true
    neighbors: # []CiliumBGPNeighbor
-    - peerAddress: "192.168.1.1"
+    - peerAddress: "192.168.1.1/32"
       peerASN: 64512
