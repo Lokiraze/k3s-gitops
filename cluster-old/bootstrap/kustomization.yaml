@@ -4,4 +4,4 @@ kind: Kustomization
 metadata:
   name: arbitrary
 resources:
-  - github.com/fluxcd/flux2/manifests/install?ref=v0.31.3
+  - github.com/fluxcd/flux2/manifests/install?ref=v0.31.5
