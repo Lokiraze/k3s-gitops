@@ -35,10 +35,10 @@ spec:
         config:
           osdsPerDevice: "1"
         nodes:
-          - name: k8s-phoenix
+          - name: k8s-odin
             devices:
               - name: "sdb"
-          - name: k8s-odin
+          - name: k8s-phoenix
             devices:
               - name: "sdb"
               - name: "sdc"

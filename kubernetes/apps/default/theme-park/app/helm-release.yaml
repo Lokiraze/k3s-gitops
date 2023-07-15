@@ -25,7 +25,7 @@ spec:
   values:
     image:
       repository: ghcr.io/onedr0p/theme-park
-      tag: 1.13.1
+      tag: 1.13.9
     env:
       TZ: "${TIMEZONE}"
     ingress:
@@ -33,8 +33,9 @@ spec:
         enabled: true
         ingressClassName: "nginx"
         annotations:
-          external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
-          external-dns/is-public: "true"
+          external-dns-cf/is-dns-public: "true"
+          external-dns-cf/is-public: "true"
+          external-dns.target/enabled: "true"
         hosts:
           - host: &host "{{ .Release.Name }}.${SECRET_DOMAIN}"
             paths:
