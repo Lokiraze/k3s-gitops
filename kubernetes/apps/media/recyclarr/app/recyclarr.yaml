@@ -1,6 +1,7 @@
 sonarr:
     # Sonarr
-  - base_url: http://sonarr.media.svc:80
+  sonarr:
+    base_url: http://sonarr.media.svc:80
     api_key: ${SONARR_API_KEY}
     delete_old_custom_formats: true
     quality_definition:
@@ -126,8 +127,9 @@ sonarr:
           - 07a32f77690263bb9fda1842db7e273f  # VOSTFR
 # Configuration specific to Radarr.
 radarr:
+  radarr:
   # Radarr
-  - base_url: http://radarr.media.svc:80
+    base_url: http://radarr.media.svc:80
     api_key: ${RADARR_API_KEY}
 
     # Which quality definition in the guide to sync to Radarr. Only choice right now is 'movie'
