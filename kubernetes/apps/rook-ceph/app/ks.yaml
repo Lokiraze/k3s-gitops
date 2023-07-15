@@ -6,7 +6,7 @@ metadata:
   name: cluster-apps-rook-ceph-cluster
   namespace: flux-system
 spec:
-  path: './kubernetes/apps/rook-ceph/app/cluster/'
+  path: ./kubernetes/apps/rook-ceph/app/cluster
   prune: true
   sourceRef:
     kind: GitRepository
@@ -29,7 +29,7 @@ metadata:
   name: cluster-apps-rook-ceph-operator
   namespace: flux-system
 spec:
-  path: './kubernetes/apps/rook-ceph/app/operator/'
+  path: ./kubernetes/apps/rook-ceph/app/operator
   prune: true
   sourceRef:
     kind: GitRepository
