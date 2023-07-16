@@ -79,6 +79,7 @@ spec:
       config:
         enabled: true
         existingClaim: zwavejs-config
+        mountPath: /usr/src/app/store
       usb:
         enabled: true
         type: hostPath
