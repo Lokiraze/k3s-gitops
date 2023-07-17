@@ -1,0 +1,78 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app vaultwarden
+  namespace: security
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  values:
+    image:
+      repository: vaultwarden/server
+      tag: 1.26.0
+
+    envFrom:
+      - secretRef:
+          name: *app
+    env:
+      TZ: "${TIMEZONE}"
+      DOMAIN: https://passwords.${SECRET_DOMAIN}
+      # SIGNUPS_ALLOWED: "false"
+      WEBSOCKET_ADDRESS: 0.0.0.0
+      WEBSOCKET_ENABLED: true
+      WEBSOCKET_PORT: 3012
+
+    service:
+      main:
+        ports:
+          http:
+            port: 80
+          websocket:
+            enabled: true
+            port: 3012
+
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations:
+          external-dns/is-public: "true"
+        hosts:
+          - host:  &host passwords.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+              - path: /notifications/hub
+                pathType: Prefix
+                service:
+                  port: 3012
+              - path: /notifications/hub/negotiate
+                pathType: Prefix
+        tls:
+          - hosts:
+              - *host
+
+      admin:
+        enabled: true
+        ingressClassName: "nginx"
+        hosts:
+          - host: *host
+            paths:
+              - path: /admin
+                pathType: Prefix
+        tls:
+          - hosts:
+              - *host
+
+    persistence:
+      config:
+        enabled: true
+        existingClaim: vaultwarden-config
