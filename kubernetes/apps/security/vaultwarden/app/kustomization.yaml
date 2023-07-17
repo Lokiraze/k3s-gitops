@@ -5,3 +5,4 @@ namespace: security
 resources:
   - ./helm-release.yaml
   - ./config-pvc.yaml
+  - ./secret.sops.yaml
