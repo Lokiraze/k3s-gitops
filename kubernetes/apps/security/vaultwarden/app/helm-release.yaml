@@ -16,7 +16,7 @@ spec:
         namespace: flux-system
   values:
     image:
-      repository: vaultwarden/server
+      repository: ghcr.io/dani-garcia/vaultwarden
       tag: 1.29.0
 
     envFrom:
