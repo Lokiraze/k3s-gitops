@@ -84,7 +84,7 @@ spec:
           enabled: true
           annotations: {}
           hosts:
-            - host: &host-hass-config hass-config.${DOMAIN}
+            - host: &host-hass-config hass-config.${SECRET_DOMAIN}
               paths:
                 - path: /
                   pathType: Prefix

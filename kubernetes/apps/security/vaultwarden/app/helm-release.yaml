@@ -12,12 +12,12 @@ spec:
       version: 1.5.1
       sourceRef:
         kind: HelmRepository
-        name: bjw-s-charts
+        name: bjw-s
         namespace: flux-system
   values:
     image:
       repository: vaultwarden/server
-      tag: 1.26.0
+      tag: 1.29.0
 
     envFrom:
       - secretRef:
