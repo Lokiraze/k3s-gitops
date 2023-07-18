@@ -63,11 +63,11 @@ spec:
         tls:
           - hosts:
               - *host
-    podSecurityContext:
-      runAsUser: 100
-      runAsGroup: 100
-      fsGroup: 100
-      fsGroupChangePolicy: "OnRootMismatch"
+    # podSecurityContext:
+    #   runAsUser: 100
+    #   runAsGroup: 100
+    #   fsGroup: 100
+    #   fsGroupChangePolicy: "OnRootMismatch"
     persistence:
       config:
         enabled: true
