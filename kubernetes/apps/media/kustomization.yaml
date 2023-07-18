@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ./namespace.yaml
   - ./calibre-web/ks.yaml
+  - ./jellyseer/ks.yaml
   - ./lidarr/ks.yaml
   - ./podgrab/ks.yaml
   - ./prowlarr/ks.yaml
