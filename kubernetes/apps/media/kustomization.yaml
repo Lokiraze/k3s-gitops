@@ -6,6 +6,7 @@ resources:
   - ./calibre-web/ks.yaml
   - ./jellyseer/ks.yaml
   - ./lidarr/ks.yaml
+  - ./podfetch/ks.yaml
   - ./podgrab/ks.yaml
   - ./prowlarr/ks.yaml
   - ./radarr/ks.yaml
