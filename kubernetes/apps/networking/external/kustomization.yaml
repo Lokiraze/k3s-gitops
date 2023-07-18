@@ -6,3 +6,4 @@ resources:
   - ./jellyfin
   - ./robo
   - ./stash
+  - ./torrent
