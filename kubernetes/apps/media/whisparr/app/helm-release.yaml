@@ -32,8 +32,8 @@ spec:
       tag: nightly-ad909e8
     env:
       TZ: "${TIMEZONE}"
-      PUID: 568
-      PGID: 568
+      PUID: 100
+      PGID: 100
       WHISPARR__INSTANCE_NAME: Whisparr
       WHISPARR__PORT: &port 80
       WHISPARR__BRANCH: nightly
@@ -64,9 +64,9 @@ spec:
           - hosts:
               - *host
     podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
+      runAsUser: 100
+      runAsGroup: 100
+      fsGroup: 100
       fsGroupChangePolicy: "OnRootMismatch"
     persistence:
       config:
