@@ -29,7 +29,7 @@ spec:
   values:
     image:
       repository: ghcr.io/hotio/whisparr
-      tag: nightly-ad909e8
+      tag: nightly-2.0.0.287
     env:
       TZ: "${TIMEZONE}"
       PUID: 100
