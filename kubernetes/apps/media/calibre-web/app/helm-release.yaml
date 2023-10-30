@@ -29,7 +29,7 @@ spec:
   values:
     image:
       repository: ghcr.io/bjw-s/calibre-web
-      tag: 0.6.20
+      tag: 0.6.21
     env:
       TZ: "${TIMEZONE}"
     service:
