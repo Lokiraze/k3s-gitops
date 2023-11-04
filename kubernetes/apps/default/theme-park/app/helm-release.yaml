@@ -25,7 +25,7 @@ spec:
   values:
     image:
       repository: ghcr.io/onedr0p/theme-park
-      tag: 1.13.11
+      tag: 1.14.1
     env:
       TZ: "${TIMEZONE}"
     service:
