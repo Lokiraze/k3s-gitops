@@ -29,7 +29,7 @@ spec:
   values:
     image:
       repository: ghcr.io/onedr0p/lidarr-develop
-      tag: 2.1.0.3856
+      tag: 2.2.3.4098
     env:
       TZ: "${TIMEZONE}"
     service:
