@@ -29,7 +29,7 @@ spec:
   values:
     image:
       repository: ghcr.io/onedr0p/readarr-develop
-      tag: 0.3.12.2327
+      tag: 0.3.32.2587
     env:
       TZ: "${TIMEZONE}"
     service:
