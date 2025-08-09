@@ -29,7 +29,7 @@ spec:
   values:
     image:
       repository: ghcr.io/zwave-js/zwave-js-ui
-      tag: 9.6.2
+      tag: 11.1.0
 
     env:
       TZ: "${TIMEZONE}"
