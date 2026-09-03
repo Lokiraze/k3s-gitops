@@ -27,7 +27,7 @@ spec:
   values:
     image:
       repository: ghcr.io/onedr0p/home-assistant
-      tag: 2023.12.3
+      tag: 2023.12.4
     service:
       main:
         type: LoadBalancer
