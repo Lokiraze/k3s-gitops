@@ -6,6 +6,11 @@
   serial: 1
   any_errors_fatal: true
   pre_tasks:
+    - name: Require exactly one recorded storage identity
+      ansible.builtin.assert:
+        that:
+          - (internal_disk_serial is defined) != (internal_sd_cid is defined)
+          - internal_sd_cid is not defined or inventory_hostname == 'k8s-ifrit'
     - name: Require the supported Debian release
       ansible.builtin.assert:
         that:
@@ -58,18 +63,49 @@
 
     - name: Identify the root filesystem block device
       ansible.builtin.command: findmnt -n -o SOURCE /
+      check_mode: false
       register: root_device
       changed_when: false
     - name: Identify the physical root disk
       ansible.builtin.command:
         argv: [lsblk, --inverse, --noheadings, --output, SERIAL, "{{ root_device.stdout }}"]
+      check_mode: false
       register: root_serials
       changed_when: false
+      when: internal_disk_serial is defined
     - name: Require the intended internal SSD for application data
       ansible.builtin.assert:
         that:
           - internal_disk_serial in (root_serials.stdout_lines | map('trim') | list)
         fail_msg: Root is not on the recorded internal SSD; review storage before creating application paths.
+      when: internal_disk_serial is defined
+    - name: Identify the radio worker root SD card
+      ansible.builtin.command:
+        argv: [lsblk, --noheadings, --output, PKNAME, "{{ root_device.stdout }}"]
+      check_mode: false
+      register: root_sd_device
+      changed_when: false
+      when: internal_sd_cid is defined
+    - name: Read the radio worker SD identity
+      ansible.builtin.slurp:
+        src: "/sys/class/block/{{ root_sd_device.stdout | trim }}/device/cid"
+      register: root_sd_identity
+      when: internal_sd_cid is defined
+    - name: Require the recorded SD card for the existing radio worker
+      ansible.builtin.assert:
+        that:
+          - (root_sd_identity.content | b64decode | trim) == internal_sd_cid
+      when: internal_sd_cid is defined
+    - name: Require root filesystem headroom for Kubernetes and local data
+      ansible.builtin.assert:
+        that:
+          - (ansible_facts.mounts | selectattr('mount', 'equalto', '/') | first).size_available > 10 * 1024 * 1024 * 1024
+    - name: Resolve the application data path before creating it
+      ansible.builtin.command: readlink -m /var/lib/homelab/app-data
+      check_mode: false
+      register: resolved_app_data
+      changed_when: false
+      failed_when: resolved_app_data.stdout != '/var/lib/homelab/app-data'
     - name: Create application storage on the existing internal root filesystem
       ansible.builtin.file:
         path: /var/lib/homelab/app-data
@@ -79,6 +115,7 @@
         mode: "0750"
     - name: Ensure application data does not resolve to another mount
       ansible.builtin.command: findmnt -n -o TARGET --target /var/lib/homelab/app-data
+      check_mode: false
       register: app_data_mount
       changed_when: false
       failed_when: app_data_mount.stdout != '/'

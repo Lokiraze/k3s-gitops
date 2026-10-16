@@ -11,3 +11,4 @@ spec:
     requests:
       storage: 5Gi
   storageClassName: local-app-data
+  volumeName: local-lidarr-config

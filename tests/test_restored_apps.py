@@ -60,7 +60,7 @@ def test_namespace_local_substitution_and_external_routes():
     for app in ['jellyfin', 'robo', 'stash', 'torrent']:
         path = ROOT / 'kubernetes/apps/network/external/app' / app
         route = yaml.safe_load((path / 'httproute.yaml').read_text())
-        assert route['spec']['parentRefs'][0]['name'] == 'envoy-internal'
+        assert route['spec']['parentRefs'][0]['name'] == ('envoy-external' if app == 'jellyfin' else 'envoy-internal')
         endpoints = yaml.safe_load((path / 'endpointslice.yaml').read_text())
         service = yaml.safe_load((path / 'service.yaml').read_text())
         assert endpoints['metadata']['labels']['kubernetes.io/service-name'] == service['metadata']['name']

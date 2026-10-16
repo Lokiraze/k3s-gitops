@@ -11,8 +11,8 @@ def test_inventory_bootstrap_and_deferred_nodes():
     inventory = read('ansible/inventory/hosts.yaml')
     active = inventory['kubernetes']['children']
     assert set(active['master']['hosts']) == {'k8s-summoner', 'k8s-phoenix', 'k8s-bahamut'}
-    assert set(active['worker']['hosts']) == {'k8s-odin'}
-    assert set(inventory['deferred']['hosts']) == {'k8s-ramuh', 'k8s-ifrit', 'k8s-shiva'}
+    assert set(active['worker']['hosts']) == {'k8s-odin', 'k8s-ifrit'}
+    assert set(inventory['deferred']['hosts']) == {'k8s-ramuh', 'k8s-shiva'}
 
 def test_cilium_and_k3s_network_agree():
     network = read('ansible/inventory/group_vars/kubernetes/supplemental.yaml')
@@ -89,3 +89,16 @@ def test_os_update_rejects_floating_suites_in_deb822_lists():
         ('deb https://deb.debian.org/debian oldstable main', False),
     ]:
         assert check(item={'content': base64.b64encode(text.encode()).decode()}) is allowed
+
+
+def test_radio_worker_storage_identity_and_label_are_explicit():
+    inv = read('ansible/inventory/hosts.yaml')['kubernetes']['children']
+    radio = inv['worker']['hosts']['k8s-ifrit']
+    assert radio['internal_sd_cid'] == '035344534d33324780fa263f73014300'
+    assert 'internal_disk_serial' not in radio
+    assert radio['k3s_node_labels'] == ['usb=zwave']
+    worker = read('ansible/inventory/group_vars/worker/main.yaml')['k3s_agent']
+    assert 'k3s_node_labels' in worker['node-label']
+    prep = read('ansible/playbooks/cluster-prepare.yaml')[0]
+    assert 'internal_sd_cid' in str(prep['pre_tasks'])
+    assert any('device/cid' in str(t) for t in prep['tasks'])

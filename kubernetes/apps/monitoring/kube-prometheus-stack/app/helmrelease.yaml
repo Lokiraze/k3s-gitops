@@ -123,6 +123,19 @@ spec:
         - hosts:
           - prometheus.${SECRET_DOMAIN}
       prometheusSpec:
+        replicas: 1
+        initContainers:
+        - name: verify-restored-data
+          image: docker.io/library/busybox:1.36.1@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+          command:
+          - /bin/sh
+          - -ec
+          - test "$(cat /restore/.restore-verified)" = "prometheus-kube-prometheus-stack-db-prometheus-kube-prometheus-stack-0";
+            set -- /restore/prometheus-db/*/meta.json; test -s "$1"
+          volumeMounts:
+          - name: prometheus-kube-prometheus-stack-db
+            mountPath: /restore
+            readOnly: true
         ruleSelectorNilUsesHelmValues: false
         serviceMonitorSelectorNilUsesHelmValues: false
         podMonitorSelectorNilUsesHelmValues: false
@@ -133,6 +146,7 @@ spec:
         storageSpec:
           volumeClaimTemplate:
             spec:
+              volumeName: local-prometheus-kube-prometheus-stack-db-prometheus-kube-prometheus-stack-0
               storageClassName: local-app-data
               resources:
                 requests:

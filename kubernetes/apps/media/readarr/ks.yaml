@@ -5,6 +5,7 @@ metadata:
   name: cluster-apps-readarr
   namespace: flux-system
 spec:
+  # Owner chose to retain backups and leave retired Readarr disabled.
   suspend: true
   interval: 30m
   path: ./kubernetes/apps/media/readarr/app

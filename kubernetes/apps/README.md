@@ -25,12 +25,15 @@ sources live under `flux-system/app-recovery/`; secrets remain SOPS-encrypted.
 - Updated HelmRelease and HelmRepository API versions and Flux source references.
 - Kept application settings, NFS locations, USB identifiers and encrypted secrets.
 - Changed old Ceph/local-path claims to explicit `local-app-data` claims. That
-  class and its volumes are **not provisioned yet**; an unknown class cannot
-  silently fall back to a default storage class and create an empty application.
+  class uses `kubernetes.io/no-provisioner`, `WaitForFirstConsumer` and `Retain`.
+  It never creates empty directories or volumes automatically. Home Assistant
+  and Z-Wave, all ten media config claims, Grafana and Prometheus have explicit
+  PV/PVC bindings. Frigate still needs its storage/config migration.
 - Removed dependencies on the retired nginx and local-path Helm releases.
 - Disabled old Ingress generation. Ordinary HTTP services now have internal
   Envoy HTTPRoutes preserving their hostnames. The external-service definitions
-  use EndpointSlice resources. Public access must be chosen separately.
+  use EndpointSlice resources. Jellyfin preserves its existing public access
+  through `envoy-external`; robo, stash and torrent remain internal.
 - Corrected Vaultwarden's persistent mount to `/data`.
 - Disabled Home Assistant's unauthenticated code-server sidecar and removed
   Dashboard's insecure-login flags and automatic cluster-admin binding.
@@ -43,6 +46,39 @@ these new HTTPRoutes. Prometheus and Kubernetes Dashboard routing still require
 review rather than guessing their backend/TLS configuration.
 
 ## Checks before enabling an app
+
+Home Assistant's local volume is assigned to Bahamut; Z-Wave's is assigned to
+Ifrit, alongside its existing radio. All local volumes use
+`/var/lib/homelab/app-data/<claim-name>`. Ifrit is now an initial worker with a
+checked SD-card identity; final data ownership must be checked before activation.
+This is not an SSD-backed volume on Ifrit. Production data directories are not
+created by these manifests.
+
+After a final restore and offline integrity/ownership checks, the restore
+operator must write `.restore-verified` inside the data directory, containing
+exactly the PVC name. Init containers
+check that marker and the essential application configuration before startup.
+Do not create the marker for an empty directory. Missing local paths fail mount;
+unverified directories fail initialization. Keep the applications suspended until
+their final restores and node placement are accepted.
+
+| Data | Owning node | Restore layout |
+|---|---|---|
+| Home Assistant | Bahamut | Config files at volume root |
+| Z-Wave | Ifrit | Original controller store at volume root |
+| Ten media config claims | Phoenix | Each app's original config at its volume root |
+| Grafana | Odin | `grafana.db` at volume root |
+| Prometheus (one replica) | Odin | Snapshot block directories under `prometheus-db/` |
+
+Media and monitoring have the same verified-restore marker gate. Prometheus's
+marker belongs at the volume root, alongside `prometheus-db/`; its operator-owned
+claim is explicitly pre-bound to the retained PV. Grafana uses an existing claim.
+Each monitoring claim requests 10Gi for binding; this is not an enforced quota.
+
+Static PV capacities are binding metadata, **not filesystem quotas**. The volumes
+share their node's root filesystem and require free-space monitoring. Retained
+PVs and their StorageClass are excluded from Flux pruning; removing an app does
+not constitute permission to erase its data.
 
 1. Select a supported image/chart version and review its data/config migration.
    Historical image availability and compatibility with k3s 1.37 are not proven
@@ -64,6 +100,8 @@ review rather than guessing their backend/TLS configuration.
 MQTT retains its original settings and service address. Its old deployment had
 no persistent data volume; decide on retained-message/session persistence before
 activation. Vaultwarden recovery is optional: the owner stores passwords elsewhere.
+Readarr is retired upstream; the owner chose to keep its backups and leave it
+disabled. Do not include Readarr in a bulk application activation.
 
 ## Validation and known blocker
 
@@ -77,4 +115,4 @@ reference and choose a maintained replacement before attempting activation.
 
 The external routes are behind a separate suspended Kustomization at
 `network/external/ks.yaml`. Their hostnames and backend addresses are retained,
-but they now target internal Envoy ingress until access is deliberately enabled.
+and retain their internal/public split. They remain suspended until cutover.

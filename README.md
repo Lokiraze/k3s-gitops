@@ -8,7 +8,10 @@ is part of these playbooks.
 The running old cluster still watches `main`. The new Flux source watches the
 existing branch name, `feat-upgrade-to-talos`, despite the change of platform.
 Do not merge this replacement tree into `main` while the old Flux is active.
-Nothing in this branch has been applied to the machines yet.
+The replacement foundation has not been applied. All seven existing machines
+have been updated to Debian 12.15, and the old cluster still runs k3s 1.27.3.
+Live DNS, certificate renewal and Home Assistant proxy repairs restored browser
+access; those repairs do not constitute a cluster cutover.
 
 ## Machines and storage
 
@@ -21,10 +24,12 @@ credentials remain alongside it.
 | phoenix | 192.168.1.16 | HP EliteDesk 800 G2, 16 GB | Control plane + workloads | 2M0329SJGQFJ |
 | bahamut | 192.168.1.17 | HP EliteDesk 800 G2, 16 GB | Control plane + workloads | 2M032LCJ78G7 |
 | odin | 192.168.1.14 | Minisforum GK41, 8 GB | Worker | LCMLCCC11202425 |
+| ifrit | 192.168.1.11 | Raspberry Pi 4, 4 GB | Radio worker | SD CID recorded in inventory |
 
-Ramuh `.10`, Ifrit `.11`, and Shiva `.12` are the three Raspberry Pi 4s, retained
-in the `deferred` inventory group. Initial preparation and installation exclude
-them. Home Assistant and Z-Wave still run on the Pis, but their PVCs depend on
+Ramuh `.10` and Shiva `.12` remain in the `deferred` inventory group. Ifrit is
+included in the new worker inventory because it owns the existing Z-Wave radio;
+preparation verifies its recorded SD-card CID instead of an SSD serial. Home
+Assistant and Z-Wave still use the old cluster; their PVCs depend on
 Ceph on the Intel machines: leaving the Pis alone does not preserve that data.
 
 Use `/var/lib/homelab/app-data` on the existing internal root filesystem for
@@ -34,8 +39,9 @@ images, logs and app data share capacity, so free-space monitoring is required.
 Bahamut's failed USB disk is excluded; other USB disks still hold old Ceph data.
 No Ceph or Longhorn controller is included in the new tree.
 
-The local-volume provisioner, volume ownership, backup schedules and application
-restores remain the next stage. Test node affinity, retained data, reboot recovery
+The static local StorageClass and home, media and monitoring PV bindings are defined; there is
+no dynamic provisioner. Production volume ownership, backup schedules and final
+application restores remain prerequisites. Test node affinity, retained data, reboot recovery
 and a restore from NAS before activating stateful workloads. No automatic
 stateful failover is required: applications can wait for their owning node.
 
@@ -52,8 +58,9 @@ stateful failover is required: applications can wait for their owning node.
   `.101`, DNS `.180`. Do not advertise it from old and new clusters simultaneously.
 
 Cloudflare DNS/tunnel credentials and Flux's SOPS identity remain encrypted in
-`bootstrap/` and `kubernetes/`. The DNS token is active and zone reads passed;
-DNS writes, certificate issuance and tunnel authentication are not yet verified.
+`bootstrap/` and `kubernetes/`. DNS writes, certificate issuance and Cloudflare
+tunnel HTTPS access have been verified on the old cluster. They must be tested
+again after the replacement foundation is installed.
 Keep the existing age recovery key outside both Git and the cluster. Restore it
 locally as ignored `age.key` before decrypting secrets. Kubeconfig is ignored and
 written with mode `0600`. Newly generated k3s server tokens must also be backed
@@ -114,11 +121,11 @@ of its release notes and package changes.
    Follow k3s/Cilium teardown requirements to preserve SSH networking. This branch
    deliberately does not automate data deletion or a multi-minor in-place upgrade.
 3. Update Debian, reboot and verify SSH, kernel, storage and Secure Boot state.
-4. Run `just ansible prepare`, then `just ansible install` against all four initial
+4. Run `just ansible prepare`, then `just ansible install` against all five initial
    nodes. Installation refuses existing `/var/lib/rancher/k3s` unless this rebuild
    already owns it; it never erases that directory. Partial bootstrap failures
    require inspection before retrying, rather than bypassing the guard.
-5. Verify `.18:6443`, all four registered nodes and the private local kubeconfig.
+5. Verify `.18:6443`, all five registered nodes and the private local kubeconfig.
    Publish the reviewed branch so the new Flux source can fetch it, then run
    `just bootstrap apps`.
 6. Verify node readiness, Flux's observed Git revision, SOPS decryption, BGP,

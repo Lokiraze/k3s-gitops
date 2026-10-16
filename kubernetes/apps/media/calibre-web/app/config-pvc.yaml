@@ -11,3 +11,4 @@ spec:
     requests:
       storage: 1Gi
   storageClassName: local-app-data
+  volumeName: local-calibre-web-config
