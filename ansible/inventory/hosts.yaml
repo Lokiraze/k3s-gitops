@@ -2,6 +2,8 @@
 kubernetes:
   vars:
     ansible_user: lokiraze
+    # The existing hosts use the same saved password for SSH and sudo.
+    ansible_password: "{{ ansible_become_pass }}"
   children:
     master:
       hosts:
@@ -23,6 +25,8 @@ kubernetes:
 deferred:
   vars:
     ansible_user: lokiraze
+    # The existing hosts use the same saved password for SSH and sudo.
+    ansible_password: "{{ ansible_become_pass }}"
   hosts:
     k8s-ramuh:
       ansible_host: 192.168.1.10
