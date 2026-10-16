@@ -1,1 +1,2 @@
-openshift==0.13.2
+# The controller dependencies are pinned in ../pyproject.toml and ../uv.lock.
+# From the repository root: uv sync --locked

@@ -1,0 +1,17 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: calibre-web
+  namespace: media
+spec:
+  parentRefs:
+  - name: envoy-internal
+    namespace: network
+    sectionName: https
+  hostnames:
+  - read.${SECRET_DOMAIN}
+  rules:
+  - backendRefs:
+    - name: calibre-web
+      port: 8083

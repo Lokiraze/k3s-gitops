@@ -1,9 +1,9 @@
 ---
-timezone: "America/Phoenix"
-github_username: "Lokiraze"
-coredns_addr: "10.43.0.10"
-kube_master_addr: "192.168.1.15"
-kube_vip_addr: "192.168.69.1"
-cluster_cidr: "10.42.0.0/16"
-service_cidr: "10.43.0.0/16"
-node_cidr: "192.168.69.0/24"
+timezone: America/Phoenix
+kube_vip_addr: 192.168.1.18
+cluster_cidr: 10.42.0.0/16
+service_cidr: 10.43.0.0/16
+coredns_addr: 10.43.0.10
+node_cidr: 192.168.1.0/24
+# Services use the existing router BGP pool, not the physical node subnet.
+loadbalancer_cidr: 192.168.69.0/24

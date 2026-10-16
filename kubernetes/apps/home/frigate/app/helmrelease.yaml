@@ -1,0 +1,150 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: frigate
+  namespace: home
+  annotations:
+    rebuild.homelab/status: suspended-pending-version-storage-and-restore-checks
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: frigate
+      version: 8.2.2
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-at-home
+        namespace: flux-system
+      interval: 15m
+  values:
+    global:
+      nameOverride: frigate
+    image:
+      repository: docker.io/blakeblackshear/frigate
+      tag: 0.11.0-beta5
+    env:
+      TZ: ${TIMEZONE}
+      FRIGATE_BACKYARD_PATHWAY_CAMERA_1:
+        valueFrom:
+          secretKeyRef:
+            name: frigate
+            key: BACKYARD_PATHWAY_CAMERA_1
+      FRIGATE_GARAGE_CAMERA:
+        valueFrom:
+          secretKeyRef:
+            name: frigate
+            key: GARAGE_CAMERA
+      FRIGATE_PORCH_CAMERA:
+        valueFrom:
+          secretKeyRef:
+            name: frigate
+            key: PORCH_CAMERA
+      FRIGATE_SIDE_ALLEY_CAMERA_1:
+        valueFrom:
+          secretKeyRef:
+            name: frigate
+            key: SIDE_ALLEY_CAMERA_1
+      FRIGATE_SIDE_ALLEY_CAMERA_2:
+        valueFrom:
+          secretKeyRef:
+            name: frigate
+            key: SIDE_ALLEY_CAMERA_2
+    envFrom:
+    - secretRef:
+        name: frigate
+    service:
+      main:
+        ports:
+          rtmp:
+            enabled: true
+    probes:
+      liveness: &id001
+        enabled: true
+        custom: true
+        spec:
+          httpGet:
+            path: /api/version
+            port: 5000
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 3
+      readiness: *id001
+      startup:
+        enabled: false
+    ingress:
+      main:
+        enabled: false
+        ingressClassName: nginx
+        annotations:
+          nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+        hosts:
+        - host: cctv.${SECRET_DOMAIN}
+          paths:
+          - path: /
+            pathType: Prefix
+        tls:
+        - hosts:
+          - cctv.${SECRET_DOMAIN}
+    securityContext:
+      privileged: true
+    configmap:
+      config:
+        enabled: true
+        data:
+          config.yml: "mqtt:\n  host: eclipse-mosquitto\n  topic_prefix: frigate\ndatabase:\n  path: /data/frigate.db\n\
+            detectors:\n  coral:\n    type: edgetpu\n    device: usb\nffmpeg:\n  input_args:\n    - -avoid_negative_ts\n\
+            \    - make_zero\n    - -flags\n    - low_delay\n    - -strict\n    - experimental\n    - -fflags\n\
+            \    - +genpts+discardcorrupt\n    - -rtsp_transport\n    - tcp\n    - -stimeout\n    - \"5000000\"\n\
+            \    - -use_wallclock_as_timestamps\n    - \"1\"\ncameras:\n  # ---\n  porch:\n    ffmpeg:\n      inputs:\n\
+            \        - path: \"{FRIGATE_PORCH_CAMERA}\"\n          roles:\n            - detect\n            - rtmp\n\
+            \    snapshots:\n      enabled: true\n    detect:\n      height: 2160\n      width: 3840\n      fps:\
+            \ 5\n  garage:\n    ffmpeg:\n      inputs:\n        - path: \"{FRIGATE_GARAGE_CAMERA}\"\n          roles:\n\
+            \            - detect\n            - rtmp\n    snapshots:\n      enabled: true\n    detect:\n      height:\
+            \ 2160\n      width: 3840\n      fps: 5\n  backyard_pathway_1:\n    ffmpeg:\n      inputs:\n       \
+            \ - path: \"{FRIGATE_BACKYARD_PATHWAY_CAMERA_1}\"\n          roles:\n            - detect\n        \
+            \    - rtmp\n    snapshots:\n      enabled: true\n    detect:\n      height: 2160\n      width: 3840\n\
+            \      fps: 5\n  side_alley_1:\n    ffmpeg:\n      inputs:\n        - path: \"{FRIGATE_SIDE_ALLEY_CAMERA_1}\"\
+            \n          roles:\n            - detect\n            - rtmp\n    snapshots:\n      enabled: true\n\
+            \    detect:\n      height: 2160\n      width: 3840\n      fps: 5\n  side_alley_2:\n    ffmpeg:\n  \
+            \    inputs:\n        - path: \"{FRIGATE_SIDE_ALLEY_CAMERA_2}\"\n          roles:\n            - detect\n\
+            \            - rtmp\n    snapshots:\n      enabled: true\n    detect:\n      height: 2160\n      width:\
+            \ 3840\n      fps: 5\n"
+    persistence:
+      data:
+        enabled: true
+        existingClaim: frigate-config
+      media:
+        enabled: true
+        type: nfs
+        server: 192.168.1.50
+        path: /mnt/user/cctv/frigate
+      cache:
+        enabled: true
+        type: emptyDir
+        medium: Memory
+        sizeLimit: 4Gi
+        mountPath: /dev/shm
+      usb:
+        enabled: true
+        type: hostPath
+        hostPath: /dev/bus/usb
+        hostPathType: Directory
+        mountPath: /dev/bus/usb
+    podAnnotations:
+      configmap.reloader.stakater.com/reload: frigate
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: tpu
+              operator: In
+              values:
+              - google-coral
+            - key: kubernetes.io/arch
+              operator: In
+              values:
+              - amd64
+  suspend: true

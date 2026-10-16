@@ -1,9 +1,11 @@
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: kubernetes-dashboard
   namespace: monitoring
+  annotations:
+    rebuild.homelab/status: suspended-pending-version-storage-and-restore-checks
 spec:
   interval: 30m
   chart:
@@ -25,30 +27,23 @@ spec:
       retries: 3
   uninstall:
     keepHistory: false
-  dependsOn:
-    - name: ingress-nginx
-      namespace: networking
   values:
     env:
-      TZ: "${TIMEZONE}"
+      TZ: ${TIMEZONE}
     api:
-      containers:
-        args:
-          - --enable-insecure-login=true
-          - --enable-skip-login=true
-          - --disable-settings-authorizer=true
+      containers: {}
     app:
       ingress:
-        enabled: true
+        enabled: false
         className: nginx
         annotations:
           hajimari.io/icon: mdi:kubernetes
         hosts:
-          - &host "kubernetes.${SECRET_DOMAIN}"
+        - kubernetes.${SECRET_DOMAIN}
         tls:
-          - hosts:
-              - *host
-            secretName: kubernetes-dashboard-tls
+        - hosts:
+          - kubernetes.${SECRET_DOMAIN}
+          secretName: kubernetes-dashboard-tls
     metricsScraper:
       enabled: true
     serviceMonitor:
@@ -59,3 +54,4 @@ spec:
       enabled: false
     metrics-server:
       enabled: false
+  suspend: true

@@ -1,0 +1,28 @@
+---
+- name: Install keepalived
+  ansible.builtin.apt:
+    name: keepalived
+    update_cache: true
+- name: Install local API health check
+  ansible.builtin.copy:
+    dest: /usr/local/sbin/check-k3s-api
+    owner: root
+    group: root
+    mode: "0755"
+    content: |
+      #!/bin/sh
+      exec /usr/local/bin/k3s kubectl --kubeconfig=/etc/rancher/k3s/k3s.yaml --request-timeout=2s get --raw=/readyz >/dev/null 2>&1
+- name: Configure unicast API address failover
+  ansible.builtin.template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: "0600"
+    validate: /usr/sbin/keepalived --config-test --use-file %s
+  notify: Restart keepalived
+- name: Enable keepalived
+  ansible.builtin.systemd_service:
+    name: keepalived
+    enabled: true
+    state: started

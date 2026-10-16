@@ -5,16 +5,19 @@ metadata:
   name: cluster-apps-kubernetes-dashboard
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: cluster-apps-cert-manager
-    - name: cluster-apps-ingress-nginx
-    - name: cluster-apps-metrics-server
+  suspend: true
+  interval: 30m
   path: ./kubernetes/apps/monitoring/kubernetes-dashboard/app
   prune: true
   sourceRef:
     kind: GitRepository
-    name: home-kubernetes
-  wait: false # no flux ks dependents
-  interval: 30m
-  retryInterval: 1m
-  timeout: 5m
+    name: flux-system
+    namespace: flux-system
+  postBuild:
+    substituteFrom:
+    - kind: ConfigMap
+      name: legacy-app-settings
+    - kind: Secret
+      name: legacy-app-secrets
+  targetNamespace: monitoring
+  wait: false

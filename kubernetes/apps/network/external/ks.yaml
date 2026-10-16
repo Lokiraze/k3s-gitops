@@ -1,0 +1,30 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cluster-apps-external
+  namespace: flux-system
+spec:
+  suspend: true
+  interval: 30m
+  path: ./kubernetes/apps/network/external/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  postBuild:
+    substituteFrom:
+    - kind: Secret
+      name: cluster-secrets
+    substitute:
+      TIMEZONE: America/Phoenix
+      NFS_SERVER: 192.168.1.50
+      UNIFI_LB: 192.168.69.82
+      SYNCTHING_LB: 192.168.69.12
+      MQTT_LB: 192.168.69.4
+      INFLUXDB_LB: 192.168.69.120
+      HOME_ASSISTANT_LB: 192.168.69.140
+      MINIO_URL: 192.168.1.50:9768
+  targetNamespace: network
+  wait: false

@@ -1,0 +1,19 @@
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: robo
+  namespace: network
+  labels:
+    kubernetes.io/service-name: valetudo
+    endpointslice.kubernetes.io/managed-by: homelab-gitops
+addressType: IPv4
+ports:
+- port: 80
+  name: http
+  protocol: TCP
+endpoints:
+- addresses:
+  - 192.168.1.51
+  conditions:
+    ready: true

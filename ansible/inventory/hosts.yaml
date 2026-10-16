@@ -1,28 +1,32 @@
 ---
 kubernetes:
+  vars:
+    ansible_user: lokiraze
   children:
     master:
       hosts:
         k8s-summoner:
-          ansible_user: lokiraze
           ansible_host: 192.168.1.15
+          internal_disk_serial: LCMLCCC11202554
+        k8s-phoenix:
+          ansible_host: 192.168.1.16
+          internal_disk_serial: 2M0329SJGQFJ
+        k8s-bahamut:
+          ansible_host: 192.168.1.17
+          internal_disk_serial: 2M032LCJ78G7
     worker:
       hosts:
         k8s-odin:
-          ansible_user: lokiraze
           ansible_host: 192.168.1.14
-        k8s-shiva:
-          ansible_user: lokiraze
-          ansible_host: 192.168.1.12
-        k8s-ramuh:
-          ansible_user: lokiraze
-          ansible_host: 192.168.1.10
-        k8s-ifrit:
-          ansible_user: lokiraze
-          ansible_host: 192.168.1.11
-        k8s-phoenix:
-          ansible_user: lokiraze
-          ansible_host: 192.168.1.16
-        k8s-bahamut:
-          ansible_user: lokiraze
-          ansible_host: 192.168.1.17
+          internal_disk_serial: LCMLCCC11202425
+# Still running old workloads; add deliberately after their data/radios migrate.
+deferred:
+  vars:
+    ansible_user: lokiraze
+  hosts:
+    k8s-ramuh:
+      ansible_host: 192.168.1.10
+    k8s-ifrit:
+      ansible_host: 192.168.1.11
+    k8s-shiva:
+      ansible_host: 192.168.1.12
