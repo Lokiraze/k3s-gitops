@@ -1,0 +1,10 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-app-data
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+provisioner: kubernetes.io/no-provisioner
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer

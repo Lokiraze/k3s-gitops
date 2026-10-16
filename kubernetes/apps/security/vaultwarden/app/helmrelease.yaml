@@ -1,0 +1,76 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: vaultwarden
+  namespace: security
+  annotations:
+    rebuild.homelab/status: suspended-pending-version-storage-and-restore-checks
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  values:
+    image:
+      repository: ghcr.io/dani-garcia/vaultwarden
+      tag: 1.30.1
+    envFrom:
+    - secretRef:
+        name: vaultwarden
+    env:
+      TZ: ${TIMEZONE}
+      DOMAIN: https://passwords.${SECRET_DOMAIN}
+      WEBSOCKET_ADDRESS: 0.0.0.0
+      WEBSOCKET_ENABLED: true
+      WEBSOCKET_PORT: 3012
+    service:
+      main:
+        ports:
+          http:
+            port: 80
+          websocket:
+            enabled: true
+            port: 3012
+    ingress:
+      main:
+        enabled: false
+        ingressClassName: nginx
+        annotations:
+          external-dns.alpha.kubernetes.io/target: ingress.${SECRET_DOMAIN}
+        hosts:
+        - host: passwords.${SECRET_DOMAIN}
+          paths:
+          - path: /
+            pathType: Prefix
+          - path: /notifications/hub
+            pathType: Prefix
+            service:
+              port: 3012
+          - path: /notifications/hub/negotiate
+            pathType: Prefix
+        tls:
+        - hosts:
+          - passwords.${SECRET_DOMAIN}
+      admin:
+        enabled: false
+        ingressClassName: nginx
+        hosts:
+        - host: passwords.${SECRET_DOMAIN}
+          paths:
+          - path: /admin
+            pathType: Prefix
+        tls:
+        - hosts:
+          - passwords.${SECRET_DOMAIN}
+    persistence:
+      config:
+        enabled: true
+        existingClaim: vaultwarden-config
+        mountPath: /data
+  suspend: true

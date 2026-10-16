@@ -1,71 +1,69 @@
 ---
-- name: Cluster Installation
-  hosts: all
+- name: Install the fresh k3s foundation
+  hosts: kubernetes
   become: true
   gather_facts: true
   any_errors_fatal: true
   pre_tasks:
-    - name: Pausing for 5 seconds...
-      ansible.builtin.pause:
-        seconds: 5
-  tasks:
-    - name: Check if cluster is installed
-      check_mode: false
+    - name: Require all initial nodes for cluster bootstrap
+      ansible.builtin.assert:
+        that:
+          - ansible_play_hosts_all | sort == groups['kubernetes'] | sort
+          - ansible_facts.distribution == 'Debian'
+          - ansible_facts.distribution_release == 'bookworm'
+    - name: Detect existing Kubernetes data
       ansible.builtin.stat:
-        path: /etc/rancher/k3s/config.yaml
-      register: k3s_installed
-
-    - name: Ignore manifests templates and urls if the cluster is already installed
-      when: k3s_installed.stat.exists
-      ansible.builtin.set_fact:
-        k3s_server_manifests_templates: []
-        k3s_server_manifests_urls: []
-
-    - name: Install Kubernetes
+        path: /var/lib/rancher/k3s
+      register: existing_k3s
+    - name: Detect a cluster installed by this rebuild
+      ansible.builtin.stat:
+        path: /etc/rancher/k3s/rebuild-managed
+      register: rebuild_managed
+    - name: Refuse to overwrite or jump-upgrade the old cluster
+      ansible.builtin.assert:
+        that:
+          - not existing_k3s.stat.exists or rebuild_managed.stat.exists
+        fail_msg: Old k3s data exists. Complete final backups and the reviewed cluster teardown first. This playbook never uninstalls the old cluster.
+  tasks:
+    - name: Install pinned k3s with embedded etcd
       ansible.builtin.include_role:
         name: xanmanning.k3s
         public: true
       vars:
         k3s_state: installed
-
-    - name: Kubeconfig
-      ansible.builtin.include_tasks: tasks/kubeconfig.yaml
-
-    - name: Wait for custom manifests to rollout
-      when:
-        - k3s_primary_control_node
-        - (k3s_server_manifests_templates | length > 0
-            or k3s_server_manifests_urls | length > 0)
-      kubernetes.core.k8s_info:
-        kubeconfig: /etc/rancher/k3s/k3s.yaml
-        kind: "{{ item.kind }}"
-        name: "{{ item.name }}"
-        namespace: "{{ item.namespace | default('') }}"
-        wait: true
-        wait_sleep: 10
-        wait_timeout: 360
-      loop:
-        - { name: cilium, kind: HelmChart, namespace: kube-system }
-        - { name: coredns, kind: HelmChart, namespace: kube-system }
-        - { name: policy, kind: CiliumBGPPeeringPolicy }
-        - { name: pool, kind: CiliumLoadBalancerIPPool }
-        - { name: podmonitors.monitoring.coreos.com, kind: CustomResourceDefinition }
-        - { name: prometheusrules.monitoring.coreos.com, kind: CustomResourceDefinition }
-        - { name: servicemonitors.monitoring.coreos.com, kind: CustomResourceDefinition }
-
-    - name: Coredns
-      when: k3s_primary_control_node
-      ansible.builtin.include_tasks: tasks/coredns.yaml
-
-    - name: Cilium
-      when: k3s_primary_control_node
-      ansible.builtin.include_tasks: tasks/cilium.yaml
-
-    - name: Cruft
-      when: k3s_primary_control_node
-      ansible.builtin.include_tasks: tasks/cruft.yaml
-
-    - name: Stale Containers
-      ansible.builtin.include_tasks: tasks/stale_containers.yaml
-      vars:
-        stale_containers_state: enabled
+    - name: Record ownership of the new installation
+      ansible.builtin.copy:
+        dest: /etc/rancher/k3s/rebuild-managed
+        content: "Debian k3s rebuild\n"
+        mode: "0600"
+    - name: Configure API virtual address independently of the CNI
+      ansible.builtin.include_tasks: tasks/keepalived.yaml
+      when: k3s_control_node | bool
+    - name: Apply API address configuration before fetching kubeconfig
+      ansible.builtin.meta: flush_handlers
+    - name: Fetch private kubeconfig from the first server
+      ansible.builtin.fetch:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: "{{ playbook_dir }}/../../kubeconfig"
+        flat: true
+      when: inventory_hostname == 'k8s-summoner'
+    - name: Point local kubeconfig at the reserved API address
+      ansible.builtin.replace:
+        path: "{{ playbook_dir }}/../../kubeconfig"
+        regexp: 'https://127\.0\.0\.1:6443'
+        replace: "https://{{ kube_vip_addr }}:6443"
+      delegate_to: localhost
+      become: false
+      run_once: true
+    - name: Restrict local kubeconfig permissions
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/../../kubeconfig"
+        mode: "0600"
+      delegate_to: localhost
+      become: false
+      run_once: true
+  handlers:
+    - name: Restart keepalived
+      ansible.builtin.systemd_service:
+        name: keepalived
+        state: restarted

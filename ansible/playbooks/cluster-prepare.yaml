@@ -1,120 +1,122 @@
 ---
-- name: Prepare System
-  hosts: all
+- name: Prepare Debian for k3s
+  hosts: kubernetes
   become: true
   gather_facts: true
+  serial: 1
   any_errors_fatal: true
   pre_tasks:
-    - name: Pausing for 5 seconds...
-      ansible.builtin.pause:
-        seconds: 5
+    - name: Require exactly one recorded storage identity
+      ansible.builtin.assert:
+        that:
+          - (internal_disk_serial is defined) != (internal_sd_cid is defined)
+          - internal_sd_cid is not defined or inventory_hostname == 'k8s-ifrit'
+    - name: Require the supported Debian release
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.distribution == 'Debian'
+          - ansible_facts.distribution_release == 'bookworm'
+        fail_msg: Review another Debian release before changing this playbook.
   tasks:
-    - name: Locale
-      block:
-        - name: Locale | Set timezone
-          community.general.timezone:
-            name: "{{ timezone | default('Etc/UTC') }}"
+    - name: Install Kubernetes and hardware support packages
+      ansible.builtin.apt:
+        name: [ca-certificates, curl, conntrack, iptables, bpftool, nfs-common, python3, python3-apt, smartmontools, nvme-cli, pciutils, usbutils, mokutil, apparmor]
+        update_cache: true
+        install_recommends: false
+    - name: Set timezone
+      community.general.timezone:
+        name: "{{ timezone }}"
+    - name: Set hostname
+      ansible.builtin.hostname:
+        name: "{{ inventory_hostname }}"
+    - name: Disable active swap for kubelet
+      ansible.builtin.command: swapoff -a
+      when: ansible_facts.swaptotal_mb | int > 0
+      changed_when: true
+    - name: Disable fstab swap on subsequent boots
+      ansible.builtin.replace:
+        path: /etc/fstab
+        regexp: '^(\s*[^#\s]+\s+\S+\s+swap\s+.*)$'
+        replace: '# k3s: \1'
+    - name: Persist required kernel modules
+      ansible.builtin.copy:
+        dest: /etc/modules-load.d/k3s.conf
+        content: "overlay\nbr_netfilter\n"
+        mode: "0644"
+    - name: Load required kernel modules
+      community.general.modprobe:
+        name: "{{ item }}"
+        state: present
+      loop: [overlay, br_netfilter]
+    - name: Enable forwarding and raise inotify limits
+      ansible.posix.sysctl:
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
+        sysctl_file: /etc/sysctl.d/99-kubernetes.conf
+        reload: true
+      loop: "{{ settings | dict2items }}"
+      vars:
+        settings:
+          net.ipv4.ip_forward: "1"
+          fs.inotify.max_user_watches: "524288"
+          fs.inotify.max_user_instances: "8192"
 
-    - name: Packages
-      block:
-        - name: Packages | Install
-          ansible.builtin.apt:
-            name: apt-transport-https,ca-certificates,conntrack,curl,dirmngr,gdisk,gnupg,hdparm,htop,
-              iptables,iputils-ping,ipvsadm,libseccomp2,lm-sensors,neofetch,net-tools,nfs-common,
-              nvme-cli,open-iscsi,parted,psmisc,python3,python3-apt,python3-kubernetes,python3-yaml,
-              smartmontools,socat,software-properties-common,unzip,util-linux
-            install_recommends: false
-
-    - name: User Configuration
-      block:
-        - name: User Configuration | SSH keys
-          ansible.posix.authorized_key:
-            user: "{{ ansible_user }}"
-            key: "https://github.com/{{ github_username }}.keys"
-        - name: User Configuration | Silence login
-          ansible.builtin.file:
-            dest: "{{ '/home/' + ansible_user if ansible_user != 'root' else '/root' }}/.hushlogin"
-            state: touch
-            owner: "{{ ansible_user }}"
-            group: "{{ ansible_user }}"
-            mode: "0644"
-            modification_time: preserve
-            access_time: preserve
-
-    - name: Network Configuration
-      notify: Reboot
-      block:
-        - name: Network Configuration | Set hostname
-          ansible.builtin.hostname:
-            name: "{{ inventory_hostname }}"
-        - name: Network Configuration | Update hosts
-          ansible.builtin.copy:
-            content: |
-              127.0.0.1 localhost
-              127.0.1.1 {{ inventory_hostname }}
-              # The following lines are desirable for IPv6 capable hosts
-              ::1     localhost ip6-localhost ip6-loopback
-              ff02::1 ip6-allnodes
-              ff02::2 ip6-allrouters
-            dest: /etc/hosts
-            mode: preserve
-        # https://github.com/cilium/cilium/issues/18706
-        - name: Network Configuration | Cilium (1)
-          ansible.builtin.lineinfile:
-            dest: /etc/systemd/networkd.conf
-            regexp: ManageForeignRoutingPolicyRules
-            line: ManageForeignRoutingPolicyRules=no
-        - name: Network Configuration | Cilium (2)
-          ansible.builtin.lineinfile:
-            dest: /etc/systemd/networkd.conf
-            regexp: ManageForeignRoutes
-            line: ManageForeignRoutes=no
-
-    - name: System Configuration
-      notify: Reboot
-      block:
-        - name: System Configuration | Neofetch
-          ansible.builtin.copy:
-            dest: /etc/profile.d/neofetch.sh
-            mode: "0755"
-            content: neofetch --config none
-        - name: System Configuration | Disable apparmor
-          ansible.builtin.systemd:
-            name: apparmor
-            state: stopped
-            masked: true
-        - name: System Configuration | Disable swap
-          ansible.posix.mount:
-            name: "{{ item }}"
-            fstype: swap
-            state: absent
-          loop: ["none", "swap"]
-        - name: System Configuration | Kernel modules (1)
-          community.general.modprobe:
-            name: "{{ item }}"
-            state: present
-          loop: ["br_netfilter", "ceph", "ip_vs", "ip_vs_rr", "nbd", "overlay", "rbd"]
-        - name: System Configuration | Kernel modules (2)
-          ansible.builtin.copy:
-            dest: "/etc/modules-load.d/{{ item }}.conf"
-            mode: "0644"
-            content: "{{ item }}"
-          loop: ["br_netfilter", "ceph", "ip_vs", "ip_vs_rr", "nbd", "overlay", "rbd"]
-        - name: System Configuration | Sysctl
-          ansible.posix.sysctl:
-            name: "{{ item.key }}"
-            value: "{{ item.value }}"
-            sysctl_file: /etc/sysctl.d/99-kubernetes.conf
-            reload: true
-          with_dict: "{{ sysctl_config }}"
-          vars:
-            sysctl_config:
-              fs.inotify.max_queued_events: 65536
-              fs.inotify.max_user_watches: 524288
-              fs.inotify.max_user_instances: 8192
-
-  handlers:
-    - name: Reboot
-      ansible.builtin.reboot:
-        msg: Rebooting nodes
-        reboot_timeout: 3600
+    - name: Identify the root filesystem block device
+      ansible.builtin.command: findmnt -n -o SOURCE /
+      check_mode: false
+      register: root_device
+      changed_when: false
+    - name: Identify the physical root disk
+      ansible.builtin.command:
+        argv: [lsblk, --inverse, --noheadings, --output, SERIAL, "{{ root_device.stdout }}"]
+      check_mode: false
+      register: root_serials
+      changed_when: false
+      when: internal_disk_serial is defined
+    - name: Require the intended internal SSD for application data
+      ansible.builtin.assert:
+        that:
+          - internal_disk_serial in (root_serials.stdout_lines | map('trim') | list)
+        fail_msg: Root is not on the recorded internal SSD; review storage before creating application paths.
+      when: internal_disk_serial is defined
+    - name: Identify the radio worker root SD card
+      ansible.builtin.command:
+        argv: [lsblk, --noheadings, --output, PKNAME, "{{ root_device.stdout }}"]
+      check_mode: false
+      register: root_sd_device
+      changed_when: false
+      when: internal_sd_cid is defined
+    - name: Read the radio worker SD identity
+      ansible.builtin.slurp:
+        src: "/sys/class/block/{{ root_sd_device.stdout | trim }}/device/cid"
+      register: root_sd_identity
+      when: internal_sd_cid is defined
+    - name: Require the recorded SD card for the existing radio worker
+      ansible.builtin.assert:
+        that:
+          - (root_sd_identity.content | b64decode | trim) == internal_sd_cid
+      when: internal_sd_cid is defined
+    - name: Require root filesystem headroom for Kubernetes and local data
+      ansible.builtin.assert:
+        that:
+          - (ansible_facts.mounts | selectattr('mount', 'equalto', '/') | first).size_available > 10 * 1024 * 1024 * 1024
+    - name: Resolve the application data path before creating it
+      ansible.builtin.command: readlink -m /var/lib/homelab/app-data
+      check_mode: false
+      register: resolved_app_data
+      changed_when: false
+      failed_when: resolved_app_data.stdout != '/var/lib/homelab/app-data'
+    - name: Create application storage on the existing internal root filesystem
+      ansible.builtin.file:
+        path: /var/lib/homelab/app-data
+        state: directory
+        owner: root
+        group: root
+        mode: "0750"
+    - name: Ensure application data does not resolve to another mount
+      ansible.builtin.command: findmnt -n -o TARGET --target /var/lib/homelab/app-data
+      check_mode: false
+      register: app_data_mount
+      changed_when: false
+      failed_when: app_data_mount.stdout != '/'
+      when: not ansible_check_mode

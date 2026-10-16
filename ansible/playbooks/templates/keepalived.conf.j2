@@ -1,0 +1,30 @@
+global_defs {
+    enable_script_security
+    script_user root
+}
+vrrp_script check_k3s {
+    script "/usr/local/sbin/check-k3s-api"
+    interval 3
+    timeout 3
+    fall 2
+    rise 2
+}
+vrrp_instance K3S_API {
+    state BACKUP
+    interface {{ ansible_facts.default_ipv4.interface }}
+    virtual_router_id 18
+    priority {{ 150 - groups['master'].index(inventory_hostname) * 10 }}
+    advert_int 1
+    unicast_src_ip {{ ansible_host }}
+    unicast_peer {
+{% for host in groups['master'] if host != inventory_hostname %}
+        {{ hostvars[host].ansible_host }}
+{% endfor %}
+    }
+    virtual_ipaddress {
+        {{ kube_vip_addr }}/24 dev {{ ansible_facts.default_ipv4.interface }}
+    }
+    track_script {
+        check_k3s
+    }
+}

@@ -1,13 +1,33 @@
-# Trash
-.DS_Store
-Thumbs.db
-# k8s
-kubeconfig
-# vscode-sops
-.decrypted~*.yaml
-.config.env
-*.agekey
+# Secrets
 *.pub
 *.key
-# Ansible
-xanmanning.k3s*
+*.decrypted~*.yaml
+/age.key
+/cloudflare-tunnel.json
+/deploy.key
+/deploy.key.pub
+/flux-webhook-token.txt
+# Template config files
+/cluster.toml
+# Kubernetes
+kubeconfig
+talosconfig
+# Python
+__pycache__/
+*.py[cod]
+# Misc.
+.claude/
+.private/
+.venv/
+.DS_Store
+Thumbs.db
+/talos/output/
+/talos/rendered/
+
+# Execution notes and legacy Ansible key patterns
+/.superpowers/
+/.rebuild/
+*.agekey
+
+/talos/.render-check/
+/ansible/.dependencies/

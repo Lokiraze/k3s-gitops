@@ -1,9 +1,11 @@
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: grafana
   namespace: monitoring
+  annotations:
+    rebuild.homelab/status: suspended-pending-version-storage-and-restore-checks
 spec:
   interval: 30m
   chart:
@@ -25,19 +27,25 @@ spec:
       retries: 3
   uninstall:
     keepHistory: false
-  dependsOn:
-    - name: local-path-provisioner
-      namespace: kube-system
-    - name: ingress-nginx
-      namespace: networking
   values:
+    extraInitContainers:
+    - name: verify-restored-data
+      image: docker.io/library/busybox:1.36.1@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+      command:
+      - /bin/sh
+      - -ec
+      - test "$(cat /restore/.restore-verified)" = "grafana"; test -s /restore/grafana.db
+      volumeMounts:
+      - name: storage
+        mountPath: /restore
+        readOnly: true
     deploymentStrategy:
       type: Recreate
     admin:
       existingSecret: grafana-admin-secret
     env:
       GF_EXPLORE_ENABLED: true
-      GF_SERVER_ROOT_URL: "https://grafana.${SECRET_DOMAIN}"
+      GF_SERVER_ROOT_URL: https://grafana.${SECRET_DOMAIN}
     grafana.ini:
       analytics:
         check_for_updates: false
@@ -46,23 +54,23 @@ spec:
       dashboardproviders.yaml:
         apiVersion: 1
         providers:
-          - name: default
-            orgId: 1
-            folder: ""
-            type: file
-            disableDeletion: false
-            editable: true
-            options:
-              path: /var/lib/grafana/dashboards/default
+        - name: default
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
     datasources:
       datasources.yaml:
         apiVersion: 1
         datasources:
-          - name: Prometheus
-            type: prometheus
-            access: proxy
-            url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
-            isDefault: true
+        - name: Prometheus
+          type: prometheus
+          access: proxy
+          url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+          isDefault: true
     dashboards:
       default:
         cert-manager:
@@ -84,17 +92,19 @@ spec:
     serviceMonitor:
       enabled: true
     ingress:
-      enabled: true
+      enabled: false
       ingressClassName: nginx
       annotations:
         hajimari.io/icon: simple-icons:grafana
       hosts:
-        - &host "grafana.${SECRET_DOMAIN}"
+      - grafana.${SECRET_DOMAIN}
       tls:
-        - hosts:
-            - *host
+      - hosts:
+        - grafana.${SECRET_DOMAIN}
     persistence:
+      existingClaim: grafana
       enabled: true
-      storageClassName: local-path
+      storageClassName: local-app-data
     testFramework:
       enabled: false
+  suspend: true

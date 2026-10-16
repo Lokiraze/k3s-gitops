@@ -1,0 +1,19 @@
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: stash
+  namespace: network
+  labels:
+    kubernetes.io/service-name: stash
+    endpointslice.kubernetes.io/managed-by: homelab-gitops
+addressType: IPv4
+ports:
+- port: 9999
+  name: http
+  protocol: TCP
+endpoints:
+- addresses:
+  - ${NFS_SERVER}
+  conditions:
+    ready: true

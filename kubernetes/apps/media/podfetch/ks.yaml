@@ -5,12 +5,19 @@ metadata:
   name: cluster-apps-podfetch
   namespace: flux-system
 spec:
+  suspend: true
+  interval: 30m
   path: ./kubernetes/apps/media/podfetch/app
   prune: true
   sourceRef:
     kind: GitRepository
-    name: home-kubernetes
-  wait: false # no flux ks dependents
-  interval: 30m
-  retryInterval: 1m
-  timeout: 5m
+    name: flux-system
+    namespace: flux-system
+  postBuild:
+    substituteFrom:
+    - kind: ConfigMap
+      name: legacy-app-settings
+    - kind: Secret
+      name: legacy-app-secrets
+  targetNamespace: media
+  wait: false

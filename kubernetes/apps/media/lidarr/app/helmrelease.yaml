@@ -1,0 +1,93 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: lidarr
+  namespace: media
+  annotations:
+    rebuild.homelab/status: suspended-pending-version-storage-and-restore-checks
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  maxHistory: 2
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    initContainers:
+      verify-restored-data:
+        image: docker.io/library/busybox:1.36.1@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+        command:
+        - /bin/sh
+        - -ec
+        - test "$(cat /restore/.restore-verified)" = "lidarr-config"; test -s /restore/lidarr.db
+        volumeMounts:
+        - name: config
+          mountPath: /restore
+          readOnly: true
+    image:
+      repository: ghcr.io/linuxserver/lidarr
+      tag: latest@sha256:67887807b13ae025c0fe979da298347c8609969087ab064c81d8e9acc1e06bbf
+    env:
+      TZ: ${TIMEZONE}
+      PUID: "568"
+      PGID: "568"
+    service:
+      main:
+        ports:
+          http:
+            port: 8686
+    ingress:
+      main:
+        enabled: false
+        ingressClassName: nginx
+        annotations:
+          hajimari.io/enable: 'true'
+          hajimari.io/icon: music-box-multiple
+        hosts:
+        - host: grooves.${SECRET_DOMAIN}
+          paths:
+          - path: /
+            pathType: Prefix
+        tls:
+        - hosts:
+          - grooves.${SECRET_DOMAIN}
+    podSecurityContext:
+      # LinuxServer init starts as root and drops the app to PUID/PGID.
+      runAsUser: 0
+      runAsGroup: 0
+      fsGroup: 568
+      fsGroupChangePolicy: OnRootMismatch
+    persistence:
+      config:
+        enabled: true
+        existingClaim: lidarr-config
+      media:
+        enabled: true
+        type: nfs
+        server: ${NFS_SERVER}
+        path: /mnt/user/media/music
+      downloads:
+        enabled: true
+        type: nfs
+        server: ${NFS_SERVER}
+        path: /mnt/user/downloads/
+    resources:
+      requests:
+        cpu: 500m
+        memory: 128Mi
+  suspend: true
