@@ -3,8 +3,8 @@
 The home, media, security and monitoring applications are present again, with
 Frigate recovered from the older configuration tree. These are **suspended
 recovery definitions**, not production-ready upgrades. Chart and image versions
-are intentionally pinned to their historical values until each app's supported
-upgrade path and restored data have been checked.
+remain at historical values except for the tested replacements documented below.
+Each app still needs its remaining activation checks.
 
 Every restored application has `spec.suspend: true` in both `ks.yaml` and its
 `app/helmrelease.yaml`. Changing only one does not start it. The source GitRepository
@@ -91,7 +91,7 @@ not constitute permission to erase its data.
    are a reference, not a validated current Frigate configuration.
 3. For Z-Wave, verify the existing controller path and `usb=zwave` node label;
    for Frigate, verify the `tpu=google-coral` label and hardware access. The Pis
-   remain deferred nodes; coordinate their workloads and radio before cutover.
+   Ramuh and Shiva remain deferred; Ifrit is an initial worker for Z-Wave.
 4. Verify namespace-local substitutions, API keys, NFS permissions and ingress.
    Check HA trusted proxies and each application's authentication before exposure.
 5. Remove both suspension flags for that app only, verify its health and data,
@@ -116,3 +116,24 @@ reference and choose a maintained replacement before attempting activation.
 The external routes are behind a separate suspended Kustomization at
 `network/external/ks.yaml`. Their hostnames and backend addresses are retained,
 and retain their internal/public split. They remain suspended until cutover.
+
+
+## Tested media image replacements
+
+Calibre-Web 0.6.27 and Lidarr 3.1.0.4875 now use LinuxServer stable images pinned
+by manifest digest because their old images cannot be pulled anonymously.
+LinuxServer initialization runs as root; PUID/PGID keep both application
+processes at 568, verified in the running test containers.
+
+On 2026-10-16, both images started on Phoenix from disposable copies of the
+restored NAS backups, with all network traffic denied and no media/download
+mounts. Calibre-Web served its login page; Lidarr returned healthy and completed
+its database migration. After stopping both containers, SQLite integrity passed;
+Calibre-Web retained its two user records, and Lidarr retained 513 artists,
+7,388 albums, 367,177 tracks and 26,309 track-file records. Configured download
+clients, indexers and quality profiles retained their record counts.
+
+These checks do not validate library access, downloads, login credentials,
+external integrations, or operation on the replacement cluster. Both apps remain
+suspended. Keep the original backups; migrated databases must not be opened by
+older application versions.

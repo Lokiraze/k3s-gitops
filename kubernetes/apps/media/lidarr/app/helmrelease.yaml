@@ -40,10 +40,12 @@ spec:
           mountPath: /restore
           readOnly: true
     image:
-      repository: ghcr.io/onedr0p/lidarr-develop
-      tag: 2.1.0.3856
+      repository: ghcr.io/linuxserver/lidarr
+      tag: latest@sha256:67887807b13ae025c0fe979da298347c8609969087ab064c81d8e9acc1e06bbf
     env:
       TZ: ${TIMEZONE}
+      PUID: "568"
+      PGID: "568"
     service:
       main:
         ports:
@@ -65,8 +67,9 @@ spec:
         - hosts:
           - grooves.${SECRET_DOMAIN}
     podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
+      # LinuxServer init starts as root and drops the app to PUID/PGID.
+      runAsUser: 0
+      runAsGroup: 0
       fsGroup: 568
       fsGroupChangePolicy: OnRootMismatch
     persistence:

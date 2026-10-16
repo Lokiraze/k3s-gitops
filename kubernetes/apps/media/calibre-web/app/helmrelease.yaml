@@ -40,10 +40,12 @@ spec:
           mountPath: /restore
           readOnly: true
     image:
-      repository: ghcr.io/bjw-s/calibre-web
-      tag: 0.6.21
+      repository: ghcr.io/linuxserver/calibre-web
+      tag: latest@sha256:5dcbcb381d29c4ccb2236910eb547679f482c3eb1c9e458138729e89eceb4774
     env:
       TZ: ${TIMEZONE}
+      PUID: "568"
+      PGID: "568"
     service:
       main:
         ports:
@@ -65,8 +67,9 @@ spec:
         - hosts:
           - read.${SECRET_DOMAIN}
     podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
+      # LinuxServer init starts as root and drops the app to PUID/PGID.
+      runAsUser: 0
+      runAsGroup: 0
       fsGroup: 568
       fsGroupChangePolicy: OnRootMismatch
     persistence:
