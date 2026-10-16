@@ -22,7 +22,7 @@ spec:
       sync:
         kind: GitRepository
         url: "https://github.com/Lokiraze/k3s-gitops.git"
-        ref: "refs/heads/feat-upgrade-to-talos"
+        ref: "refs/heads/main"
         path: kubernetes/flux/cluster
       commonMetadata:
         labels:

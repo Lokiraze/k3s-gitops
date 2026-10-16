@@ -5,9 +5,12 @@ Ansible manages the hosts over SSH; Flux manages Kubernetes add-ons and apps.
 Secure Boot stays enabled on the HP machines. No OS reinstall or disk formatting
 is part of these playbooks.
 
-The running old cluster still watches `main`. The new Flux source watches the
-existing branch name, `feat-upgrade-to-talos`, despite the change of platform.
-Do not merge this replacement tree into `main` while the old Flux is active.
+The old cluster's six Flux controllers are stopped, its Kustomizations and
+HelmReleases are suspended, and its source is pinned to the pre-rebuild commit.
+The replacement Flux source follows `main`; merge this tree before bootstrapping
+the new cluster. Keep old Flux frozen throughout the cutover. Its old root
+Kustomization can reset the source to `main`, so do not blindly resume it during
+rollback after the merge.
 The replacement foundation has not been applied. All seven existing machines
 have been updated to Debian 12.15, and the old cluster still runs k3s 1.27.3.
 Live DNS, certificate renewal and Home Assistant proxy repairs restored browser
