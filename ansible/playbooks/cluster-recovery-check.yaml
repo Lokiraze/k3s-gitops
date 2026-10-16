@@ -1,0 +1,51 @@
+---
+- name: Test detached recovery without changing host networking
+  hosts: kubernetes:deferred
+  become: true
+  gather_facts: false
+  serial: 1
+  any_errors_fatal: true
+  tasks:
+    - name: Refuse check mode because this is an active isolated test
+      ansible.builtin.assert:
+        that: not ansible_check_mode
+
+    - name: Exercise recovery in a disposable network namespace
+      block:
+        - name: Break isolated routing and firewall and arm recovery timers
+          ansible.builtin.script:
+            cmd: files/recovery-timer-check.py arm
+            executable: python3
+          register: recovery_probe
+
+        - name: Close the SSH connection while systemd owns the timers
+          ansible.builtin.meta: reset_connection
+
+        - name: Wait past both timer deadlines
+          ansible.builtin.pause:
+            seconds: 25
+
+        - name: Verify recovery and cancellation over a new SSH connection
+          ansible.builtin.command:
+            argv:
+              - python3
+              - "{{ recovery_probe.stdout | trim }}/check.py"
+              - verify
+              - "{{ recovery_probe.stdout | trim }}"
+          changed_when: false
+      always:
+        - name: Check for probe state remaining after an interrupted test
+          ansible.builtin.stat:
+            path: "{{ recovery_probe.stdout | default('') | trim }}"
+          register: recovery_probe_remaining
+          when:
+            - recovery_probe is defined
+            - recovery_probe.rc | default(1) == 0
+        - name: Remove remaining isolated probe resources
+          ansible.builtin.command:
+            argv:
+              - python3
+              - "{{ recovery_probe.stdout | trim }}/check.py"
+              - cleanup
+              - "{{ recovery_probe.stdout | trim }}"
+          when: recovery_probe_remaining.stat.exists | default(false)

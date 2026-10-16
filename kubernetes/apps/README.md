@@ -81,7 +81,7 @@ PVs and their StorageClass are excluded from Flux pruning; removing an app does
 not constitute permission to erase its data.
 
 1. Select a supported image/chart version and review its data/config migration.
-   Historical image availability and compatibility with k3s 1.37 are not proven
+   Historical image availability and compatibility with k3s 1.36 are not proven
    by a successful Helm render. Check maintenance status of old projects such as
    Readarr, Podgrab and Hajimari before choosing to continue or replace them.
 2. Choose the owning node, create retained local storage and restore its data.
@@ -137,3 +137,38 @@ These checks do not validate library access, downloads, login credentials,
 external integrations, or operation on the replacement cluster. Both apps remain
 suspended. Keep the original backups; migrated databases must not be opened by
 older application versions.
+
+
+### Media-library checks
+
+On 2026-10-16, Phoenix mounted the existing books, music and downloads exports.
+A Kubernetes pod also mounted all three exports using the application paths and
+passed read-access checks as UID 568.
+UID/GID 568 could read them and create, read, rename and delete disposable probe
+files. All probes were removed. The Calibre `metadata.db` passed SQLite integrity
+and contains 352 books. Lidarr's saved `/media/` root matches its rendered mount.
+Calibre-Web's saved `config_calibre_dir` is unset; select `/books` after restoring
+and signing in. Permission checks do not exercise download-client integration
+or move any existing books, music or downloads.
+
+
+### Frigate hardware and configuration checks
+
+On 2026-10-16, a disposable pod on Bahamut tested
+`ghcr.io/blakeblackshear/frigate:0.18.2` at digest
+`sha256:fd60f99ffd4eb6c42360ed4e14953e270586f239309ab3983e55b2e97ffac09a`.
+Its USB Coral delegate completed ten inferences using the bundled EdgeTPU model
+(12.82 ms average, including the first inference). Intel VAAPI decoded a locally
+generated H.264 video through `/dev/dri/renderD128`. No camera credentials,
+recordings, production config volumes or MQTT access were supplied to the pod.
+
+The same image parsed a five-camera candidate retaining the USB Coral and using
+`preset-rtsp-generic` plus `preset-vaapi`, with obsolete RTMP roles removed.
+Camera addresses were inert placeholders. The parser also accepted the original
+configuration; parsing alone does not prove that its old FFmpeg arguments work.
+The candidate is saved under ignored `.rebuild/frigate-0.18.2-candidate.yaml`.
+
+Frigate remains suspended at its historical deployment definition until the
+chart, writable local config/database volume, authenticated web route and NAS
+recording mounts are migrated together. These hardware checks do not validate
+live camera streams, H.265 decoding, recording retention or sustained load.

@@ -1,6 +1,7 @@
 ---
+# Cilium 1.20.2's tested Kubernetes range ends at 1.36.
 # renovate: datasource=github-releases depName=k3s-io/k3s
-k3s_release_version: "v1.37.1+k3s1"
+k3s_release_version: "v1.36.5+k3s1"
 k3s_become: true
 k3s_build_cluster: true
 k3s_etcd_datastore: true

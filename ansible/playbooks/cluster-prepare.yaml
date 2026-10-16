@@ -20,7 +20,7 @@
   tasks:
     - name: Install Kubernetes and hardware support packages
       ansible.builtin.apt:
-        name: [ca-certificates, curl, conntrack, iptables, nfs-common, python3, python3-apt, smartmontools, nvme-cli, pciutils, usbutils, mokutil, apparmor]
+        name: [ca-certificates, curl, conntrack, iptables, bpftool, nfs-common, python3, python3-apt, smartmontools, nvme-cli, pciutils, usbutils, mokutil, apparmor]
         update_cache: true
         install_recommends: false
     - name: Set timezone

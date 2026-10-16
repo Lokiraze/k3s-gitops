@@ -86,7 +86,7 @@ cover inventory, Cilium/k3s network agreement, Keepalived rendering and maintena
 guards. Kubernetes schema validation permits missing schemas and skips Secrets,
 Gateway and HTTPRoute; chart rendering and live acceptance are separate checks.
 
-The installer uses `xanmanning.k3s` v3.6.2 and pins k3s v1.37.1+k3s1. The role's
+The installer uses `xanmanning.k3s` v3.6.2 and pins k3s v1.36.5+k3s1, within Cilium 1.20.2's tested Kubernetes range. The role's
 node-ready post-check is deferred because Cilium is installed in the next phase.
 Bundled flannel, kube-proxy, network policy, CoreDNS, local storage, metrics-server,
 ServiceLB and Traefik are disabled as appropriate; Flux owns their replacements.
@@ -112,7 +112,87 @@ reboot. Review available signed kernel/firmware updates and cluster health befor
 a controlled one-at-a-time reboot. A Debian 13 migration needs a separate review
 of its release notes and package changes.
 
+## Detached recovery prerequisite check
+
+Run `just ansible recovery-check k8s-bahamut` (or use `all` for all seven hosts).
+The playbook creates a disposable network namespace, proves that broken routing
+and firewall rules each block a local ping, then schedules systemd to restore
+both after SSH disconnects. It also checks that a canceled timer never fires.
+The test removes its namespace, timers and private temporary state afterward.
+It neither stops Kubernetes nor changes the host's networking.
+
+All seven hosts passed this probe on 2026-10-16. The probe is **not a host rollback
+script**: transient timers do not survive reboot, and it does not test recovering
+SSH from Cilium BPF filters or restoring the old cluster. Those remain cutover
+gates. The initial test exposed an empty iptables snapshot; the probe now requires
+an explicit filter-table snapshot before testing restoration.
+
+Live Cilium 1.14.5 attaches BPF filters to the management interface. Its cleanup
+must run only after the agent is stopped, and Ceph mounts must be detached before
+network shutdown. Upstream cleanup reports individual errors on stderr without
+necessarily failing its exit status; check the remaining BPF attachments/maps,
+routes and SSH reachability explicitly. A zero exit code alone is insufficient.
+
+## Host-local management rescue
+
+`ansible/playbooks/files/host-network-recovery.py` now implements capture,
+quiescence checks, a ten-minute recovery timer, repair and cancellation. Corrected
+copies and network snapshots are staged privately on all seven hosts under
+`/var/lib/homelab/network-recovery/`; **none is armed**. Recapture within an hour
+of the actual cutover while the old Cilium agent is still running.
+
+The tool preserves the running agent's CLI and accepts exactly Cilium 1.14.5
+(`cleanup`) or 1.20.2 (`post-uninstall-cleanup`). It prefers `cilium-dbg` in newer
+images and chooses the command from the saved client's version, not the daemon's.
+Rescue uses only `--bpf-state`; full cleanup remains a separate operation.
+Unknown versions are rejected before changing the pidfile or network. The real
+1.20.2 CLI and flags were checked on Intel and ARM Debian using help only; no
+production BPF cleanup was executed. It refuses to arm or repair
+while k3s services, container shims, Cilium/Ceph processes or Ceph/RBD mounts remain.
+A host-wide lock and active-capture record prevent competing timers. Cancellation
+can disarm without working networking or intact snapshot contents. After teardown,
+repair removes Cilium BPF state and restores management IPv4 addressing, LAN
+policy routing and the captured IPv4 firewall. It never restarts the cluster.
+
+The actual IPv4 repair function passed a Linux namespace test on Bahamut with a
+down interface, missing address, blocked firewall, missing main routing lookup
+and a blocking policy rule; repeating the repair passed too. This does **not**
+prove recovery from real host BPF failure or a lost SSH connection. IPv6, reboot
+recovery and full-cluster rollback are outside this tool's scope. Do not begin
+teardown until the shutdown/restore runbook and remaining foundation gates pass.
+
+## Runtime shutdown rehearsal
+
+The separate-runtime test in `ansible/playbooks/files/runtime-shutdown-check.py`
+passed on Bahamut (Intel) and Ifrit (ARM64). A disposable container survived its
+containerd daemon being killed, reconnected with the same PID, then exited with
+code 0 after SIGTERM. Stopping its sandbox left no tasks before test metadata was
+removed. No production runtime or container was stopped.
+
+The original containerd config, binary hash and full startup arguments are now
+preserved in each host's private network-recovery capture. k3s supplies the root,
+state and socket as command-line options; copying only the TOML is insufficient.
+
+`cilium-cleanup-check.py --require-clean` is a read-only BPF postcondition for the
+future cleanup. It checks Cilium programs, maps, links, network/cgroup attachments
+and pinned maps, while preserving systemd's unrelated BPF protections. All seven
+live hosts correctly fail this gate while Cilium is running. bpftool is included
+in host preparation. Real CNI teardown and whole-cluster rollback remain untested.
+
 ## Cutover and fresh installation
+
+The old etcd snapshot was restored with k3s v1.27.3+k3s1 and its original server
+token in a disconnected container. The restored API returned all 15 original
+PVC bindings and 135 readable Secret objects, with scheduling disabled. The
+original token must exist at `server/token` for that version's snapshot reset;
+`--token-file` alone did not satisfy its restore check. This verifies control-plane
+recovery, not the full seven-node Ceph/BGP rollback.
+
+Final read-only backup Pod manifests cover all 15 PVCs and passed server-side
+dry-run validation against that restored API. They have not been applied to
+production. The reviewed cutover plan requires stopped writers, verified NAS
+copies of the final snapshot and application data, off-host path-preservation
+records, and MQTT retained-message replay before clients restart on rollback.
 
 1. Verify the recovery sets below and take final backups with writers stopped.
    Coordinate old Flux and old BGP shutdown before reusing the service addresses.
@@ -149,8 +229,18 @@ Preliminary encrypted copies are saved locally under ignored `.rebuild/` and on
   checks. Lidarr/Sonarr cover-image caches are omitted; their settings, databases
   and existing backup files are included.
 
+Isolated restore checks passed for Home Assistant, MQTT and Z-Wave UI. Home
+Assistant served its frontend as UID 568 from a restored copy, with SQLite
+integrity and its saved integration entry preserved. The containers had no
+network or USB access. The retained MQTT
+payload matched exactly, and Z-Wave's security keys and controller path were
+unchanged after startup. The MQTT snapshot is encrypted locally and in the NAS
+`k3s-rebuild-20261016-home-pre-cutover` directory. The old broker has no persistent
+storage; this snapshot covers retained messages, not client sessions or queued
+messages. Refresh it after stopping publishers during cutover.
+
 The NAS write/read/delete test passed and reported about 17 TB free. These are
-live preliminary copies, not final cutover snapshots or application restore
+live preliminary copies, not final cutover snapshots or full device-reconnection
 acceptance. Vaultwarden's current database is empty; the owner stores passwords
 elsewhere and does not require Vaultwarden recovery. Its old PVC was incorrectly
 mounted at `/config` while actual data lived at `/data` in the container.

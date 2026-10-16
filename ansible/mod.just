@@ -28,3 +28,7 @@ prepare:
 
 install:
     uv run --project .. --locked ansible-playbook playbooks/cluster-installation.yaml
+
+# Isolated networking/timer probe; does not stop Kubernetes or alter host routes.
+recovery-check host:
+    uv run --project .. --locked ansible-playbook playbooks/cluster-recovery-check.yaml --limit '{{ host }}'
