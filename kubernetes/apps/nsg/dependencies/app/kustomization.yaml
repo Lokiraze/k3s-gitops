@@ -10,3 +10,4 @@ resources:
 - postgres-service.yaml
 - redis.yaml
 - redis-service.yaml
+- registry-secret.sops.yaml

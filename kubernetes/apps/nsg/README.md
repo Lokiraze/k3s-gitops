@@ -18,3 +18,11 @@ No routes, LoadBalancers, development seed accounts, Identity application, game 
 Before storing real accounts or game progress, configure and test PostgreSQL backups and restore. Retained local storage is not a backup. Backup destination and schedule remain part of the cluster integration work.
 
 After Flux applies: check both deployments are Ready, verify authenticated connections to each database and Redis, and verify unauthenticated Redis connections are rejected. This configuration has not yet been live-deployed or runtime-verified.
+
+## Private Gitea registry
+
+The SOPS-encrypted `gitea-registry` Secret in `nsg` uses a dedicated `read:package` token on Gitea's existing `ci-bot` account, which belongs to `games`. It grants package read access only; it is not a CI publishing credential.
+
+Game and Identity pod specifications must reference `imagePullSecrets: [{name: gitea-registry}]`. Flux OCIRepository resources in `nsg` can use `secretRef: {name: gitea-registry}` for chart downloads. Sources in other namespaces need their own Secret there. The chart must be published before Flux can fetch it.
+
+An authenticated manifest request for `games/colony:latest` succeeded during credential setup. That checks registry access, not a live Kubernetes image pull or an unpublished Helm chart. The Secret becomes available after merge and Flux reconciliation.
