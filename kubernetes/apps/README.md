@@ -27,7 +27,7 @@ first-run wizard, inform-host setting and persistent storage details.
 [Bazarr setup](media/bazarr/README.md) covers the initial login, subtitle-provider
 account and selecting the Korean + English profile at `https://bazarr.lokiraze.dev`.
 [Music Assistant setup](home/music-assistant/README.md) covers speakers, music
-sources and Home Assistant integration at `https://music-assistant.lokiraze.dev`.
+sources and Home Assistant integration at `https://music.lokiraze.dev`.
 
 ## Changes already made
 

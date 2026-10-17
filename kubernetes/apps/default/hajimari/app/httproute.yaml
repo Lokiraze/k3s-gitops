@@ -10,7 +10,7 @@ spec:
     namespace: network
     sectionName: https
   hostnames:
-  - hajimari.${SECRET_DOMAIN}
+  - ${SECRET_DOMAIN}
   rules:
   - backendRefs:
     - name: hajimari

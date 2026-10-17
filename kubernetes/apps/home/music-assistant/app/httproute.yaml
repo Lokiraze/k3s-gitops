@@ -10,7 +10,7 @@ spec:
     namespace: network
     sectionName: https
   hostnames:
-  - music-assistant.${SECRET_DOMAIN}
+  - music.${SECRET_DOMAIN}
   rules:
   - backendRefs:
     - name: music-assistant

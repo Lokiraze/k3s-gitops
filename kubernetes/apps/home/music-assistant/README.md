@@ -5,7 +5,7 @@ Music Assistant runs on `k8s-bahamut` with retained local data at
 initialized with the pinned image before enabling Flux. The PV does not create
 it automatically; preserve this directory during node maintenance.
 
-After Flux reconciles, open <https://music-assistant.lokiraze.dev> and complete
+After Flux reconciles, open <https://music.lokiraze.dev> and complete
 first-run setup by creating an administrator account. Add your music sources and
 confirm that your speakers are discovered and can play audio.
 
