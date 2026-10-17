@@ -120,14 +120,5 @@ spec:
             statusStyle: dot\nbackground:\n  opacity: 100\nlayout:\n  Home:\n    style:\
             \ row\n    columns: 3\n  Media:\n    style: row\n    columns: 4\n  Infrastructure:\n\
             \    style: row\n    columns: 3\n"
-          custom.css: '/* Match theme.park Aquamarine without depending on unsupported
-            app CSS. */
-
-            body { background: radial-gradient(ellipse at center, #47918a 0%, #0b3161
-            100%) fixed !important; }
-
-            .service-card { background: rgba(11,49,97,.55) !important; border: 1px
-            solid rgba(141,207,201,.2); }
-
-            '
+          custom.css: ''
           custom.js: ''
