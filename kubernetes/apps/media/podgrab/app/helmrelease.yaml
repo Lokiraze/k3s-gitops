@@ -41,7 +41,7 @@ spec:
           readOnly: true
     image:
       repository: ghcr.io/akhilrex/podgrab
-      tag: 1.0.0
+      tag: 1.0.0@sha256:bce133f3f5111381f63d9341313fa7ce7e16209068e8a06e6db2c4ed33972b87
     env:
       TZ: ${TIMEZONE}
     service:
