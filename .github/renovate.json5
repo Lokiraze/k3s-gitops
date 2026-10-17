@@ -1,63 +1,68 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base",
-    "docker:enableMajor",
-    ":disableRateLimiting",
-    ":dependencyDashboard",
-    ":semanticCommits",
-    ":automergeDigest",
-    ":automergeBranch",
-    "helpers:pinGitHubActionDigests"
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    'config:recommended',
+    'docker:enableMajor',
+    ':disableRateLimiting',
+    ':dependencyDashboard',
+    ':semanticCommits',
+    ':automergeDigest',
+    ':automergeBranch',
+    'helpers:pinGitHubActionDigests',
   ],
-  "dependencyDashboard": true,
-  "dependencyDashboardTitle": "Renovate Dashboard 🤖",
-  "suppressNotifications": ["prIgnoreNotification"],
-  "rebaseWhen": "conflicted",
-  "schedule": ["on saturday"],
-  "ansible-galaxy": {
-    "fileMatch": [
-      "(^|/)requirements\\.ya?ml(\\.j2)?$",
-      "(^|/)galaxy\\.ya?ml(\\.j2)?$"
-    ]
+  dependencyDashboard: true,
+  dependencyDashboardTitle: 'Renovate Dashboard 🤖',
+  suppressNotifications: [
+    'prIgnoreNotification',
+  ],
+  rebaseWhen: 'conflicted',
+  schedule: [
+    'on saturday',
+  ],
+  'ansible-galaxy': {
+    managerFilePatterns: [
+      '/(^|/)requirements\\.ya?ml(\\.j2)?$/',
+      '/(^|/)galaxy\\.ya?ml(\\.j2)?$/',
+    ],
   },
-  "flux": {
-    "fileMatch": [
-      "(^|/)kubernetes/.+\\.ya?ml(\\.j2)?$"
-    ]
+  flux: {
+    managerFilePatterns: [
+      '/(^|/)kubernetes/.+\\.ya?ml(\\.j2)?$/',
+    ],
   },
-  "helm-values": {
-    "fileMatch": [
-      "(^|/)kubernetes/.+\\.ya?ml(\\.j2)?$"
-    ]
+  'helm-values': {
+    managerFilePatterns: [
+      '/(^|/)kubernetes/.+\\.ya?ml(\\.j2)?$/',
+    ],
   },
-  "kubernetes": {
-    "fileMatch": [
-      "(^|/)ansible/.+\\.ya?ml(\\.j2)?$",
-      "(^|/)kubernetes/.+\\.ya?ml(\\.j2)?$"
-    ]
+  kubernetes: {
+    managerFilePatterns: [
+      '/(^|/)ansible/.+\\.ya?ml(\\.j2)?$/',
+      '/(^|/)kubernetes/.+\\.ya?ml(\\.j2)?$/',
+    ],
   },
-  "kustomize": {
-    "fileMatch": [
-      "(^|/)kustomization\\.ya?ml(\\.j2)?$"
-    ]
+  kustomize: {
+    managerFilePatterns: [
+      '/(^|/)kustomization\\.ya?ml(\\.j2)?$/',
+    ],
   },
-  "pip_requirements": {
-    "fileMatch": [
-      "(^|/)[\\w-]*requirements(-\\w+)?\\.(txt|pip)(\\.j2)?$"
-    ]
+  pip_requirements: {
+    managerFilePatterns: [
+      '/(^|/)[\\w-]*requirements(-\\w+)?\\.(txt|pip)(\\.j2)?$/',
+    ],
   },
-  "regexManagers": [
+  customManagers: [
     {
-      "description": "Process various other dependencies",
-      "fileMatch": [
-        "(^|/)ansible/.+\\.ya?ml(\\.j2)?$",
-        "(^|/)kubernetes/.+\\.ya?ml(\\.j2)?$"
+      customType: 'regex',
+      description: 'Process various other dependencies',
+      managerFilePatterns: [
+        '/(^|/)ansible/.+\\.ya?ml(\\.j2)?$/',
+        '/(^|/)kubernetes/.+\\.ya?ml(\\.j2)?$/',
       ],
-      "matchStrings": [
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( registryUrl=(?<registryUrl>\\S+))?\n.*?\"(?<currentValue>.*)\"\n"
+      matchStrings: [
+        'datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( registryUrl=(?<registryUrl>\\S+))?\n.*?"(?<currentValue>.*)"\n',
       ],
-      "datasourceTemplate": "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}"
-    }
-  ]
+      datasourceTemplate: '{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}',
+    },
+  ],
 }
