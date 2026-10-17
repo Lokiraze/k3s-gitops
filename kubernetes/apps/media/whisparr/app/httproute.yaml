@@ -10,7 +10,7 @@ spec:
     namespace: network
     sectionName: https
   hostnames:
-  - '{{ .Release.Name }}.${SECRET_DOMAIN}'
+  - 'whisparr.${SECRET_DOMAIN}'
   rules:
   - backendRefs:
     - name: whisparr

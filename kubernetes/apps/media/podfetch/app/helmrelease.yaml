@@ -5,7 +5,7 @@ metadata:
   name: podfetch
   namespace: media
   annotations:
-    rebuild.homelab/status: suspended-pending-version-storage-and-restore-checks
+    rebuild.homelab/status: active-after-restore-checks
 spec:
   interval: 30m
   chart:
@@ -41,9 +41,10 @@ spec:
           readOnly: true
     image:
       repository: samuel19982/podfetch
-      tag: latest
+      tag: latest@sha256:b4f0eac9d9d93f5b850e29546277ad3093fa6398e7a112c8a8867c0c9843883d
     env:
       TZ: ${TIMEZONE}
+      DATABASE_URL: sqlite:///app/db/podcast.db
     service:
       main:
         ports:
@@ -80,4 +81,4 @@ spec:
         server: ${NFS_SERVER}
         path: /mnt/user/media/podcasts
         mountPath: /app/podcasts
-  suspend: true
+  suspend: false

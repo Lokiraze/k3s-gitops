@@ -5,7 +5,7 @@ metadata:
   name: jellyseer
   namespace: media
   annotations:
-    rebuild.homelab/status: suspended-pending-version-storage-and-restore-checks
+    rebuild.homelab/status: active-after-restore-checks
 spec:
   interval: 30m
   chart:
@@ -74,4 +74,4 @@ spec:
         enabled: true
         existingClaim: jellyseer-config
         mountPath: /app/config
-  suspend: true
+  suspend: false

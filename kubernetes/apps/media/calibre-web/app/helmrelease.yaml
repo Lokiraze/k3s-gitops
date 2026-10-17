@@ -5,7 +5,7 @@ metadata:
   name: calibre-web
   namespace: media
   annotations:
-    rebuild.homelab/status: suspended-pending-version-storage-and-restore-checks
+    rebuild.homelab/status: active-after-restore-checks
 spec:
   interval: 30m
   chart:
@@ -81,4 +81,4 @@ spec:
         type: nfs
         server: ${NFS_SERVER}
         path: /mnt/user/media/books/calibre/Calibre Library
-  suspend: true
+  suspend: false

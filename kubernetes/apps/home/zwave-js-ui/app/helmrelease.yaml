@@ -5,7 +5,7 @@ metadata:
   name: zwave-js-ui
   namespace: home
   annotations:
-    rebuild.homelab/status: suspended-pending-version-storage-and-restore-checks
+    rebuild.homelab/status: active-after-restore-checks
 spec:
   interval: 15m
   chart:
@@ -102,4 +102,4 @@ spec:
               operator: In
               values:
               - zwave
-  suspend: true
+  suspend: false

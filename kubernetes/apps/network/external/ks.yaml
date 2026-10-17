@@ -5,7 +5,7 @@ metadata:
   name: cluster-apps-external
   namespace: flux-system
 spec:
-  suspend: true
+  suspend: false
   interval: 30m
   path: ./kubernetes/apps/network/external/app
   prune: true

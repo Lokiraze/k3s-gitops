@@ -15,18 +15,21 @@ def apps():
         for name in names:
             yield ns, name, ROOT / 'kubernetes/apps' / ns / name
 
-def test_every_restored_app_is_reachable_but_suspended():
+DISABLED = {('home', 'frigate'), ('media', 'readarr'), ('security', 'vaultwarden'), ('monitoring', 'kubernetes-dashboard')}
+
+
+def test_every_restored_app_has_explicit_activation_state():
     for ns, name, path in apps():
         parent = yaml.safe_load((path.parent / 'kustomization.yaml').read_text())
         assert f'./{name}/ks.yaml' in parent['resources']
         ks = yaml.safe_load((path / 'ks.yaml').read_text())
-        assert ks['spec']['suspend'] is True
+        assert ks['spec']['suspend'] is ((ns, name) in DISABLED)
         assert ks['spec']['sourceRef']['name'] == 'flux-system'
         assert ks['spec']['sourceRef']['namespace'] == 'flux-system'
         assert (ROOT / ks['spec']['path']).is_dir()
         hr = yaml.safe_load((path / 'app/helmrelease.yaml').read_text())
         assert hr['apiVersion'] == 'helm.toolkit.fluxcd.io/v2'
-        assert hr['spec']['suspend'] is True
+        assert hr['spec']['suspend'] is ((ns, name) in DISABLED)
 
 def test_chart_sources_and_storage_are_explicit():
     sources = {d['metadata']['name'] for d in yaml.safe_load_all((ROOT / 'kubernetes/apps/flux-system/app-recovery/sources.yaml').read_text())}
@@ -65,3 +68,27 @@ def test_namespace_local_substitution_and_external_routes():
         service = yaml.safe_load((path / 'service.yaml').read_text())
         assert endpoints['metadata']['labels']['kubernetes.io/service-name'] == service['metadata']['name']
         assert route['spec']['rules'][0]['backendRefs'][0]['name'] == service['metadata']['name']
+
+
+def test_http_routes_do_not_contain_helm_templates():
+    for route in (ROOT / 'kubernetes/apps').glob('**/httproute.yaml'):
+        doc = yaml.safe_load(route.read_text())
+        for hostname in doc.get('spec', {}).get('hostnames', []):
+            assert '{{' not in hostname, str(route)
+
+
+def test_podfetch_uses_restored_sqlite_and_whisparr_matches_restored_owner():
+    podfetch = yaml.safe_load((ROOT / 'kubernetes/apps/media/podfetch/app/helmrelease.yaml').read_text())['spec']['values']
+    assert podfetch['env']['DATABASE_URL'] == 'sqlite:///app/db/podcast.db'
+    assert '@sha256:' in podfetch['image']['tag']
+    whisparr = yaml.safe_load((ROOT / 'kubernetes/apps/media/whisparr/app/helmrelease.yaml').read_text())['spec']['values']
+    assert whisparr['env']['PUID'] == whisparr['env']['PGID'] == 568
+
+
+def test_prometheus_route_uses_verified_internal_http_service():
+    base = ROOT / 'kubernetes/apps/monitoring/kube-prometheus-stack/app'
+    assert './httproute.yaml' in yaml.safe_load((base / 'kustomization.yaml').read_text())['resources']
+    route = yaml.safe_load((base / 'httproute.yaml').read_text())['spec']
+    assert route['hostnames'] == ['prometheus.${SECRET_DOMAIN}']
+    assert route['parentRefs'] == [{'name': 'envoy-internal', 'namespace': 'network', 'sectionName': 'https'}]
+    assert route['rules'][0]['backendRefs'] == [{'name': 'kube-prometheus-stack-prometheus', 'port': 9090}]

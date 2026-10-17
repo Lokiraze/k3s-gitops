@@ -5,7 +5,7 @@ metadata:
   name: hajimari
   namespace: default
   annotations:
-    rebuild.homelab/status: suspended-pending-version-storage-and-restore-checks
+    rebuild.homelab/status: active-after-restore-checks
 spec:
   interval: 30m
   chart:
@@ -67,4 +67,4 @@ spec:
       requests:
         cpu: 100m
         memory: 128M
-  suspend: true
+  suspend: false

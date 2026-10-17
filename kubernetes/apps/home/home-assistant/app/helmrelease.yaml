@@ -5,7 +5,7 @@ metadata:
   name: home-assistant
   namespace: home
   annotations:
-    rebuild.homelab/status: suspended-pending-version-storage-and-restore-checks
+    rebuild.homelab/status: active-after-restore-checks
 spec:
   interval: 10m
   chart:
@@ -109,4 +109,4 @@ spec:
         volumeMounts:
         - name: config
           mountPath: /config
-  suspend: true
+  suspend: false

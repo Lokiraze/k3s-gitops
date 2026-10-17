@@ -5,7 +5,7 @@ metadata:
   name: grafana
   namespace: monitoring
   annotations:
-    rebuild.homelab/status: suspended-pending-version-storage-and-restore-checks
+    rebuild.homelab/status: active-after-restore-checks
 spec:
   interval: 30m
   chart:
@@ -107,4 +107,4 @@ spec:
       storageClassName: local-app-data
     testFramework:
       enabled: false
-  suspend: true
+  suspend: false

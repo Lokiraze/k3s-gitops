@@ -36,7 +36,6 @@ def test_home_restores_are_bound_to_the_right_claim_and_node():
         assert '.restore-verified' in guard['command'][-1]
         assert required_file in guard['command'][-1]
         assert guard['volumeMounts'] == [{'name': 'config', 'mountPath': '/restore', 'readOnly': True}]
-        assert hr['spec']['suspend'] is True
         assert './config-pv.yaml' in yaml.safe_load((base / 'kustomization.yaml').read_text())['resources']
 
 
@@ -81,7 +80,6 @@ def test_media_claims_have_retained_node_bound_volumes_and_restore_guards():
         guard = hr['spec']['values']['initContainers']['verify-restored-data']
         assert pvc['metadata']['name'] in guard['command'][-1]
         assert guard['volumeMounts'][0]['readOnly'] is True
-        assert hr['spec']['suspend'] is True
 
 
 def test_monitoring_storage_is_bound_and_cannot_start_without_a_restore():

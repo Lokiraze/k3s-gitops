@@ -5,7 +5,7 @@ metadata:
   name: whisparr
   namespace: media
   annotations:
-    rebuild.homelab/status: suspended-pending-version-storage-and-restore-checks
+    rebuild.homelab/status: active-after-restore-checks
 spec:
   interval: 30m
   chart:
@@ -44,8 +44,8 @@ spec:
       tag: nightly-2.0.0.287
     env:
       TZ: ${TIMEZONE}
-      PUID: 100
-      PGID: 100
+      PUID: 568
+      PGID: 568
     service:
       main:
         ports:
@@ -78,4 +78,4 @@ spec:
         type: nfs
         server: ${NFS_SERVER}
         path: /mnt/user/downloads/
-  suspend: true
+  suspend: false

@@ -5,7 +5,7 @@ metadata:
   name: kube-prometheus-stack
   namespace: monitoring
   annotations:
-    rebuild.homelab/status: suspended-pending-version-storage-and-restore-checks
+    rebuild.homelab/status: active-after-restore-checks
 spec:
   interval: 30m
   timeout: 15m
@@ -151,4 +151,4 @@ spec:
               resources:
                 requests:
                   storage: 10Gi
-  suspend: true
+  suspend: false
