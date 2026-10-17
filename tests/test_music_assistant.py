@@ -19,7 +19,7 @@ def test_music_assistant_lan_access_without_mount_privileges():
     assert main['pod']['automountServiceAccountToken'] is False
     security = main['containers']['app']['securityContext']
     assert security['allowPrivilegeEscalation'] is False
-    assert security['capabilities'] == {'drop': ['ALL']}
+    assert security['capabilities'] == {'drop': ['ALL'], 'add': ['NET_BIND_SERVICE']}
     route = read('httproute.yaml')['spec']
     assert route['parentRefs'][0]['name'] == 'envoy-internal'
     assert route['rules'][0]['backendRefs'][0]['port'] == values['service']['main']['ports']['http']['port'] == 8095
