@@ -74,10 +74,10 @@ def check_cleanup_result(code, stderr):
 
 def cleanup_command(binary):
     version = run(str(binary), 'version').stdout
-    match = re.match(r'Client: (1\.14\.5|1\.20\.2)(?:\s|$)', version)
+    match = re.match(r'Client: (1\.14\.5|1\.20\.[23])(?:\s|$)', version)
     if not match:
         raise RuntimeError('Unexpected Cilium version; review cleanup compatibility')
-    command = {'1.14.5': 'cleanup', '1.20.2': 'post-uninstall-cleanup'}[match[1]]
+    command = {'1.14.5': 'cleanup', '1.20.2': 'post-uninstall-cleanup', '1.20.3': 'post-uninstall-cleanup'}[match[1]]
     # Rescue removes BPF state only; full teardown remains a separate operation.
     return [str(binary), command, '--bpf-state', '--force']
 
