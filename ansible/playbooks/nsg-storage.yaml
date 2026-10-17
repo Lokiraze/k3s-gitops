@@ -1,0 +1,21 @@
+---
+- name: Prepare NSG PostgreSQL storage on Bahamut's internal filesystem
+  hosts: k8s-bahamut
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Resolve application storage path
+      ansible.builtin.command: readlink -m /var/lib/homelab/app-data
+      register: app_path
+      changed_when: false
+      failed_when: app_path.stdout != '/var/lib/homelab/app-data'
+    - name: Verify application storage is on the internal root filesystem
+      ansible.builtin.command: findmnt -n -o TARGET --target /var/lib/homelab/app-data
+      register: app_mount
+      changed_when: false
+      failed_when: app_mount.stdout != '/'
+    - name: Create the dedicated PostgreSQL directory without changing existing contents
+      ansible.builtin.file:
+        path: /var/lib/homelab/app-data/nsg-postgres
+        state: directory
+        mode: '0700'

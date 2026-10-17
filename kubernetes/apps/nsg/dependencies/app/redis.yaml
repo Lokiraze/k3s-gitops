@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: redis
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: redis
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: redis
+        image: redis:8.10.2-alpine@sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0
+        ports:
+        - name: redis
+          containerPort: 6379
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            memory: 256Mi
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nsg-dependencies
+              key: REDIS_PASSWORD
+        command:
+        - sh
+        - -ec
+        args:
+        - exec redis-server --requirepass "$REDIS_PASSWORD" --save "" --appendonly
+          no --maxmemory 128mb --maxmemory-policy noeviction
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        readinessProbe:
+          exec: &id001
+            command:
+            - sh
+            - -ec
+            - REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli ping | grep -qx PONG
+          periodSeconds: 10
+        startupProbe:
+          exec: *id001
+          periodSeconds: 10
+          failureThreshold: 60
+      volumes:
+      - name: data
+        emptyDir: {}

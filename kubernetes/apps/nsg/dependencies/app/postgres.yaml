@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postgres
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: postgres
+        image: postgres:17.11-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826
+        ports:
+        - name: postgres
+          containerPort: 5432
+        resources:
+          requests:
+            cpu: 50m
+            memory: 256Mi
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nsg-dependencies
+              key: POSTGRES_PASSWORD
+        - name: IDENTITY_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nsg-dependencies
+              key: IDENTITY_DB_PASSWORD
+        - name: STEAMTACTICS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nsg-dependencies
+              key: STEAMTACTICS_DB_PASSWORD
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+        - name: init
+          mountPath: /docker-entrypoint-initdb.d
+          readOnly: true
+        readinessProbe:
+          exec: &id001
+            command:
+            - sh
+            - -c
+            - pg_isready -U postgres -d postgres
+          periodSeconds: 10
+        startupProbe:
+          exec: *id001
+          periodSeconds: 10
+          failureThreshold: 60
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: postgres-data
+      - name: init
+        configMap:
+          name: postgres-init
+          defaultMode: 365
+      nodeSelector:
+        kubernetes.io/hostname: k8s-bahamut
