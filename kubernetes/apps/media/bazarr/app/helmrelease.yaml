@@ -1,0 +1,122 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: bazarr
+  namespace: media
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 5.3.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      main:
+        type: deployment
+        strategy: Recreate
+        pod:
+          automountServiceAccountToken: false
+        initContainers:
+          seed-config:
+            image: &id001
+              repository: ghcr.io/linuxserver/bazarr
+              tag: v1.6.2-ls368@sha256:fb0437897eaa7f96cf6ac42f795f8dcc208d34ec969eac5d366454e767304eb9
+            command:
+            - /bin/sh
+            - -ec
+            - mkdir -p /config/config; if [ ! -s /config/config/config.yaml ]; then cp /bootstrap/config.yaml /config/config/config.yaml;
+              chown 568:568 /config/config /config/config/config.yaml; chmod 600 /config/config/config.yaml; fi
+        containers:
+          bazarr:
+            image: *id001
+            env:
+              PUID: 568
+              PGID: 568
+              TZ: ${TIMEZONE}
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 6767
+                  periodSeconds: 10
+                  timeoutSeconds: 3
+                  failureThreshold: 60
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 6767
+                  periodSeconds: 10
+                  timeoutSeconds: 3
+                  failureThreshold: 6
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 6767
+                  periodSeconds: 10
+                  timeoutSeconds: 3
+                  failureThreshold: 6
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 6767
+    persistence:
+      config:
+        existingClaim: bazarr-config
+        advancedMounts:
+          main:
+            bazarr:
+            - path: /config
+            seed-config:
+            - path: /config
+      bootstrap:
+        type: secret
+        name: bazarr-bootstrap
+        advancedMounts:
+          main:
+            seed-config:
+            - path: /bootstrap
+              readOnly: true
+      tv:
+        type: nfs
+        server: ${NFS_SERVER}
+        path: /mnt/user/media/tvshows
+        advancedMounts:
+          main:
+            bazarr:
+            - path: /tv
+      movies:
+        type: nfs
+        server: ${NFS_SERVER}
+        path: /mnt/user/media/movies
+        advancedMounts:
+          main:
+            bazarr:
+            - path: /movies
