@@ -8,14 +8,17 @@ sonarr:
       type: series
     quality_profiles:
       - name: WEB 1080p
-        reset_unmatched_scores: true
+        reset_unmatched_scores:
+          enabled: true
       - name: Remux 1080p - Anime
-        reset_unmatched_scores: true
+        reset_unmatched_scores:
+          enabled: true
       - name: Remux 1080p - VOSTFR Anime
-        reset_unmatched_scores: true
+        reset_unmatched_scores:
+          enabled: true
     custom_formats:
       # Common
-      - quality_profiles:
+      - assign_scores_to:
           - name: WEB 1080p
         trash_ids:
           # Unwanted
@@ -51,13 +54,13 @@ sonarr:
           - d84935abd3f8556dcd51d4f27e22d0a6  # WEB Tier 03
           - d0c516558625b04b363fa6c5c2c7cfd4  # WEB Scene
       # Common 1080p
-      - quality_profiles:
+      - assign_scores_to:
           - name: WEB 1080p
         trash_ids:
           # Unwanted
           - 47435ece6b99a0b477caf360e79ba0bb  # x265 (HD)
       # Common Anime
-      - quality_profiles:
+      - assign_scores_to:
           - name: Remux 1080p - Anime
           - name: Remux 1080p - VOSTFR Anime
         trash_ids:
@@ -103,7 +106,7 @@ sonarr:
           - 570b03b3145a25011bf073274a407259  # HIDIVE
           - d34870697c9db575f17700212167be23  # NF
           # - 44a8ee6403071dd7b8a3a8dd3fe8cb20  # VRV
-      - quality_profiles:
+      - assign_scores_to:
           - name: Remux 1080p - VOSTFR Anime
         trash_ids:
           # Unwanted
@@ -119,7 +122,7 @@ sonarr:
           - ddb8eaa9c85a549c50034d280539d54d  # FR WEB Tier 01
           - a4c51febd4d8b2a0db10a3c974f21d92  # FR WEB Tier 02
           - dbfc0a4b5cb4cbd693311c4482ae9683  # FR WEB Tier 03
-      - quality_profiles:
+      - assign_scores_to:
           - name: Remux 1080p - VOSTFR Anime
             score: 101
         trash_ids:
@@ -143,14 +146,16 @@ radarr:
 
     quality_profiles:
       - name: HD
-        reset_unmatched_scores: true
+        reset_unmatched_scores:
+          enabled: true
       - name: UHD
-        reset_unmatched_scores: true
+        reset_unmatched_scores:
+          enabled: true
 
     custom_formats:
       # A list of custom formats to sync to Radarr. Must match the "name" in the importable JSON.
       # Do NOT use the heading names here, those do not work! These are case-insensitive.
-      - quality_profiles:
+      - assign_scores_to:
           - name: HD
           - name: UHD
         trash_ids:
@@ -191,14 +196,14 @@ radarr:
           - e7718d7a3ce595f289bfee26adc178f5  # Repack/Proper
           - ae43b294509409a6a13919dedd4764c4  # Repack2
       # Common HD
-      - quality_profiles:
+      - assign_scores_to:
           - name: HD
         trash_ids:
           # HQ Release Groups
           - ed27ebfef2f323e964fb1f61391bcb35  # HD Bluray Tier 01
           - c20c8647f2746a1f4c4262b0fbbeeeae  # HD Bluray Tier 02
       # Common UHD
-      - quality_profiles:
+      - assign_scores_to:
           - name: UHD
         trash_ids:
           # HQ Release Groups
