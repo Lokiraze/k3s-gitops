@@ -1,0 +1,133 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: homepage
+  namespace: default
+spec:
+  suspend: false
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 5.3.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    global:
+      fullnameOverride: homepage
+      createDefaultServiceAccount: false
+    controllers:
+      main:
+        type: deployment
+        pod:
+          automountServiceAccountToken: true
+        containers:
+          app:
+            image:
+              repository: ghcr.io/gethomepage/homepage
+              tag: v2.6.0@sha256:3e38fe788223cb46a3ce1f046ef11667b40f7707fdca0dcbfa3f86c5c42bf1e8
+            env:
+              TZ: ${TIMEZONE}
+              HOMEPAGE_ALLOWED_HOSTS: ${SECRET_DOMAIN}
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 3000
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  failureThreshold: 30
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 3000
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  failureThreshold: 3
+            resources:
+              requests:
+                cpu: 25m
+                memory: 128Mi
+        serviceAccount:
+          name: homepage
+    service:
+      app:
+        controller: main
+        ports:
+          http:
+            port: 3000
+    persistence:
+      config:
+        type: emptyDir
+        globalMounts:
+        - path: /app/config
+      config-files:
+        type: configMap
+        identifier: config
+        globalMounts:
+        - path: /app/config/kubernetes.yaml
+          subPath: kubernetes.yaml
+        - path: /app/config/services.yaml
+          subPath: services.yaml
+        - path: /app/config/bookmarks.yaml
+          subPath: bookmarks.yaml
+        - path: /app/config/widgets.yaml
+          subPath: widgets.yaml
+        - path: /app/config/settings.yaml
+          subPath: settings.yaml
+        - path: /app/config/custom.css
+          subPath: custom.css
+        - path: /app/config/custom.js
+          subPath: custom.js
+      logs:
+        type: emptyDir
+        globalMounts:
+        - path: /app/config/logs
+    configMaps:
+      config:
+        data:
+          kubernetes.yaml: 'mode: cluster
+
+            ingress: false
+
+            gateway: true
+
+            '
+          services.yaml: '[]
+
+            '
+          bookmarks.yaml: '[]
+
+            '
+          widgets.yaml: "- search:\n    provider: duckduckgo\n    target: _blank\n"
+          settings.yaml: "title: Home\ntheme: dark\ncolor: teal\nheaderStyle: clean\n\
+            statusStyle: dot\nbackground:\n  opacity: 100\nlayout:\n  Home:\n    style:\
+            \ row\n    columns: 3\n  Media:\n    style: row\n    columns: 4\n  Infrastructure:\n\
+            \    style: row\n    columns: 3\n"
+          custom.css: '/* Match theme.park Aquamarine without depending on unsupported
+            app CSS. */
+
+            body { background: radial-gradient(ellipse at center, #47918a 0%, #0b3161
+            100%) fixed !important; }
+
+            .service-card { background: rgba(11,49,97,.55) !important; border: 1px
+            solid rgba(141,207,201,.2); }
+
+            '
+          custom.js: ''

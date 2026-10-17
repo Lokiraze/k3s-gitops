@@ -2,12 +2,12 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cluster-apps-hajimari
+  name: cluster-apps-theme-park
   namespace: flux-system
 spec:
   suspend: false
   interval: 30m
-  path: ./kubernetes/apps/default/hajimari/app
+  path: ./kubernetes/apps/default/theme-park/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -19,12 +19,5 @@ spec:
       name: cluster-secrets
     substitute:
       TIMEZONE: America/Phoenix
-      NFS_SERVER: 192.168.1.50
-      UNIFI_LB: 192.168.69.82
-      SYNCTHING_LB: 192.168.69.12
-      MQTT_LB: 192.168.69.4
-      INFLUXDB_LB: 192.168.69.120
-      HOME_ASSISTANT_LB: 192.168.69.140
-      MINIO_URL: 192.168.1.50:9768
   targetNamespace: default
   wait: false

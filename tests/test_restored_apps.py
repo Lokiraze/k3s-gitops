@@ -7,7 +7,7 @@ EXPECTED = {
     'media': ['calibre-web','jellyseer','lidarr','podfetch','podgrab','prowlarr','radarr','recyclarr','sonarr','whisparr'],
     'security': ['vaultwarden'],
     'monitoring': ['grafana','kube-prometheus-stack'],
-    'default': ['hajimari'],
+    'default': ['homepage', 'theme-park'],
 }
 
 def apps():
@@ -56,10 +56,11 @@ def test_vaultwarden_persists_actual_data_and_frigate_uses_secret_env():
 
 
 def test_namespace_local_substitution_and_external_routes():
-    for rel in ['default/hajimari', 'network/external']:
+    for rel in ['default/homepage', 'default/theme-park', 'network/external']:
         ks = yaml.safe_load((ROOT / 'kubernetes/apps' / rel / 'ks.yaml').read_text())
         assert ks['spec']['postBuild']['substituteFrom'] == [{'kind': 'Secret', 'name': 'cluster-secrets'}]
-        assert ks['spec']['postBuild']['substitute']['NFS_SERVER'] == '192.168.1.50'
+        if rel == 'network/external':
+            assert ks['spec']['postBuild']['substitute']['NFS_SERVER'] == '192.168.1.50'
     for app in ['jellyfin', 'robo', 'stash', 'torrent']:
         path = ROOT / 'kubernetes/apps/network/external/app' / app
         route = yaml.safe_load((path / 'httproute.yaml').read_text())

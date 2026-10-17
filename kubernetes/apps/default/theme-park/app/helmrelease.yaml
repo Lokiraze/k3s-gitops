@@ -1,0 +1,79 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: theme-park
+  namespace: default
+spec:
+  suspend: false
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 5.3.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    global:
+      fullnameOverride: theme-park
+      createDefaultServiceAccount: false
+    controllers:
+      main:
+        type: deployment
+        pod:
+          automountServiceAccountToken: false
+        containers:
+          app:
+            image:
+              repository: ghcr.io/themepark-dev/theme.park
+              tag: 1.23.0@sha256:c8a01c56d27f2e07336e4762fa1bba061c45e054701366fa1ba8d3840d724dfd
+            env:
+              TZ: ${TIMEZONE}
+              PUID: '568'
+              PGID: '568'
+              TP_DOMAIN: theme-park.${SECRET_DOMAIN}
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 80
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  failureThreshold: 30
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 80
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  failureThreshold: 3
+            resources:
+              requests:
+                cpu: 25m
+                memory: 128Mi
+    service:
+      app:
+        controller: main
+        ports:
+          http:
+            port: 80
+    persistence:
+      config:
+        type: emptyDir
+        globalMounts:
+        - path: /config

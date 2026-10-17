@@ -4,6 +4,12 @@ kind: HTTPRoute
 metadata:
   name: jellyfin
   namespace: network
+  annotations:
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/name: Jellyfin
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: mdi-jellyfin
+    gethomepage.dev/href: https://media.${SECRET_DOMAIN}
 spec:
   parentRefs:
   - name: envoy-external

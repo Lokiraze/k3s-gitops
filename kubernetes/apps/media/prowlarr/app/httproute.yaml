@@ -4,13 +4,19 @@ kind: HTTPRoute
 metadata:
   name: prowlarr
   namespace: media
+  annotations:
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/name: Prowlarr
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: mdi-magnify
+    gethomepage.dev/href: https://prowlarr.${SECRET_DOMAIN}
 spec:
   parentRefs:
   - name: envoy-internal
     namespace: network
     sectionName: https
   hostnames:
-  - 'prowlarr.${SECRET_DOMAIN}'
+  - prowlarr.${SECRET_DOMAIN}
   rules:
   - backendRefs:
     - name: prowlarr

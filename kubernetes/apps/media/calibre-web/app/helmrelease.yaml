@@ -42,6 +42,10 @@ spec:
               repository: ghcr.io/linuxserver/calibre-web
               tag: latest@sha256:5dcbcb381d29c4ccb2236910eb547679f482c3eb1c9e458138729e89eceb4774
             env:
+              DOCKER_MODS: ghcr.io/themepark-dev/theme.park:calibre-web
+              TP_DOMAIN: theme-park.${SECRET_DOMAIN}
+              TP_SCHEME: https
+              TP_THEME: aquamarine
               TZ: ${TIMEZONE}
               PUID: '568'
               PGID: '568'

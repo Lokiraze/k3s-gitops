@@ -42,6 +42,10 @@ spec:
               repository: ghcr.io/linuxserver/lidarr
               tag: latest@sha256:67887807b13ae025c0fe979da298347c8609969087ab064c81d8e9acc1e06bbf
             env:
+              DOCKER_MODS: ghcr.io/themepark-dev/theme.park:lidarr
+              TP_DOMAIN: theme-park.${SECRET_DOMAIN}
+              TP_SCHEME: https
+              TP_THEME: aquamarine
               TZ: ${TIMEZONE}
               PUID: '568'
               PGID: '568'

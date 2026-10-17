@@ -1,0 +1,163 @@
+title: Media
+views:
+- title: Discover
+  path: overview
+  icon: mdi:movie-open
+  type: panel
+  cards:
+  - type: vertical-stack
+    cards:
+    - type: horizontal-stack
+      cards:
+      - type: button
+        name: Watch
+        icon: mdi:play-circle
+        show_icon: true
+        tap_action:
+          action: url
+          url_path: https://media.lokiraze.dev
+        icon_height: 24px
+      - type: button
+        name: Listen
+        icon: mdi:music
+        show_icon: true
+        tap_action:
+          action: url
+          url_path: https://music.lokiraze.dev
+        icon_height: 24px
+      - type: button
+        name: Request
+        icon: mdi:plus-circle-outline
+        show_icon: true
+        tap_action:
+          action: url
+          url_path: https://requests.lokiraze.dev
+        icon_height: 24px
+    - type: custom:media-poster-grid
+      entity: sensor.sonarr_upcoming_media_sonarr_upcoming_media
+      title: Coming to TV
+      max: 12
+    - type: custom:media-poster-grid
+      entity: sensor.radarr_upcoming_media_radarr_upcoming_media
+      title: On the movie calendar
+      max: 12
+- title: Apps & activity
+  path: apps
+  icon: mdi:apps
+  cards:
+  - type: grid
+    columns: 3
+    square: false
+    cards:
+    - type: button
+      name: Jellyfin
+      icon: mdi:jellyfish
+      tap_action:
+        action: url
+        url_path: https://media.lokiraze.dev
+    - type: button
+      name: Music Assistant
+      icon: mdi:music
+      tap_action:
+        action: url
+        url_path: https://music.lokiraze.dev
+    - type: button
+      name: Requests
+      icon: mdi:movie-search
+      tap_action:
+        action: url
+        url_path: https://requests.lokiraze.dev
+    - type: button
+      name: Sonarr
+      icon: mdi:television
+      tap_action:
+        action: url
+        url_path: https://tv.lokiraze.dev
+    - type: button
+      name: Radarr
+      icon: mdi:movie
+      tap_action:
+        action: url
+        url_path: https://movies.lokiraze.dev
+    - type: button
+      name: Lidarr
+      icon: mdi:album
+      tap_action:
+        action: url
+        url_path: https://grooves.lokiraze.dev
+    - type: button
+      name: Bazarr
+      icon: mdi:subtitles
+      tap_action:
+        action: url
+        url_path: https://bazarr.lokiraze.dev
+    - type: button
+      name: Downloads
+      icon: mdi:download
+      tap_action:
+        action: url
+        url_path: https://torrents.lokiraze.dev
+    - type: button
+      name: Books
+      icon: mdi:book-open-page-variant
+      tap_action:
+        action: url
+        url_path: https://read.lokiraze.dev
+    - type: button
+      name: Podcasts
+      icon: mdi:podcast
+      tap_action:
+        action: url
+        url_path: https://podcast.lokiraze.dev
+    - type: button
+      name: Prowlarr
+      icon: mdi:magnify
+      tap_action:
+        action: url
+        url_path: https://prowlarr.lokiraze.dev
+    - type: button
+      name: Whisparr
+      icon: mdi:movie-open
+      tap_action:
+        action: url
+        url_path: https://whisparr.lokiraze.dev
+  - type: media-control
+    entity: media_player.firefox
+  - type: entities
+    title: Library activity
+    show_header_toggle: false
+    entities:
+    - sensor.tower_active_clients
+    - sensor.sonarr_upcoming
+    - sensor.lidarr_queue
+    - binary_sensor.radarr_health
+- title: Upcoming
+  path: upcoming
+  icon: mdi:calendar
+  cards:
+  - type: calendar
+    initial_view: listWeek
+    entities:
+    - calendar.sonarr
+    - calendar.radarr
+- title: Requests
+  path: requests
+  icon: mdi:movie-search
+  cards:
+  - type: entities
+    title: Requests
+    show_header_toggle: false
+    entities:
+    - sensor.seerr_total_requests
+    - sensor.seerr_pending_requests
+    - sensor.seerr_processing_requests
+    - sensor.seerr_available_requests
+    - sensor.seerr_declined_requests
+  - type: entities
+    title: Issues
+    show_header_toggle: false
+    entities:
+    - sensor.seerr_open_issues
+    - sensor.seerr_video_issues
+    - sensor.seerr_audio_issues
+    - sensor.seerr_subtitle_issues

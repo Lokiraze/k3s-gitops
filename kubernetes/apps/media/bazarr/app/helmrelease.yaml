@@ -41,6 +41,10 @@ spec:
           bazarr:
             image: *id001
             env:
+              DOCKER_MODS: ghcr.io/themepark-dev/theme.park:bazarr
+              TP_DOMAIN: theme-park.${SECRET_DOMAIN}
+              TP_SCHEME: https
+              TP_THEME: aquamarine
               PUID: 568
               PGID: 568
               TZ: ${TIMEZONE}
