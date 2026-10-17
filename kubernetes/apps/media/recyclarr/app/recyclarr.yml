@@ -11,6 +11,11 @@ sonarr:
         trash_id: 72dae194fc92bf828f32cde7744e51a1
         reset_unmatched_scores:
           enabled: true
+      # Assign to Korean series: preserve original audio; subtitle tracks are managed separately.
+      - name: Korean Drama - WEB 1080p
+        trash_id: 72dae194fc92bf828f32cde7744e51a1
+        reset_unmatched_scores:
+          enabled: true
       - name: Remux 1080p - Anime
         trash_id: 20e0fc959f1f1704bed501f23bdae76f
         reset_unmatched_scores:
@@ -51,6 +56,7 @@ sonarr:
       # Common
       - assign_scores_to:
           - name: WEB 1080p
+          - name: Korean Drama - WEB 1080p
         trash_ids:
           # Unwanted
           - 85c61753df5da1fb2aab6f2a47426b09  # BR-DISK
@@ -87,9 +93,15 @@ sonarr:
       # Common 1080p
       - assign_scores_to:
           - name: WEB 1080p
+          - name: Korean Drama - WEB 1080p
         trash_ids:
           # Unwanted
           - 47435ece6b99a0b477caf360e79ba0bb  # x265 (HD)
+      - assign_scores_to:
+          - name: Korean Drama - WEB 1080p
+            score: -10000
+        trash_ids:
+          - ae575f95ab639ba5d15f663bf019e3e8  # Language: Not Original
       # Common Anime
       - assign_scores_to:
           - name: Remux 1080p - Anime
