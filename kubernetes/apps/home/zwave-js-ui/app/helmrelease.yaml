@@ -32,7 +32,7 @@ spec:
     # Refuse to start against an unverified or empty restore.
     initContainers:
       verify-restored-data:
-        image: docker.io/library/busybox:1.36.1@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+        image: docker.io/library/busybox:1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
         command:
         - /bin/sh
         - -ec
@@ -43,7 +43,7 @@ spec:
           readOnly: true
     image:
       repository: ghcr.io/zwave-js/zwave-js-ui
-      tag: 9.6.2
+      tag: 11.24.3@sha256:3fef66d575ea0ea9d50aad3e05c36619228557cfa888557eac2035215a29a321
     env:
       TZ: ${TIMEZONE}
     service:

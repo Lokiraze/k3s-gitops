@@ -30,7 +30,7 @@ spec:
   values:
     initContainers:
       verify-restored-data:
-        image: docker.io/library/busybox:1.36.1@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+        image: docker.io/library/busybox:1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
         command:
         - /bin/sh
         - -ec
@@ -41,7 +41,7 @@ spec:
           readOnly: true
     image:
       repository: ghcr.io/hotio/whisparr
-      tag: nightly-2.0.0.287
+      tag: v2@sha256:4cbc45dcdf9e41e00a3c4ab8d6b0150731e6113018d27489f6960e43022d1b27
     env:
       TZ: ${TIMEZONE}
       PUID: 568

@@ -21,7 +21,7 @@ spec:
   values:
     image:
       repository: eclipse-mosquitto
-      tag: 2.0.18
+      tag: 2.1.2-alpine@sha256:38c0da4f2ef84284d47b3b3eeea1cb3bdeabe81ee10caf0cd5c5ff61ee3ea408
     service:
       main:
         type: LoadBalancer

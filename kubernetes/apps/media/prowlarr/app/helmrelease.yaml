@@ -30,7 +30,7 @@ spec:
   values:
     initContainers:
       verify-restored-data:
-        image: docker.io/library/busybox:1.36.1@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+        image: docker.io/library/busybox:1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
         command:
         - /bin/sh
         - -ec
@@ -40,8 +40,8 @@ spec:
           mountPath: /restore
           readOnly: true
     image:
-      repository: ghcr.io/onedr0p/prowlarr-develop
-      tag: 1.11.2.4160
+      repository: ghcr.io/home-operations/prowlarr
+      tag: 2.6.5.5623@sha256:6152751c3ea2e7751564f5952173d5e83eed0e09f3fabd2cb6bdb58690c39e2f
     env:
       TZ: ${TIMEZONE}
       PROWLARR__INSTANCE_NAME: Prowlarr
