@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 5.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -29,23 +29,72 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    # Refuse to start against an unverified or empty restore.
-    initContainers:
-      verify-restored-data:
-        image: docker.io/library/busybox:1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
-        command:
-        - /bin/sh
-        - -ec
-        - test "$(cat /restore/.restore-verified)" = "zwavejs-config"; test -s /restore/settings.json
-        volumeMounts:
-        - name: config
-          mountPath: /restore
-          readOnly: true
-    image:
-      repository: ghcr.io/zwave-js/zwave-js-ui
-      tag: 11.24.3@sha256:3fef66d575ea0ea9d50aad3e05c36619228557cfa888557eac2035215a29a321
-    env:
-      TZ: ${TIMEZONE}
+    global:
+      fullnameOverride: zwave-js-ui
+      nameOverride: zwave-js-ui
+      createDefaultServiceAccount: false
+    controllers:
+      main:
+        type: deployment
+        forceRename: zwave-js-ui
+        containers:
+          zwave-js-ui:
+            image:
+              repository: ghcr.io/zwave-js/zwave-js-ui
+              tag: 11.24.3@sha256:3fef66d575ea0ea9d50aad3e05c36619228557cfa888557eac2035215a29a321
+            env:
+              TZ: ${TIMEZONE}
+            securityContext:
+              privileged: true
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /health
+                    port: 8091
+                    scheme: HTTP
+                  periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 1
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /health
+                    port: 8091
+                    scheme: HTTP
+                  periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 1
+              startup:
+                enabled: false
+        strategy: Recreate
+        pod:
+          automountServiceAccountToken: true
+          enableServiceLinks: true
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                  - key: usb
+                    operator: In
+                    values:
+                    - zwave
+        initContainers:
+          verify-restored-data:
+            image:
+              repository: docker.io/library/busybox
+              tag: 1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
+            command:
+            - /bin/sh
+            - -ec
+            - test "$(cat /restore/.restore-verified)" = "zwavejs-config"; test -s /restore/settings.json
     service:
       main:
         ports:
@@ -54,52 +103,35 @@ spec:
           websocket:
             enabled: true
             port: 3000
-    probes:
-      liveness: &id001
-        enabled: true
-        custom: true
-        spec:
-          httpGet:
-            path: /health
-            port: 8091
-          initialDelaySeconds: 0
-          periodSeconds: 10
-          timeoutSeconds: 1
-          failureThreshold: 3
-      readiness: *id001
-      startup:
-        enabled: false
-    ingress:
-      main:
-        enabled: false
-        ingressClassName: nginx
-        hosts:
-        - host: zwave.${SECRET_DOMAIN}
-          paths:
-          - path: /
-            pathType: Prefix
-        tls:
-        - hosts:
-          - zwave.${SECRET_DOMAIN}
-    securityContext:
-      privileged: true
+        controller: main
+        forceRename: zwave-js-ui
     persistence:
       config:
         enabled: true
         existingClaim: zwavejs-config
-        mountPath: /usr/src/app/store
+        type: persistentVolumeClaim
+        advancedMounts:
+          main:
+            zwave-js-ui:
+            - path: /usr/src/app/store
+            verify-restored-data:
+            - path: /restore
+              readOnly: true
       usb:
         enabled: true
         type: hostPath
         hostPath: /dev/serial/by-id/usb-Silicon_Labs_HubZ_Smart_Home_Controller_6120113C-if00-port0
         hostPathType: CharDevice
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-          - matchExpressions:
-            - key: usb
-              operator: In
-              values:
-              - zwave
+        advancedMounts:
+          main:
+            zwave-js-ui:
+            - path: /dev/serial/by-id/usb-Silicon_Labs_HubZ_Smart_Home_Controller_6120113C-if00-port0
   suspend: false
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          kind: Deployment
+          name: zwave-js-ui
+        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
+          \ zwave-js-ui\n      app.kubernetes.io/name: zwave-js-ui\n"

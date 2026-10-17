@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 5.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -28,57 +28,106 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    initContainers:
-      verify-restored-data:
-        image: docker.io/library/busybox:1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
-        command:
-        - /bin/sh
-        - -ec
-        - test "$(cat /restore/.restore-verified)" = "calibre-web-config"; test -s /restore/app.db
-        volumeMounts:
-        - name: config
-          mountPath: /restore
-          readOnly: true
-    image:
-      repository: ghcr.io/linuxserver/calibre-web
-      tag: latest@sha256:5dcbcb381d29c4ccb2236910eb547679f482c3eb1c9e458138729e89eceb4774
-    env:
-      TZ: ${TIMEZONE}
-      PUID: "568"
-      PGID: "568"
+    global:
+      fullnameOverride: calibre-web
+      nameOverride: calibre-web
+      createDefaultServiceAccount: false
+    controllers:
+      main:
+        type: deployment
+        forceRename: calibre-web
+        containers:
+          calibre-web:
+            image:
+              repository: ghcr.io/linuxserver/calibre-web
+              tag: latest@sha256:5dcbcb381d29c4ccb2236910eb547679f482c3eb1c9e458138729e89eceb4774
+            env:
+              TZ: ${TIMEZONE}
+              PUID: '568'
+              PGID: '568'
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 8083
+                  timeoutSeconds: 1
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 8083
+                  timeoutSeconds: 1
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 8083
+                  timeoutSeconds: 1
+        strategy: Recreate
+        pod:
+          automountServiceAccountToken: true
+          enableServiceLinks: true
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+        initContainers:
+          verify-restored-data:
+            image:
+              repository: docker.io/library/busybox
+              tag: 1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
+            command:
+            - /bin/sh
+            - -ec
+            - test "$(cat /restore/.restore-verified)" = "calibre-web-config"; test -s /restore/app.db
     service:
       main:
         ports:
           http:
             port: 8083
-    ingress:
-      main:
-        enabled: false
-        ingressClassName: nginx
-        annotations:
-          hajimari.io/enable: 'true'
-          hajimari.io/icon: bookshelf
-        hosts:
-        - host: read.${SECRET_DOMAIN}
-          paths:
-          - path: /
-            pathType: Prefix
-        tls:
-        - hosts:
-          - read.${SECRET_DOMAIN}
-    podSecurityContext:
-      # LinuxServer init starts as root and drops the app to PUID/PGID.
-      runAsUser: 0
-      runAsGroup: 0
-      fsGroup: 568
-      fsGroupChangePolicy: OnRootMismatch
+        controller: main
+        forceRename: calibre-web
     persistence:
       config:
         enabled: true
         existingClaim: calibre-web-config
+        type: persistentVolumeClaim
+        advancedMounts:
+          main:
+            calibre-web:
+            - path: /config
+            verify-restored-data:
+            - path: /restore
+              readOnly: true
       books:
         enabled: true
         type: nfs
         server: ${NFS_SERVER}
         path: /mnt/user/media/books/calibre/Calibre Library
+        advancedMounts:
+          main:
+            calibre-web:
+            - path: /books
   suspend: false
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          kind: Deployment
+          name: calibre-web
+        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
+          \ calibre-web\n      app.kubernetes.io/name: calibre-web\n"

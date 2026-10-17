@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 5.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -28,54 +28,110 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    initContainers:
-      verify-restored-data:
-        image: docker.io/library/busybox:1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
-        command:
-        - /bin/sh
-        - -ec
-        - test "$(cat /restore/.restore-verified)" = "whisparr-config"; test -s /restore/whisparr2.db
-        volumeMounts:
-        - name: config
-          mountPath: /restore
-          readOnly: true
-    image:
-      repository: ghcr.io/hotio/whisparr
-      tag: v2@sha256:4cbc45dcdf9e41e00a3c4ab8d6b0150731e6113018d27489f6960e43022d1b27
-    env:
-      TZ: ${TIMEZONE}
-      PUID: 568
-      PGID: 568
+    global:
+      fullnameOverride: whisparr
+      nameOverride: whisparr
+      createDefaultServiceAccount: false
+    controllers:
+      main:
+        type: deployment
+        forceRename: whisparr
+        containers:
+          whisparr:
+            image:
+              repository: ghcr.io/hotio/whisparr
+              tag: v2@sha256:4cbc45dcdf9e41e00a3c4ab8d6b0150731e6113018d27489f6960e43022d1b27
+            env:
+              TZ: ${TIMEZONE}
+              PUID: 568
+              PGID: 568
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 6969
+                  timeoutSeconds: 1
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 6969
+                  timeoutSeconds: 1
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 6969
+                  timeoutSeconds: 1
+        strategy: Recreate
+        pod:
+          automountServiceAccountToken: true
+          enableServiceLinks: true
+        initContainers:
+          verify-restored-data:
+            image:
+              repository: docker.io/library/busybox
+              tag: 1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
+            command:
+            - /bin/sh
+            - -ec
+            - test "$(cat /restore/.restore-verified)" = "whisparr-config"; test -s /restore/whisparr2.db
     service:
       main:
         ports:
           http:
             port: 6969
-    ingress:
-      main:
-        enabled: false
-        ingressClassName: nginx
-        annotations: null
-        hosts:
-        - host: '{{ .Release.Name }}.${SECRET_DOMAIN}'
-          paths:
-          - path: /
-            pathType: Prefix
-        tls:
-        - hosts:
-          - '{{ .Release.Name }}.${SECRET_DOMAIN}'
+        controller: main
+        forceRename: whisparr
     persistence:
       config:
         enabled: true
         existingClaim: whisparr-config
+        type: persistentVolumeClaim
+        advancedMounts:
+          main:
+            whisparr:
+            - path: /config
+            verify-restored-data:
+            - path: /restore
+              readOnly: true
       media:
         enabled: true
         type: nfs
         server: ${NFS_SERVER}
         path: /mnt/user/media/other
+        advancedMounts:
+          main:
+            whisparr:
+            - path: /media
       downloads:
         enabled: true
         type: nfs
         server: ${NFS_SERVER}
         path: /mnt/user/downloads/
+        advancedMounts:
+          main:
+            whisparr:
+            - path: /downloads
   suspend: false
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          kind: Deployment
+          name: whisparr
+        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
+          \ whisparr\n      app.kubernetes.io/name: whisparr\n"

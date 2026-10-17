@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 5.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -27,44 +27,68 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    controller:
-      type: cronjob
-      cronjob:
-        schedule: '@daily'
-        concurrencyPolicy: Forbid
-        ttlSecondsAfterFinished: 86400
-    restartPolicy: OnFailure
-    image:
-      repository: ghcr.io/recyclarr/recyclarr
-      tag: 8.8.0@sha256:b1fbb929ba718fdbdac2c1fc25b32b0ae916d7a5a0892c2068c9bfae6f1a9209
-    command:
-    - /app/recyclarr/recyclarr
-    args:
-    - sync
-    envFrom:
-    - secretRef:
-        name: recyclarr
+    global:
+      fullnameOverride: recyclarr
+      nameOverride: recyclarr
+      createDefaultServiceAccount: false
+    controllers:
+      main:
+        type: cronjob
+        forceRename: recyclarr
+        containers:
+          recyclarr:
+            image:
+              repository: ghcr.io/recyclarr/recyclarr
+              tag: 8.8.0@sha256:b1fbb929ba718fdbdac2c1fc25b32b0ae916d7a5a0892c2068c9bfae6f1a9209
+            command:
+            - /app/recyclarr/recyclarr
+            args:
+            - sync
+            envFrom:
+            - secretRef:
+                name: recyclarr
+            probes:
+              liveness:
+                enabled: false
+              readiness:
+                enabled: false
+              startup:
+                enabled: false
+        cronjob:
+          schedule: '@daily'
+          concurrencyPolicy: Forbid
+          ttlSecondsAfterFinished: 86400
+        pod:
+          automountServiceAccountToken: true
+          enableServiceLinks: true
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+          restartPolicy: OnFailure
     service:
       main:
         enabled: false
-    podSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
     persistence:
       config:
         enabled: true
         existingClaim: recyclarr-state
-        type: pvc
-        readOnly: false
-        subPath: ""
-        mountPath: /config
+        type: persistentVolumeClaim
+        advancedMounts:
+          main:
+            recyclarr:
+            - path: /config
+              subPath: ''
+              readOnly: false
       config-file:
         enabled: true
         type: configMap
         name: recyclarr-configmap
-        subPath: recyclarr.yml
-        mountPath: /config/recyclarr.yml
         defaultMode: 509
-        readOnly: true
+        advancedMounts:
+          main:
+            recyclarr:
+            - path: /config/recyclarr.yml
+              subPath: recyclarr.yml
+              readOnly: true
   suspend: false

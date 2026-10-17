@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 5.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -28,57 +28,105 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    initContainers:
-      verify-restored-data:
-        image: docker.io/library/busybox:1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
-        command:
-        - /bin/sh
-        - -ec
-        - test "$(cat /restore/.restore-verified)" = "podfetch-config"; test -s /restore/podcast.db
-        volumeMounts:
-        - name: config
-          mountPath: /restore
-          readOnly: true
-    image:
-      repository: samuel19982/podfetch
-      tag: latest@sha256:b4f0eac9d9d93f5b850e29546277ad3093fa6398e7a112c8a8867c0c9843883d
-    env:
-      TZ: ${TIMEZONE}
-      DATABASE_URL: sqlite:///app/db/podcast.db
+    global:
+      fullnameOverride: podfetch
+      nameOverride: podfetch
+      createDefaultServiceAccount: false
+    controllers:
+      main:
+        type: deployment
+        forceRename: podfetch
+        containers:
+          podfetch:
+            image:
+              repository: samuel19982/podfetch
+              tag: latest@sha256:b4f0eac9d9d93f5b850e29546277ad3093fa6398e7a112c8a8867c0c9843883d
+            env:
+              TZ: ${TIMEZONE}
+              DATABASE_URL: sqlite:///app/db/podcast.db
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 8000
+                  timeoutSeconds: 1
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 8000
+                  timeoutSeconds: 1
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 8000
+                  timeoutSeconds: 1
+        strategy: Recreate
+        pod:
+          automountServiceAccountToken: true
+          enableServiceLinks: true
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+        initContainers:
+          verify-restored-data:
+            image:
+              repository: docker.io/library/busybox
+              tag: 1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
+            command:
+            - /bin/sh
+            - -ec
+            - test "$(cat /restore/.restore-verified)" = "podfetch-config"; test -s /restore/podcast.db
     service:
       main:
         ports:
           http:
             port: 8000
-    ingress:
-      main:
-        enabled: false
-        ingressClassName: nginx
-        annotations:
-          hajimari.io/enable: 'true'
-          hajimari.io/icon: book-music
-        hosts:
-        - host: podcast.${SECRET_DOMAIN}
-          paths:
-          - path: /
-            pathType: Prefix
-        tls:
-        - hosts:
-          - podcast.${SECRET_DOMAIN}
-    podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
-      fsGroupChangePolicy: OnRootMismatch
+        controller: main
+        forceRename: podfetch
     persistence:
       config:
         enabled: true
         existingClaim: podfetch-config
-        mountPath: /app/db
+        type: persistentVolumeClaim
+        advancedMounts:
+          main:
+            podfetch:
+            - path: /app/db
+            verify-restored-data:
+            - path: /restore
+              readOnly: true
       podcasts:
         enabled: true
         type: nfs
         server: ${NFS_SERVER}
         path: /mnt/user/media/podcasts
-        mountPath: /app/podcasts
+        advancedMounts:
+          main:
+            podfetch:
+            - path: /app/podcasts
   suspend: false
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          kind: Deployment
+          name: podfetch
+        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
+          \ podfetch\n      app.kubernetes.io/name: podfetch\n"

@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 5.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -28,50 +28,95 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    initContainers:
-      verify-restored-data:
-        image: docker.io/library/busybox:1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
-        command:
-        - /bin/sh
-        - -ec
-        - test "$(cat /restore/.restore-verified)" = "jellyseer-config"; test -s /restore/settings.json
-        volumeMounts:
-        - name: config
-          mountPath: /restore
-          readOnly: true
-    image:
-      repository: ghcr.io/seerr-team/seerr
-      tag: v3.5.0@sha256:27602401178d54f1964442287b9f23f67a3fa2252645ee8065839ea1c3f69e45
-    env:
-      TZ: ${TIMEZONE}
+    global:
+      fullnameOverride: jellyseer
+      nameOverride: jellyseer
+      createDefaultServiceAccount: false
+    controllers:
+      main:
+        type: deployment
+        forceRename: jellyseer
+        containers:
+          jellyseer:
+            image:
+              repository: ghcr.io/seerr-team/seerr
+              tag: v3.5.0@sha256:27602401178d54f1964442287b9f23f67a3fa2252645ee8065839ea1c3f69e45
+            env:
+              TZ: ${TIMEZONE}
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 5055
+                  timeoutSeconds: 1
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 5055
+                  timeoutSeconds: 1
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 5055
+                  timeoutSeconds: 1
+        strategy: Recreate
+        pod:
+          automountServiceAccountToken: true
+          enableServiceLinks: true
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+        initContainers:
+          verify-restored-data:
+            image:
+              repository: docker.io/library/busybox
+              tag: 1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
+            command:
+            - /bin/sh
+            - -ec
+            - test "$(cat /restore/.restore-verified)" = "jellyseer-config"; test -s /restore/settings.json
     service:
       main:
         ports:
           http:
             port: 5055
-    ingress:
-      main:
-        enabled: false
-        ingressClassName: nginx
-        annotations:
-          hajimari.io/enable: 'true'
-          hajimari.io/icon: folder-play
-        hosts:
-        - host: requests.${SECRET_DOMAIN}
-          paths:
-          - path: /
-            pathType: Prefix
-        tls:
-        - hosts:
-          - requests.${SECRET_DOMAIN}
-    podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
-      fsGroupChangePolicy: OnRootMismatch
+        controller: main
+        forceRename: jellyseer
     persistence:
       config:
         enabled: true
         existingClaim: jellyseer-config
-        mountPath: /app/config
+        type: persistentVolumeClaim
+        advancedMounts:
+          main:
+            jellyseer:
+            - path: /app/config
+            verify-restored-data:
+            - path: /restore
+              readOnly: true
   suspend: false
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          kind: Deployment
+          name: jellyseer
+        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
+          \ jellyseer\n      app.kubernetes.io/name: jellyseer\n"

@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 5.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -28,51 +28,99 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    initContainers:
-      verify-restored-data:
-        image: docker.io/library/busybox:1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
-        command:
-        - /bin/sh
-        - -ec
-        - test "$(cat /restore/.restore-verified)" = "prowlarr-config"; test -s /restore/prowlarr.db
-        volumeMounts:
-        - name: config
-          mountPath: /restore
-          readOnly: true
-    image:
-      repository: ghcr.io/home-operations/prowlarr
-      tag: 2.6.5.5623@sha256:6152751c3ea2e7751564f5952173d5e83eed0e09f3fabd2cb6bdb58690c39e2f
-    env:
-      TZ: ${TIMEZONE}
-      PROWLARR__INSTANCE_NAME: Prowlarr
-      PROWLARR__PORT: 80
-      PROWLARR__APPLICATION_URL: https://{{ .Release.Name }}.${SECRET_DOMAIN}
-      PROWLARR__LOG_LEVEL: info
+    global:
+      fullnameOverride: prowlarr
+      nameOverride: prowlarr
+      createDefaultServiceAccount: false
+    controllers:
+      main:
+        type: deployment
+        forceRename: prowlarr
+        containers:
+          prowlarr:
+            image:
+              repository: ghcr.io/home-operations/prowlarr
+              tag: 2.6.5.5623@sha256:6152751c3ea2e7751564f5952173d5e83eed0e09f3fabd2cb6bdb58690c39e2f
+            env:
+              TZ: ${TIMEZONE}
+              PROWLARR__INSTANCE_NAME: Prowlarr
+              PROWLARR__PORT: 80
+              PROWLARR__APPLICATION_URL: https://{{ .Release.Name }}.${SECRET_DOMAIN}
+              PROWLARR__LOG_LEVEL: info
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 80
+                  timeoutSeconds: 1
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 80
+                  timeoutSeconds: 1
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 80
+                  timeoutSeconds: 1
+        strategy: Recreate
+        pod:
+          automountServiceAccountToken: true
+          enableServiceLinks: true
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+        initContainers:
+          verify-restored-data:
+            image:
+              repository: docker.io/library/busybox
+              tag: 1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
+            command:
+            - /bin/sh
+            - -ec
+            - test "$(cat /restore/.restore-verified)" = "prowlarr-config"; test -s /restore/prowlarr.db
     service:
       main:
         ports:
           http:
             port: 80
-    ingress:
-      main:
-        enabled: false
-        ingressClassName: nginx
-        annotations: null
-        hosts:
-        - host: '{{ .Release.Name }}.${SECRET_DOMAIN}'
-          paths:
-          - path: /
-            pathType: Prefix
-        tls:
-        - hosts:
-          - '{{ .Release.Name }}.${SECRET_DOMAIN}'
-    podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
-      fsGroupChangePolicy: OnRootMismatch
+        controller: main
+        forceRename: prowlarr
     persistence:
       config:
         enabled: true
         existingClaim: prowlarr-config
+        type: persistentVolumeClaim
+        advancedMounts:
+          main:
+            prowlarr:
+            - path: /config
+            verify-restored-data:
+            - path: /restore
+              readOnly: true
   suspend: false
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          kind: Deployment
+          name: prowlarr
+        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
+          \ prowlarr\n      app.kubernetes.io/name: prowlarr\n"

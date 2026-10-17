@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 5.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -28,63 +28,117 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    initContainers:
-      verify-restored-data:
-        image: docker.io/library/busybox:1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
-        command:
-        - /bin/sh
-        - -ec
-        - test "$(cat /restore/.restore-verified)" = "radarr-config"; test -s /restore/radarr.db
-        volumeMounts:
-        - name: config
-          mountPath: /restore
-          readOnly: true
-    image:
-      repository: ghcr.io/home-operations/radarr
-      tag: 6.4.4.10685@sha256:be53998a2d39cfa3c3315b70c7509a6a1f2a10c3aee9337653efc9f4c970430e
-    env:
-      TZ: ${TIMEZONE}
-      RADARR__INSTANCE_NAME: Radarr
-      RADARR__PORT: 80
-      RADARR__APPLICATION_URL: https://movies.${SECRET_DOMAIN}
-      RADARR__LOG_LEVEL: info
+    global:
+      fullnameOverride: radarr
+      nameOverride: radarr
+      createDefaultServiceAccount: false
+    controllers:
+      main:
+        type: deployment
+        forceRename: radarr
+        containers:
+          radarr:
+            image:
+              repository: ghcr.io/home-operations/radarr
+              tag: 6.4.4.10685@sha256:be53998a2d39cfa3c3315b70c7509a6a1f2a10c3aee9337653efc9f4c970430e
+            env:
+              TZ: ${TIMEZONE}
+              RADARR__INSTANCE_NAME: Radarr
+              RADARR__PORT: 80
+              RADARR__APPLICATION_URL: https://movies.${SECRET_DOMAIN}
+              RADARR__LOG_LEVEL: info
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 80
+                  timeoutSeconds: 1
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 80
+                  timeoutSeconds: 1
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 80
+                  timeoutSeconds: 1
+        strategy: Recreate
+        pod:
+          automountServiceAccountToken: true
+          enableServiceLinks: true
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+        initContainers:
+          verify-restored-data:
+            image:
+              repository: docker.io/library/busybox
+              tag: 1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
+            command:
+            - /bin/sh
+            - -ec
+            - test "$(cat /restore/.restore-verified)" = "radarr-config"; test -s /restore/radarr.db
     service:
       main:
         ports:
           http:
             port: 80
-    ingress:
-      main:
-        enabled: false
-        ingressClassName: nginx
-        annotations:
-          hajimari.io/enable: 'true'
-          hajimari.io/icon: filmstrip
-        hosts:
-        - host: movies.${SECRET_DOMAIN}
-          paths:
-          - path: /
-            pathType: Prefix
-        tls:
-        - hosts:
-          - movies.${SECRET_DOMAIN}
-    podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
-      fsGroupChangePolicy: OnRootMismatch
+        controller: main
+        forceRename: radarr
     persistence:
       config:
         enabled: true
         existingClaim: radarr-config
+        type: persistentVolumeClaim
+        advancedMounts:
+          main:
+            radarr:
+            - path: /config
+            verify-restored-data:
+            - path: /restore
+              readOnly: true
       media:
         enabled: true
         type: nfs
         server: ${NFS_SERVER}
         path: /mnt/user/media/movies
+        advancedMounts:
+          main:
+            radarr:
+            - path: /media
       downloads:
         enabled: true
         type: nfs
         server: ${NFS_SERVER}
         path: /mnt/user/downloads/
+        advancedMounts:
+          main:
+            radarr:
+            - path: /downloads
   suspend: false
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          kind: Deployment
+          name: radarr
+        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
+          \ radarr\n      app.kubernetes.io/name: radarr\n"

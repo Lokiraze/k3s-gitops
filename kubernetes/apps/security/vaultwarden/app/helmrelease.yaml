@@ -11,66 +11,56 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 5.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
   values:
-    image:
-      repository: ghcr.io/dani-garcia/vaultwarden
-      tag: 1.37.4@sha256:efb3cde962015fcc036b2ea625242248611943b27212ebf4392841fb30fad055
-    envFrom:
-    - secretRef:
-        name: vaultwarden
-    env:
-      TZ: ${TIMEZONE}
-      DOMAIN: https://passwords.${SECRET_DOMAIN}
-      WEBSOCKET_ADDRESS: 0.0.0.0
-      WEBSOCKET_ENABLED: true
-      WEBSOCKET_PORT: 3012
+    global:
+      fullnameOverride: vaultwarden
+      nameOverride: vaultwarden
+      createDefaultServiceAccount: false
+    controllers:
+      main:
+        type: deployment
+        forceRename: vaultwarden
+        containers:
+          vaultwarden:
+            image:
+              repository: ghcr.io/dani-garcia/vaultwarden
+              tag: 1.37.4@sha256:efb3cde962015fcc036b2ea625242248611943b27212ebf4392841fb30fad055
+            env:
+              TZ: ${TIMEZONE}
+              DOMAIN: https://passwords.${SECRET_DOMAIN}
+            envFrom:
+            - secretRef:
+                name: vaultwarden
+            probes:
+              liveness:
+                enabled: false
+              readiness:
+                enabled: false
+              startup:
+                enabled: false
+        strategy: Recreate
+        pod:
+          automountServiceAccountToken: true
+          enableServiceLinks: true
     service:
       main:
         ports:
           http:
             port: 80
-          websocket:
-            enabled: true
-            port: 3012
-    ingress:
-      main:
-        enabled: false
-        ingressClassName: nginx
-        annotations:
-          external-dns.alpha.kubernetes.io/target: ingress.${SECRET_DOMAIN}
-        hosts:
-        - host: passwords.${SECRET_DOMAIN}
-          paths:
-          - path: /
-            pathType: Prefix
-          - path: /notifications/hub
-            pathType: Prefix
-            service:
-              port: 3012
-          - path: /notifications/hub/negotiate
-            pathType: Prefix
-        tls:
-        - hosts:
-          - passwords.${SECRET_DOMAIN}
-      admin:
-        enabled: false
-        ingressClassName: nginx
-        hosts:
-        - host: passwords.${SECRET_DOMAIN}
-          paths:
-          - path: /admin
-            pathType: Prefix
-        tls:
-        - hosts:
-          - passwords.${SECRET_DOMAIN}
+        controller: main
+        forceRename: vaultwarden
     persistence:
       config:
         enabled: true
         existingClaim: vaultwarden-config
-        mountPath: /data
+        type: persistentVolumeClaim
+        advancedMounts:
+          main:
+            vaultwarden:
+            - path: /data
   suspend: true

@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 5.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -27,22 +27,44 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    # Refuse to start against an unverified or empty restore.
-    initContainers:
-      verify-restored-data:
-        image: docker.io/library/busybox:1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
-        command:
-        - /bin/sh
-        - -ec
-        - test "$(cat /restore/.restore-verified)" = "home-assistant-config"; test -s
-          /restore/.storage/core.config_entries
-        volumeMounts:
-        - name: config
-          mountPath: /restore
-          readOnly: true
-    image:
-      repository: ghcr.io/home-operations/home-assistant
-      tag: 2026.10.2@sha256:0d289f21951f9ecf0bf8888089c6d43f379611c47fe84f13d3302e83daa3c8fa
+    global:
+      fullnameOverride: home-assistant
+      nameOverride: home-assistant
+      createDefaultServiceAccount: false
+    controllers:
+      main:
+        type: deployment
+        forceRename: home-assistant
+        containers:
+          home-assistant:
+            image:
+              repository: ghcr.io/home-operations/home-assistant
+              tag: 2026.10.2@sha256:0d289f21951f9ecf0bf8888089c6d43f379611c47fe84f13d3302e83daa3c8fa
+            probes:
+              liveness:
+                enabled: false
+              readiness:
+                enabled: false
+              startup:
+                enabled: false
+        strategy: Recreate
+        pod:
+          automountServiceAccountToken: true
+          enableServiceLinks: true
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+        initContainers:
+          verify-restored-data:
+            image:
+              repository: docker.io/library/busybox
+              tag: 1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
+            command:
+            - /bin/sh
+            - -ec
+            - test "$(cat /restore/.restore-verified)" = "home-assistant-config"; test -s /restore/.storage/core.config_entries
     service:
       main:
         type: LoadBalancer
@@ -51,34 +73,26 @@ spec:
         ports:
           http:
             port: 8123
-    ingress:
-      main:
-        enabled: false
-        annotations:
-          hajimari.io/enable: 'true'
-          hajimari.io/icon: home-automation
-        hosts:
-        - host: hass.${SECRET_DOMAIN}
-          paths:
-          - path: /
-            pathType: Prefix
-        tls:
-        - hosts:
-          - hass.${SECRET_DOMAIN}
-    probes:
-      liveness:
-        enabled: false
-      readiness:
-        enabled: false
-      startup:
-        enabled: false
-    podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
-      fsGroupChangePolicy: OnRootMismatch
+        controller: main
+        forceRename: home-assistant
     persistence:
       config:
         enabled: true
         existingClaim: home-assistant-config
+        type: persistentVolumeClaim
+        advancedMounts:
+          main:
+            home-assistant:
+            - path: /config
+            verify-restored-data:
+            - path: /restore
+              readOnly: true
   suspend: false
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          kind: Deployment
+          name: home-assistant
+        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
+          \ home-assistant\n      app.kubernetes.io/name: home-assistant\n"

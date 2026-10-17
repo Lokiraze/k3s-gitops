@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 5.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -28,66 +28,119 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    initContainers:
-      verify-restored-data:
-        image: docker.io/library/busybox:1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
-        command:
-        - /bin/sh
-        - -ec
-        - test "$(cat /restore/.restore-verified)" = "lidarr-config"; test -s /restore/lidarr.db
-        volumeMounts:
-        - name: config
-          mountPath: /restore
-          readOnly: true
-    image:
-      repository: ghcr.io/linuxserver/lidarr
-      tag: latest@sha256:67887807b13ae025c0fe979da298347c8609969087ab064c81d8e9acc1e06bbf
-    env:
-      TZ: ${TIMEZONE}
-      PUID: "568"
-      PGID: "568"
+    global:
+      fullnameOverride: lidarr
+      nameOverride: lidarr
+      createDefaultServiceAccount: false
+    controllers:
+      main:
+        type: deployment
+        forceRename: lidarr
+        containers:
+          lidarr:
+            image:
+              repository: ghcr.io/linuxserver/lidarr
+              tag: latest@sha256:67887807b13ae025c0fe979da298347c8609969087ab064c81d8e9acc1e06bbf
+            env:
+              TZ: ${TIMEZONE}
+              PUID: '568'
+              PGID: '568'
+            resources:
+              requests:
+                cpu: 500m
+                memory: 128Mi
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 8686
+                  timeoutSeconds: 1
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 8686
+                  timeoutSeconds: 1
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 8686
+                  timeoutSeconds: 1
+        strategy: Recreate
+        pod:
+          automountServiceAccountToken: true
+          enableServiceLinks: true
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+        initContainers:
+          verify-restored-data:
+            image:
+              repository: docker.io/library/busybox
+              tag: 1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e
+            command:
+            - /bin/sh
+            - -ec
+            - test "$(cat /restore/.restore-verified)" = "lidarr-config"; test -s /restore/lidarr.db
     service:
       main:
         ports:
           http:
             port: 8686
-    ingress:
-      main:
-        enabled: false
-        ingressClassName: nginx
-        annotations:
-          hajimari.io/enable: 'true'
-          hajimari.io/icon: music-box-multiple
-        hosts:
-        - host: grooves.${SECRET_DOMAIN}
-          paths:
-          - path: /
-            pathType: Prefix
-        tls:
-        - hosts:
-          - grooves.${SECRET_DOMAIN}
-    podSecurityContext:
-      # LinuxServer init starts as root and drops the app to PUID/PGID.
-      runAsUser: 0
-      runAsGroup: 0
-      fsGroup: 568
-      fsGroupChangePolicy: OnRootMismatch
+        controller: main
+        forceRename: lidarr
     persistence:
       config:
         enabled: true
         existingClaim: lidarr-config
+        type: persistentVolumeClaim
+        advancedMounts:
+          main:
+            lidarr:
+            - path: /config
+            verify-restored-data:
+            - path: /restore
+              readOnly: true
       media:
         enabled: true
         type: nfs
         server: ${NFS_SERVER}
         path: /mnt/user/media/music
+        advancedMounts:
+          main:
+            lidarr:
+            - path: /media
       downloads:
         enabled: true
         type: nfs
         server: ${NFS_SERVER}
         path: /mnt/user/downloads/
-    resources:
-      requests:
-        cpu: 500m
-        memory: 128Mi
+        advancedMounts:
+          main:
+            lidarr:
+            - path: /downloads
   suspend: false
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          kind: Deployment
+          name: lidarr
+        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
+          \ lidarr\n      app.kubernetes.io/name: lidarr\n"

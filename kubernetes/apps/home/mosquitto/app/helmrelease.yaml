@@ -11,19 +11,97 @@ spec:
   interval: 5m
   chart:
     spec:
-      chart: mosquitto
-      version: 4.8.2
+      chart: app-template
+      version: 5.3.0
       sourceRef:
         kind: HelmRepository
-        name: k8s-at-home
+        name: bjw-s
         namespace: flux-system
       interval: 5m
   values:
-    image:
-      repository: eclipse-mosquitto
-      tag: 2.1.2-alpine@sha256:38c0da4f2ef84284d47b3b3eeea1cb3bdeabe81ee10caf0cd5c5ff61ee3ea408
+    global:
+      fullnameOverride: eclipse-mosquitto
+      nameOverride: mosquitto
+      createDefaultServiceAccount: false
+    controllers:
+      main:
+        type: deployment
+        forceRename: eclipse-mosquitto
+        containers:
+          eclipse-mosquitto:
+            image:
+              repository: eclipse-mosquitto
+              tag: 2.1.2-alpine@sha256:38c0da4f2ef84284d47b3b3eeea1cb3bdeabe81ee10caf0cd5c5ff61ee3ea408
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 1883
+                  timeoutSeconds: 1
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 1883
+                  timeoutSeconds: 1
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+                  successThreshold: 1
+                  tcpSocket:
+                    port: 1883
+                  timeoutSeconds: 1
+        strategy: Recreate
+        pod:
+          automountServiceAccountToken: true
+          enableServiceLinks: true
     service:
       main:
         type: LoadBalancer
         loadBalancerIP: ${MQTT_LB}
+        controller: main
+        forceRename: eclipse-mosquitto
+        ports:
+          mqtt:
+            port: 1883
+    configMaps:
+      config:
+        forceRename: eclipse-mosquitto-config
+        data:
+          mosquitto.conf: 'per_listener_settings false
+
+            listener 1883
+
+            allow_anonymous true
+
+            '
+    persistence:
+      mosquitto-config:
+        type: configMap
+        name: eclipse-mosquitto-config
+        advancedMounts:
+          main:
+            eclipse-mosquitto:
+            - path: /mosquitto/config/mosquitto.conf
+              subPath: mosquitto.conf
   suspend: false
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          kind: Deployment
+          name: eclipse-mosquitto
+        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
+          \ eclipse-mosquitto\n      app.kubernetes.io/name: mosquitto\n"
