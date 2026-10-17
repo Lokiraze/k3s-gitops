@@ -5,6 +5,7 @@ namespace: monitoring
 resources:
 - ./secret.sops.yaml
 - ./helmrelease.yaml
-- ./httproute.yaml
+# Disabled: no route while Grafana is scaled to zero.
+# - ./httproute.yaml
 - ./config-pv.yaml
 - ./config-pvc.yaml

@@ -88,7 +88,7 @@ def test_podfetch_uses_restored_sqlite_and_whisparr_matches_restored_owner():
 
 def test_prometheus_route_uses_verified_internal_http_service():
     base = ROOT / 'kubernetes/apps/monitoring/kube-prometheus-stack/app'
-    assert './httproute.yaml' in yaml.safe_load((base / 'kustomization.yaml').read_text())['resources']
+    assert './httproute.yaml' not in yaml.safe_load((base / 'kustomization.yaml').read_text())['resources']
     route = yaml.safe_load((base / 'httproute.yaml').read_text())['spec']
     assert route['hostnames'] == ['prometheus.${SECRET_DOMAIN}']
     assert route['parentRefs'] == [{'name': 'envoy-internal', 'namespace': 'network', 'sectionName': 'https'}]

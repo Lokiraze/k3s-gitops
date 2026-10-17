@@ -5,4 +5,5 @@ namespace: monitoring
 resources:
 - ./helmrelease.yaml
 - ./config-pv.yaml
-- ./httproute.yaml
+# Prometheus is disabled; do not publish its route.
+# - ./httproute.yaml
