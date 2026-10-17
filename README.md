@@ -89,7 +89,7 @@ cover inventory, Cilium/k3s network agreement, Keepalived rendering and maintena
 guards. Kubernetes schema validation permits missing schemas and skips Secrets,
 Gateway and HTTPRoute; chart rendering and live acceptance are separate checks.
 
-The installer uses `xanmanning.k3s` v3.6.2 and pins k3s v1.36.5+k3s1, within Cilium 1.20.2's tested Kubernetes range. The role's
+The installer uses `xanmanning.k3s` v3.6.2 and pins k3s v1.37.1+k3s1, the latest upstream release. The role's
 node-ready post-check is deferred because Cilium is installed in the next phase.
 Bundled flannel, kube-proxy, network policy, CoreDNS, local storage, metrics-server,
 ServiceLB and Traefik are disabled as appropriate; Flux owns their replacements.
