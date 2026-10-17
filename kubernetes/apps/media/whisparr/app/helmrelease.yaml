@@ -40,7 +40,7 @@ spec:
           whisparr:
             image:
               repository: ghcr.io/hotio/whisparr
-              tag: v2@sha256:4cbc45dcdf9e41e00a3c4ab8d6b0150731e6113018d27489f6960e43022d1b27
+              tag: v3@sha256:ddc89f9af181d9ab8ddce1e5ac74bcf566f4500930fc180cf41272ed7054e4ec
             env:
               TZ: ${TIMEZONE}
               PUID: 568
