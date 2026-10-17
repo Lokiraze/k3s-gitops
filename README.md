@@ -218,7 +218,7 @@ records, and MQTT retained-message replay before clients restart on rollback.
 
 The missing application definitions are restored and suspended. See
 [kubernetes/apps/README.md](kubernetes/apps/README.md) for the complete inventory,
-activation checks and the archived Kubernetes Dashboard chart blocker.
+activation checks.
 
 Preliminary encrypted copies are saved locally under ignored `.rebuild/` and on
 `192.168.1.50:/mnt/user/backups/`:

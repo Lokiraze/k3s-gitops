@@ -40,18 +40,6 @@ spec:
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: kubernetes-dashboard
-  namespace: flux-system
-  annotations:
-    rebuild.homelab/status: chart-repository-unavailable-review-replacement-before-enabling
-spec:
-  interval: 1h
-  url: https://kubernetes.github.io/dashboard/
-  suspend: true
----
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
   name: prometheus-community
   namespace: flux-system
 spec:

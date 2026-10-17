@@ -16,7 +16,7 @@ sources live under `flux-system/app-recovery/`; secrets remain SOPS-encrypted.
 | Home | Home Assistant, MQTT/Mosquitto, Z-Wave JS UI, Frigate |
 | Media | Calibre-Web, Jellyseer, Lidarr, Podfetch, Podgrab, Prowlarr, Radarr, Readarr, Recyclarr, Sonarr, Whisparr |
 | Security | Vaultwarden |
-| Monitoring | Grafana, kube-prometheus-stack, Kubernetes Dashboard |
+| Monitoring | Grafana, kube-prometheus-stack |
 | Dashboard | Hajimari |
 | External routes | Jellyfin, robo, stash, torrent |
 
@@ -35,15 +35,15 @@ sources live under `flux-system/app-recovery/`; secrets remain SOPS-encrypted.
   use EndpointSlice resources. Jellyfin preserves its existing public access
   through `envoy-external`; robo, stash and torrent remain internal.
 - Corrected Vaultwarden's persistent mount to `/data`.
-- Disabled Home Assistant's unauthenticated code-server sidecar and removed
-  Dashboard's insecure-login flags and automatic cluster-admin binding.
+- Disabled Home Assistant's unauthenticated code-server sidecar.
+- Removed Kubernetes Dashboard and its unused chart source at the owner's request.
 - Preserved Frigate's USB Coral configuration, explicitly mounted `/dev/bus/usb`,
   and used secret-backed `FRIGATE_*` environment variables for camera URLs.
 
 The original disabled Ingress values remain as migration references. Old nginx
 snippets, theme injection, and authentication annotations are not implemented by
-these new HTTPRoutes. Prometheus and Kubernetes Dashboard routing still require
-review rather than guessing their backend/TLS configuration.
+these new HTTPRoutes. Prometheus routing still requires
+review rather than guessing its backend/TLS configuration.
 
 ## Checks before enabling an app
 
@@ -103,15 +103,11 @@ activation. Vaultwarden recovery is optional: the owner stores passwords elsewhe
 Readarr is retired upstream; the owner chose to keep its backups and leave it
 disabled. Do not include Readarr in a bulk application activation.
 
-## Validation and known blocker
+## Validation
 
 Kustomize/schema checks pass within the repository validator's documented schema
 exclusions. Nineteen historical application charts rendered with their saved
 values. This does not pull application images or prove application startup.
-
-Kubernetes Dashboard's upstream repository is archived and the saved Helm index
-returns HTTP 404. Its HelmRepository is also suspended. Keep the definition for
-reference and choose a maintained replacement before attempting activation.
 
 The external routes are behind a separate suspended Kustomization at
 `network/external/ks.yaml`. Their hostnames and backend addresses are retained,
