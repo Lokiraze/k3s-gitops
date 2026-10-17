@@ -1,0 +1,217 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: unifi
+  namespace: network
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 5.3.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      main:
+        type: deployment
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        pod:
+          automountServiceAccountToken: false
+        initContainers:
+          install-certificate:
+            image: &id001
+              repository: ghcr.io/linuxserver/unifi-network-application
+              tag: 10.6.106-ls150@sha256:4d5fc889c2f2c2cecc6b35d4d641780cbedbe90d3a51b8f03283261b137af468
+            command:
+            - /bin/sh
+            - -ec
+            - 'mkdir -p /config/data
+
+              openssl pkcs12 -export -name unifi -in /certs/tls.crt -inkey /certs/tls.key -out /tmp/unifi.p12 -passout
+              pass:aircontrolenterprise
+
+              keytool -importkeystore -noprompt -srckeystore /tmp/unifi.p12 -srcstoretype PKCS12 -srcstorepass aircontrolenterprise
+              -destkeystore /config/data/keystore -deststoretype JKS -deststorepass aircontrolenterprise -destkeypass
+              aircontrolenterprise
+
+              chown 568:568 /config/data/keystore
+
+              chmod 600 /config/data/keystore
+
+              '
+        containers:
+          unifi:
+            image: *id001
+            env:
+              PUID: 568
+              PGID: 568
+              TZ: ${TIMEZONE}
+              MONGO_HOST: 127.0.0.1
+              MONGO_PORT: '27017'
+              MONGO_DBNAME: unifi
+              MONGO_AUTHSOURCE: admin
+              MONGO_USER: unifi
+              MONGO_PASS:
+                valueFrom:
+                  secretKeyRef:
+                    name: unifi-db-credentials
+                    key: MONGO_PASS
+              MEM_LIMIT: '1024'
+              MEM_STARTUP: '256'
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 8443
+                  periodSeconds: 10
+                  timeoutSeconds: 2
+                  failureThreshold: 60
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 8443
+                  periodSeconds: 10
+                  timeoutSeconds: 2
+                  failureThreshold: 6
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 8443
+                  periodSeconds: 10
+                  timeoutSeconds: 2
+                  failureThreshold: 6
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+          mongodb:
+            image:
+              repository: docker.io/library/mongo
+              tag: 8.0.34@sha256:4a4ab5d4834207389e0d7270fac988e21ffedccecba77991a552f755df229907
+            args:
+            - --bind_ip
+            - 127.0.0.1
+            - --wiredTigerCacheSizeGB
+            - '0.25'
+            env:
+              MONGO_INITDB_ROOT_USERNAME: root
+              MONGO_INITDB_ROOT_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: unifi-db-credentials
+                    key: MONGO_INITDB_ROOT_PASSWORD
+              MONGO_PASS:
+                valueFrom:
+                  secretKeyRef:
+                    name: unifi-db-credentials
+                    key: MONGO_PASS
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                    - mongosh
+                    - --quiet
+                    - --eval
+                    - 'quit(db.adminCommand({ping: 1}).ok ? 0 : 1)'
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 60
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                    - mongosh
+                    - --quiet
+                    - --eval
+                    - 'quit(db.adminCommand({ping: 1}).ok ? 0 : 1)'
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+    service:
+      main:
+        controller: main
+        type: LoadBalancer
+        annotations:
+          lbipam.cilium.io/ips: ${UNIFI_LB}
+        ports:
+          https:
+            port: 8443
+            protocol: TCP
+          inform:
+            port: 8080
+            protocol: TCP
+          stun:
+            port: 3478
+            protocol: UDP
+          discovery:
+            port: 10001
+            protocol: UDP
+    configMaps:
+      mongo-init:
+        data:
+          init-mongo.js: "db.getSiblingDB('admin').createUser({\n  user: 'unifi',\n  pwd: process.env.MONGO_PASS,\n\
+            \  roles: [\n    'clusterMonitor',\n    { db: 'unifi', role: 'dbOwner' },\n    { db: 'unifi_stat', role:\
+            \ 'dbOwner' },\n    { db: 'unifi_audit', role: 'dbOwner' },\n    { db: 'unifi_restore', role: 'dbOwner'\
+            \ }\n  ]\n});\n"
+    persistence:
+      config:
+        existingClaim: unifi-config
+        advancedMounts:
+          main:
+            unifi:
+            - path: /config
+            install-certificate:
+            - path: /config
+      database:
+        existingClaim: unifi-db
+        advancedMounts:
+          main:
+            mongodb:
+            - path: /data/db
+      mongo-init:
+        type: configMap
+        identifier: mongo-init
+        advancedMounts:
+          main:
+            mongodb:
+            - path: /docker-entrypoint-initdb.d/init-mongo.js
+              subPath: init-mongo.js
+              readOnly: true
+      certificate:
+        type: secret
+        name: ${SECRET_DOMAIN/./-}-production-tls
+        advancedMounts:
+          main:
+            install-certificate:
+            - path: /certs
+              readOnly: true
