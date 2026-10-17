@@ -18,4 +18,6 @@
       ansible.builtin.file:
         path: /var/lib/homelab/app-data/nsg-postgres
         state: directory
+        owner: '999'
+        group: '999'
         mode: '0700'
