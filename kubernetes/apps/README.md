@@ -18,6 +18,11 @@ existing data was restored; they are not the current suspension status.
 | Monitoring | Grafana, kube-prometheus-stack |
 | Dashboard | Hajimari |
 | External routes | Jellyfin, robo, stash, torrent |
+| Network | UniFi Network (fresh installation) |
+
+UniFi uses the internal `https://unifi.lokiraze.dev` route, with dedicated device
+adoption at `192.168.69.82:8080`. See [UniFi setup](network/unifi/README.md) for the
+first-run wizard, inform-host setting and persistent storage details.
 
 ## Changes already made
 

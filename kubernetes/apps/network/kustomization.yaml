@@ -11,3 +11,4 @@ resources:
 - ./envoy-gateway/ks.yaml
 - ./k8s-gateway/ks.yaml
 - ./external/ks.yaml
+- ./unifi/ks.yaml
