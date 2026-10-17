@@ -127,11 +127,17 @@ spec:
             zwave-js-ui:
             - path: /dev/serial/by-id/usb-Silicon_Labs_HubZ_Smart_Home_Controller_6120113C-if00-port0
   suspend: false
+  # Preserve the immutable selector from the existing deployment during chart migration.
   postRenderers:
   - kustomize:
       patches:
       - target:
           kind: Deployment
           name: zwave-js-ui
-        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
-          \ zwave-js-ui\n      app.kubernetes.io/name: zwave-js-ui\n"
+        patch: |
+          - op: replace
+            path: /spec/selector
+            value:
+              matchLabels:
+                app.kubernetes.io/instance: zwave-js-ui
+                app.kubernetes.io/name: zwave-js-ui

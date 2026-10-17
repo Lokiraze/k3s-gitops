@@ -123,11 +123,17 @@ spec:
             calibre-web:
             - path: /books
   suspend: false
+  # Preserve the immutable selector from the existing deployment during chart migration.
   postRenderers:
   - kustomize:
       patches:
       - target:
           kind: Deployment
           name: calibre-web
-        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
-          \ calibre-web\n      app.kubernetes.io/name: calibre-web\n"
+        patch: |
+          - op: replace
+            path: /spec/selector
+            value:
+              matchLabels:
+                app.kubernetes.io/instance: calibre-web
+                app.kubernetes.io/name: calibre-web

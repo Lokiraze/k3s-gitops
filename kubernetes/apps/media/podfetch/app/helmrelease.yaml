@@ -122,11 +122,17 @@ spec:
             podfetch:
             - path: /app/podcasts
   suspend: false
+  # Preserve the immutable selector from the existing deployment during chart migration.
   postRenderers:
   - kustomize:
       patches:
       - target:
           kind: Deployment
           name: podfetch
-        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
-          \ podfetch\n      app.kubernetes.io/name: podfetch\n"
+        patch: |
+          - op: replace
+            path: /spec/selector
+            value:
+              matchLabels:
+                app.kubernetes.io/instance: podfetch
+                app.kubernetes.io/name: podfetch

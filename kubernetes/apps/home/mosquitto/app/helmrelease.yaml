@@ -80,13 +80,10 @@ spec:
       config:
         forceRename: eclipse-mosquitto-config
         data:
-          mosquitto.conf: 'per_listener_settings false
-
+          mosquitto.conf: |
+            per_listener_settings false
             listener 1883
-
             allow_anonymous true
-
-            '
     persistence:
       mosquitto-config:
         type: configMap
@@ -97,11 +94,17 @@ spec:
             - path: /mosquitto/config/mosquitto.conf
               subPath: mosquitto.conf
   suspend: false
+  # Preserve the immutable selector from the existing deployment during chart migration.
   postRenderers:
   - kustomize:
       patches:
       - target:
           kind: Deployment
           name: eclipse-mosquitto
-        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
-          \ eclipse-mosquitto\n      app.kubernetes.io/name: mosquitto\n"
+        patch: |
+          - op: replace
+            path: /spec/selector
+            value:
+              matchLabels:
+                app.kubernetes.io/instance: eclipse-mosquitto
+                app.kubernetes.io/name: mosquitto

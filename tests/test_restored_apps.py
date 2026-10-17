@@ -45,7 +45,7 @@ def test_chart_sources_and_storage_are_explicit():
 
 def test_vaultwarden_persists_actual_data_and_frigate_uses_secret_env():
     hr = yaml.safe_load((ROOT / 'kubernetes/apps/security/vaultwarden/app/helmrelease.yaml').read_text())
-    assert hr['spec']['values']['persistence']['config']['mountPath'] == '/data'
+    assert hr['spec']['values']['persistence']['config']['advancedMounts']['main']['vaultwarden'] == [{'path': '/data'}]
     hr = yaml.safe_load((ROOT / 'kubernetes/apps/home/frigate/app/helmrelease.yaml').read_text())
     values = hr['spec']['values']
     config = values['configmap']['config']['data']['config.yml']
@@ -79,10 +79,10 @@ def test_http_routes_do_not_contain_helm_templates():
 
 def test_podfetch_uses_restored_sqlite_and_whisparr_matches_restored_owner():
     podfetch = yaml.safe_load((ROOT / 'kubernetes/apps/media/podfetch/app/helmrelease.yaml').read_text())['spec']['values']
-    assert podfetch['env']['DATABASE_URL'] == 'sqlite:///app/db/podcast.db'
-    assert '@sha256:' in podfetch['image']['tag']
+    assert podfetch['controllers']['main']['containers']['podfetch']['env']['DATABASE_URL'] == 'sqlite:///app/db/podcast.db'
+    assert '@sha256:' in podfetch['controllers']['main']['containers']['podfetch']['image']['tag']
     whisparr = yaml.safe_load((ROOT / 'kubernetes/apps/media/whisparr/app/helmrelease.yaml').read_text())['spec']['values']
-    assert whisparr['env']['PUID'] == whisparr['env']['PGID'] == 568
+    assert whisparr['controllers']['main']['containers']['whisparr']['env']['PUID'] == whisparr['controllers']['main']['containers']['whisparr']['env']['PGID'] == 568
 
 
 def test_prometheus_route_uses_verified_internal_http_service():
@@ -97,14 +97,15 @@ def test_prometheus_route_uses_verified_internal_http_service():
 def test_recyclarr_preserves_state_between_nonoverlapping_jobs():
     base = ROOT / 'kubernetes/apps/media/recyclarr/app'
     values = yaml.safe_load((base / 'helmrelease.yaml').read_text())['spec']['values']
-    assert values['controller']['cronjob']['concurrencyPolicy'] == 'Forbid'
+    assert values['controllers']['main']['cronjob']['concurrencyPolicy'] == 'Forbid'
     assert values['persistence']['config']['existingClaim'] == 'recyclarr-state'
-    assert values['persistence']['config']['mountPath'] == '/config'
-    assert values['persistence']['config']['type'] == 'pvc'
-    assert values['persistence']['config']['readOnly'] is False
-    assert values['persistence']['config']['subPath'] == ''
-    assert values['persistence']['config-file']['mountPath'] == '/config/recyclarr.yml'
-    assert values['persistence']['config-file']['readOnly'] is True
+    assert values['persistence']['config']['type'] == 'persistentVolumeClaim'
+    assert values['persistence']['config']['advancedMounts']['main']['recyclarr'] == [
+        {'path': '/config', 'readOnly': False, 'subPath': ''}
+    ]
+    assert values['persistence']['config-file']['advancedMounts']['main']['recyclarr'] == [
+        {'path': '/config/recyclarr.yml', 'subPath': 'recyclarr.yml', 'readOnly': True}
+    ]
     pv = yaml.safe_load((base / 'state-pv.yaml').read_text())['spec']
     pvc = yaml.safe_load((base / 'state-pvc.yaml').read_text())['spec']
     assert pv['persistentVolumeReclaimPolicy'] == 'Retain'

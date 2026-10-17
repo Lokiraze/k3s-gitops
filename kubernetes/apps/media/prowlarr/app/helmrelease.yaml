@@ -116,11 +116,17 @@ spec:
             - path: /restore
               readOnly: true
   suspend: false
+  # Preserve the immutable selector from the existing deployment during chart migration.
   postRenderers:
   - kustomize:
       patches:
       - target:
           kind: Deployment
           name: prowlarr
-        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
-          \ prowlarr\n      app.kubernetes.io/name: prowlarr\n"
+        patch: |
+          - op: replace
+            path: /spec/selector
+            value:
+              matchLabels:
+                app.kubernetes.io/instance: prowlarr
+                app.kubernetes.io/name: prowlarr

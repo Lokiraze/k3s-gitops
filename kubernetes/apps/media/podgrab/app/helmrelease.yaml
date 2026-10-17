@@ -130,11 +130,17 @@ spec:
             podgrab:
             - path: /downloads
   suspend: false
+  # Preserve the immutable selector from the existing deployment during chart migration.
   postRenderers:
   - kustomize:
       patches:
       - target:
           kind: Deployment
           name: podgrab
-        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
-          \ podgrab\n      app.kubernetes.io/name: podgrab\n"
+        patch: |
+          - op: replace
+            path: /spec/selector
+            value:
+              matchLabels:
+                app.kubernetes.io/instance: podgrab
+                app.kubernetes.io/name: podgrab

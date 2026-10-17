@@ -127,11 +127,17 @@ spec:
             whisparr:
             - path: /downloads
   suspend: false
+  # Preserve the immutable selector from the existing deployment during chart migration.
   postRenderers:
   - kustomize:
       patches:
       - target:
           kind: Deployment
           name: whisparr
-        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
-          \ whisparr\n      app.kubernetes.io/name: whisparr\n"
+        patch: |
+          - op: replace
+            path: /spec/selector
+            value:
+              matchLabels:
+                app.kubernetes.io/instance: whisparr
+                app.kubernetes.io/name: whisparr

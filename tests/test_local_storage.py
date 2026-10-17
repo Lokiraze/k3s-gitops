@@ -32,10 +32,10 @@ def test_home_restores_are_bound_to_the_right_claim_and_node():
         expr = spec['nodeAffinity']['required']['nodeSelectorTerms'][0]['matchExpressions'][0]
         assert expr == {'key': 'kubernetes.io/hostname', 'operator': 'In', 'values': [node]}
         hr = yaml.safe_load((base / 'helmrelease.yaml').read_text())
-        guard = hr['spec']['values']['initContainers']['verify-restored-data']
+        guard = hr['spec']['values']['controllers']['main']['initContainers']['verify-restored-data']
         assert '.restore-verified' in guard['command'][-1]
         assert required_file in guard['command'][-1]
-        assert guard['volumeMounts'] == [{'name': 'config', 'mountPath': '/restore', 'readOnly': True}]
+        assert hr['spec']['values']['persistence']['config']['advancedMounts']['main']['verify-restored-data'] == [{'path': '/restore', 'readOnly': True}]
         assert './config-pv.yaml' in yaml.safe_load((base / 'kustomization.yaml').read_text())['resources']
 
 
@@ -46,7 +46,7 @@ def test_restore_guard_rejects_empty_and_unverified_data(tmp_path):
         ('zwave-js-ui', 'zwavejs-config', 'settings.json'),
     ]:
         hr = yaml.safe_load((APPS / 'home' / app / 'app/helmrelease.yaml').read_text())
-        command = hr['spec']['values']['initContainers']['verify-restored-data']['command'][-1]
+        command = hr['spec']['values']['controllers']['main']['initContainers']['verify-restored-data']['command'][-1]
         target = tmp_path / app
         target.mkdir()
         command = command.replace('/restore/', str(target) + '/')
@@ -77,9 +77,9 @@ def test_media_claims_have_retained_node_bound_volumes_and_restore_guards():
         assert pvc['spec']['volumeName'] == pv['metadata']['name']
         assert spec['nodeAffinity']['required']['nodeSelectorTerms'][0]['matchExpressions'][0]['values'] == ['k8s-phoenix']
         hr = yaml.safe_load((base / 'helmrelease.yaml').read_text())
-        guard = hr['spec']['values']['initContainers']['verify-restored-data']
+        guard = hr['spec']['values']['controllers']['main']['initContainers']['verify-restored-data']
         assert pvc['metadata']['name'] in guard['command'][-1]
-        assert guard['volumeMounts'][0]['readOnly'] is True
+        assert hr['spec']['values']['persistence']['config']['advancedMounts']['main']['verify-restored-data'][0]['readOnly'] is True
 
 
 def test_monitoring_storage_is_bound_and_cannot_start_without_a_restore():

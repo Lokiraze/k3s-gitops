@@ -88,11 +88,17 @@ spec:
             - path: /restore
               readOnly: true
   suspend: false
+  # Preserve the immutable selector from the existing deployment during chart migration.
   postRenderers:
   - kustomize:
       patches:
       - target:
           kind: Deployment
           name: home-assistant
-        patch: "- op: replace\n  path: /spec/selector\n  value:\n    matchLabels:\n      app.kubernetes.io/instance:\
-          \ home-assistant\n      app.kubernetes.io/name: home-assistant\n"
+        patch: |
+          - op: replace
+            path: /spec/selector
+            value:
+              matchLabels:
+                app.kubernetes.io/instance: home-assistant
+                app.kubernetes.io/name: home-assistant
