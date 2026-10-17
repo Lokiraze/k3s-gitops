@@ -41,7 +41,7 @@ def main():
     config = base / 'config.toml'
     config.write_text('''version = 2
 [plugins."io.containerd.grpc.v1.cri"]
-  sandbox_image = "docker.io/rancher/mirrored-pause:3.6"
+  sandbox_image = "registry.k8s.io/pause:3.10.2@sha256:f548e0e8e3dc1896ca956272154dde3314e8cc4fde0a57577ee9fa1c63f5baf4"
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
   runtime_type = "io.containerd.runc.v2"
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
@@ -49,7 +49,7 @@ def main():
     pod = {'metadata': {'name': unit, 'namespace': 'isolated-runtime-test', 'uid': ident, 'attempt': 0},
            'log_directory': str(base/'logs'), 'linux': {'security_context': {'namespace_options': {'network': 2}}}}
     container = {'metadata': {'name': 'signal-check', 'attempt': 0},
-                 'image': {'image': 'docker.io/library/busybox:1.36.1'},
+                 'image': {'image': 'docker.io/library/busybox:1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e'},
                  'command': ['/bin/sh', '-c', 'trap "echo graceful > /proof/stopped; exit 0" TERM; echo ready > /proof/ready; while :; do sleep 1 & wait $!; done'],
                  'log_path': 'signal-check.log', 'mounts': [{'container_path': '/proof', 'host_path': str(base/'proof'), 'readonly': False}]}
     (base/'proof').mkdir(); (base/'logs').mkdir()
@@ -76,7 +76,7 @@ def main():
     pod_id = container_id = None
     try:
         start()
-        for image in ('docker.io/library/busybox:1.36.1', 'docker.io/rancher/mirrored-pause:3.6'):
+        for image in ('docker.io/library/busybox:1.38.0@sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e', 'registry.k8s.io/pause:3.10.2@sha256:f548e0e8e3dc1896ca956272154dde3314e8cc4fde0a57577ee9fa1c63f5baf4'):
             run('/usr/local/bin/k3s', 'ctr', '--address', socket, '--namespace', 'k8s.io',
                 'images', 'pull', '--platform', 'linux/'+arch, image)
         pod_id = cri('runp', str(base/'pod.json')).stdout.strip()

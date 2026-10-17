@@ -1,15 +1,14 @@
 # Application recovery definitions
 
-The home, media, security and monitoring applications are present again, with
-Frigate recovered from the older configuration tree. These are **suspended
-recovery definitions**, not production-ready upgrades. Chart and image versions
-remain at historical values except for the tested replacements documented below.
-Each app still needs its remaining activation checks.
+The recovered applications are active except for Frigate (deferred) and
+Vaultwarden (disabled). Application images are pinned to reviewed releases.
+The generic application charts and Mosquitto now use app-template 5.3.0 from
+`oci://ghcr.io/bjw-s-labs/helm`; Frigate retains its deferred recovery definition.
 
-Every restored application has `spec.suspend: true` in both `ks.yaml` and its
-`app/helmrelease.yaml`. Changing only one does not start it. The source GitRepository
-is the new `flux-system` repository. Shared legacy substitution values and chart
+The source GitRepository is `flux-system`. Shared substitution values and chart
 sources live under `flux-system/app-recovery/`; secrets remain SOPS-encrypted.
+The recovery procedure and historical validation notes below explain how the
+existing data was restored; they are not the current suspension status.
 
 | Group | Restored applications |
 |---|---|
@@ -44,6 +43,21 @@ The original disabled Ingress values remain as migration references. Old nginx
 snippets, theme injection, and authentication annotations are not implemented by
 these new HTTPRoutes. Prometheus routing still requires
 review rather than guessing its backend/TLS configuration.
+
+## App-template migration
+
+The 5.3.0 values use controllers, container-scoped settings and explicit volume
+mounts. Service and workload names remain stable. Existing deployments retain
+their immutable selectors through HelmRelease post-renderer patches; keep those
+patches while upgrading the same deployments. Pods carry the new controller
+labels, so the new chart's service selectors still select them. Deployments use
+Recreate to avoid concurrent access to local application data and USB devices.
+
+Restore guards mount only their existing config claim read-only at `/restore`.
+Application mounts retain their paths, claims, NFS exports and security contexts.
+Mosquitto retains its listener configuration and service address. Recyclarr retains
+its persistent state and Forbid concurrency policy. Vaultwarden's obsolete separate
+WebSocket listener was removed; current releases serve it on the HTTP port.
 
 ## Checks before enabling an app
 
