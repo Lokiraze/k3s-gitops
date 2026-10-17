@@ -12,8 +12,8 @@ existing data was restored; they are not the current suspension status.
 
 | Group | Restored applications |
 |---|---|
-| Home | Home Assistant, MQTT/Mosquitto, Z-Wave JS UI, Frigate |
-| Media | Calibre-Web, Jellyseer, Lidarr, Podfetch, Podgrab, Prowlarr, Radarr, Recyclarr, Sonarr, Whisparr |
+| Home | Home Assistant, Music Assistant (fresh), MQTT/Mosquitto, Z-Wave JS UI, Frigate |
+| Media | Bazarr (fresh), Calibre-Web, Jellyseer, Lidarr, Podfetch, Podgrab, Prowlarr, Radarr, Recyclarr, Sonarr, Whisparr |
 | Security | Vaultwarden |
 | Monitoring | Grafana, kube-prometheus-stack |
 | Dashboard | Hajimari |
@@ -23,6 +23,11 @@ existing data was restored; they are not the current suspension status.
 UniFi uses the internal `https://unifi.lokiraze.dev` route, with dedicated device
 adoption at `192.168.69.82:8080`. See [UniFi setup](network/unifi/README.md) for the
 first-run wizard, inform-host setting and persistent storage details.
+
+[Bazarr setup](media/bazarr/README.md) covers the initial login, subtitle-provider
+account and selecting the Korean + English profile at `https://bazarr.lokiraze.dev`.
+[Music Assistant setup](home/music-assistant/README.md) covers speakers, music
+sources and Home Assistant integration at `https://music-assistant.lokiraze.dev`.
 
 ## Changes already made
 

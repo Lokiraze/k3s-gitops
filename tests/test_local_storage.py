@@ -77,6 +77,9 @@ def test_media_claims_have_retained_node_bound_volumes_and_restore_guards():
         assert pvc['spec']['volumeName'] == pv['metadata']['name']
         assert spec['nodeAffinity']['required']['nodeSelectorTerms'][0]['matchExpressions'][0]['values'] == ['k8s-phoenix']
         hr = yaml.safe_load((base / 'helmrelease.yaml').read_text())
+        if base.parent.name == 'bazarr':
+            # Fresh installation; its non-overwriting config seed is covered in test_bazarr.py.
+            continue
         guard = hr['spec']['values']['controllers']['main']['initContainers']['verify-restored-data']
         assert pvc['metadata']['name'] in guard['command'][-1]
         assert hr['spec']['values']['persistence']['config']['advancedMounts']['main']['verify-restored-data'][0]['readOnly'] is True
