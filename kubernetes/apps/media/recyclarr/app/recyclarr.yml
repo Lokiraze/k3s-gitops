@@ -8,14 +8,45 @@ sonarr:
       type: series
     quality_profiles:
       - name: WEB 1080p
+        trash_id: 72dae194fc92bf828f32cde7744e51a1
         reset_unmatched_scores:
           enabled: true
       - name: Remux 1080p - Anime
+        trash_id: 20e0fc959f1f1704bed501f23bdae76f
         reset_unmatched_scores:
           enabled: true
       - name: Remux 1080p - VOSTFR Anime
+        score_set: anime-sonarr
         reset_unmatched_scores:
           enabled: true
+        upgrade:
+          allowed: true
+          until_quality: Bluray 1080p
+          until_score: 10000
+        min_format_score: 100
+        qualities:
+        - name: Bluray 1080p
+          qualities:
+          - Bluray-1080p Remux
+          - Bluray-1080p
+        - name: WEB 1080p
+          qualities:
+          - HDTV-1080p
+          - WEBRip-1080p
+          - WEBDL-1080p
+        - name: Bluray-720p
+        - name: WEB 720p
+          qualities:
+          - HDTV-720p
+          - WEBRip-720p
+          - WEBDL-720p
+        - name: Bluray-480p
+        - name: WEB 480p
+          qualities:
+          - WEBRip-480p
+          - WEBDL-480p
+        - name: DVD
+        - name: SDTV
     custom_formats:
       # Common
       - assign_scores_to:
@@ -95,7 +126,6 @@ sonarr:
           - b2550eb333d27b75833e25b8c2557b38  # 10bit
           - 418f50b10f1907201b6cfdf881f467b7  # Anime Dual Audio
           - 9c14d194486c4014d422adc64092d794  # Dubs Only
-          - 07a32f77690263bb9fda1842db7e273f  # VOSTFR
           # Anime Streaming Services
           - d660701077794679fd59e8bdf4ce3a29  # AMZN
           - 7dd31f3dee6d2ef8eeaa156e23c3857e  # B-Global
@@ -123,6 +153,10 @@ sonarr:
           - a4c51febd4d8b2a0db10a3c974f21d92  # FR WEB Tier 02
           - dbfc0a4b5cb4cbd693311c4482ae9683  # FR WEB Tier 03
       - assign_scores_to:
+          - name: Remux 1080p - Anime
+        trash_ids:
+          - 07a32f77690263bb9fda1842db7e273f  # VOSTFR
+      - assign_scores_to:
           - name: Remux 1080p - VOSTFR Anime
             score: 101
         trash_ids:
@@ -146,9 +180,11 @@ radarr:
 
     quality_profiles:
       - name: HD
+        trash_id: d1d67249d3890e49bc12e275d989a7e9
         reset_unmatched_scores:
           enabled: true
       - name: UHD
+        trash_id: 64fb5f9858489bdac2af690e27c8f42f
         reset_unmatched_scores:
           enabled: true
 
@@ -214,16 +250,9 @@ radarr:
           - bfd8eb01832d646a0a89c4deb46f8564  # Upscaled
           # Optional UHD
           - 9c38ebb7384dada637be8899efa68e6f  # SDR
-          # HDR Formats
-          - e23edd2482476e595fb990b12e7c609c  # DV HDR10
-          - 58d6a88f13e2db7f5059c41047876f00  # DV
-          - 55d53828b9d81cbe20b02efd00aa0efd  # DV HLG
-          - a3e19f8f627608af0211acd02bf89735  # DV SDR
-          - b974a6cd08c1066250f1f177d7aa1225  # HDR10+
-          - dfb86d5941bc9075d6af23b09c2aeecd  # HDR10
-          - e61e28db95d22bedcadf030b8f156d96  # HDR
-          - 2a4d9069cc1fe3242ff9bdaebed239bb  # HDR (undefined)
-          - 08d6d8834ad9ec87b1dc7ec8148e7a1f  # PQ
+          # Current consolidated HDR definitions
+          - 493b6d1dbec3c3364c59d7607f7e3405  # HDR
+          - b337d6812e06c200ec9a2d3cfa9d20a7  # DV Boost
+          - caa37d0df9c348912df1fb1d88f9273a  # HDR10+ Boost
           - 9364dd386c9b4a1100dde8264690add7  # HLG
           - 923b6abef9b17f937fab56cfcf89e1f1  # DV (WEBDL)
-          - b17886cb4158d9fea189859409975758  # HDR10+ Boost

@@ -92,3 +92,18 @@ def test_prometheus_route_uses_verified_internal_http_service():
     assert route['hostnames'] == ['prometheus.${SECRET_DOMAIN}']
     assert route['parentRefs'] == [{'name': 'envoy-internal', 'namespace': 'network', 'sectionName': 'https'}]
     assert route['rules'][0]['backendRefs'] == [{'name': 'kube-prometheus-stack-prometheus', 'port': 9090}]
+
+
+def test_recyclarr_preserves_state_between_nonoverlapping_jobs():
+    base = ROOT / 'kubernetes/apps/media/recyclarr/app'
+    values = yaml.safe_load((base / 'helmrelease.yaml').read_text())['spec']['values']
+    assert values['controller']['cronjob']['concurrencyPolicy'] == 'Forbid'
+    assert values['persistence']['config']['existingClaim'] == 'recyclarr-state'
+    assert values['persistence']['config']['mountPath'] == '/config'
+    assert values['persistence']['config-file']['mountPath'] == '/config/recyclarr.yml'
+    assert values['persistence']['config-file']['readOnly'] is True
+    pv = yaml.safe_load((base / 'state-pv.yaml').read_text())['spec']
+    pvc = yaml.safe_load((base / 'state-pvc.yaml').read_text())['spec']
+    assert pv['persistentVolumeReclaimPolicy'] == 'Retain'
+    assert pv['claimRef'] == {'namespace': 'media', 'name': 'recyclarr-state'}
+    assert pvc['volumeName'] == 'local-recyclarr-state'
