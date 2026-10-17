@@ -55,6 +55,9 @@ spec:
       config:
         enabled: true
         existingClaim: recyclarr-state
+        type: pvc
+        readOnly: false
+        subPath: ""
         mountPath: /config
       config-file:
         enabled: true

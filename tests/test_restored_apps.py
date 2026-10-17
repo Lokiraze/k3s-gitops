@@ -100,6 +100,9 @@ def test_recyclarr_preserves_state_between_nonoverlapping_jobs():
     assert values['controller']['cronjob']['concurrencyPolicy'] == 'Forbid'
     assert values['persistence']['config']['existingClaim'] == 'recyclarr-state'
     assert values['persistence']['config']['mountPath'] == '/config'
+    assert values['persistence']['config']['type'] == 'pvc'
+    assert values['persistence']['config']['readOnly'] is False
+    assert values['persistence']['config']['subPath'] == ''
     assert values['persistence']['config-file']['mountPath'] == '/config/recyclarr.yml'
     assert values['persistence']['config-file']['readOnly'] is True
     pv = yaml.safe_load((base / 'state-pv.yaml').read_text())['spec']
