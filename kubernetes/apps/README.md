@@ -14,7 +14,7 @@ sources live under `flux-system/app-recovery/`; secrets remain SOPS-encrypted.
 | Group | Restored applications |
 |---|---|
 | Home | Home Assistant, MQTT/Mosquitto, Z-Wave JS UI, Frigate |
-| Media | Calibre-Web, Jellyseer, Lidarr, Podfetch, Podgrab, Prowlarr, Radarr, Readarr, Recyclarr, Sonarr, Whisparr |
+| Media | Calibre-Web, Jellyseer, Lidarr, Podfetch, Podgrab, Prowlarr, Radarr, Recyclarr, Sonarr, Whisparr |
 | Security | Vaultwarden |
 | Monitoring | Grafana, kube-prometheus-stack |
 | Dashboard | Hajimari |
@@ -83,7 +83,7 @@ not constitute permission to erase its data.
 1. Select a supported image/chart version and review its data/config migration.
    Historical image availability and compatibility with k3s 1.36 are not proven
    by a successful Helm render. Check maintenance status of old projects such as
-   Readarr, Podgrab and Hajimari before choosing to continue or replace them.
+   Podgrab and Hajimari before choosing to continue or replace them.
 2. Choose the owning node, create retained local storage and restore its data.
    Verify UID/GID, the actual mounted path, and recovery after reboot. Do not
    enable stateful apps against empty claims. Frigate also needs its old beta
@@ -100,8 +100,8 @@ not constitute permission to erase its data.
 MQTT retains its original settings and service address. Its old deployment had
 no persistent data volume; decide on retained-message/session persistence before
 activation. Vaultwarden recovery is optional: the owner stores passwords elsewhere.
-Readarr is retired upstream; the owner chose to keep its backups and leave it
-disabled. Do not include Readarr in a bulk application activation.
+Readarr is retired upstream and has been removed at the owner’s request. Its
+existing backups are retained.
 
 ## Validation
 

@@ -4,7 +4,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED = {
     'home': ['home-assistant', 'mosquitto', 'zwave-js-ui', 'frigate'],
-    'media': ['calibre-web','jellyseer','lidarr','podfetch','podgrab','prowlarr','radarr','readarr','recyclarr','sonarr','whisparr'],
+    'media': ['calibre-web','jellyseer','lidarr','podfetch','podgrab','prowlarr','radarr','recyclarr','sonarr','whisparr'],
     'security': ['vaultwarden'],
     'monitoring': ['grafana','kube-prometheus-stack'],
     'default': ['hajimari'],
@@ -15,7 +15,7 @@ def apps():
         for name in names:
             yield ns, name, ROOT / 'kubernetes/apps' / ns / name
 
-DISABLED = {('home', 'frigate'), ('media', 'readarr'), ('security', 'vaultwarden')}
+DISABLED = {('home', 'frigate'), ('security', 'vaultwarden')}
 
 
 def test_every_restored_app_has_explicit_activation_state():
