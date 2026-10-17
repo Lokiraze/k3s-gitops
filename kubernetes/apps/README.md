@@ -59,6 +59,22 @@ Mosquitto retains its listener configuration and service address. Recyclarr reta
 its persistent state and Forbid concurrency policy. Vaultwarden's obsolete separate
 WebSocket listener was removed; current releases serve it on the HTTP port.
 
+## Whisparr Eros v3
+
+Whisparr targets Eros 3.6.5.1886. V3 uses `whisparr3.db` and does not convert
+the v2 series/episode catalog. Its prepared database on Phoenix preserves the
+existing user credentials, API key, 14 indexers, download client and root folder.
+It uses v3's native quality profiles and definitions because their IDs differ
+from v2. The startup guard requires the prepared v3 database.
+
+The v3 library starts empty: the existing media needs importing through v3.
+No media files were moved or deleted. The old `whisparr2.db` remains in the
+config volume; the pre-upgrade snapshot contains 10 series and 90 file records.
+Its encrypted backup is on the NAS under
+`/mnt/user/backups/whisparr-20261017T130831Z/whisparr-v2-before-eros.sops.json`.
+To roll back, restore the v2 image pin and v2 database guard together; changes
+made to the v3 library will not appear in v2.
+
 ## Checks before enabling an app
 
 Home Assistant's local volume is assigned to Bahamut; Z-Wave's is assigned to
