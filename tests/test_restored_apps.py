@@ -110,3 +110,16 @@ def test_recyclarr_preserves_state_between_nonoverlapping_jobs():
     assert pv['persistentVolumeReclaimPolicy'] == 'Retain'
     assert pv['claimRef'] == {'namespace': 'media', 'name': 'recyclarr-state'}
     assert pvc['volumeName'] == 'local-recyclarr-state'
+
+
+def test_workload_manifests_are_referenced_by_kustomize():
+    workload_kinds = {'HelmRelease', 'Deployment', 'StatefulSet', 'DaemonSet', 'Job', 'CronJob', 'Pod'}
+    for path in (ROOT / 'kubernetes/apps').rglob('*.yaml'):
+        if '.sops.' in path.name:
+            continue
+        documents = list(yaml.safe_load_all(path.read_text()))
+        if not any(isinstance(doc, dict) and doc.get('kind') in workload_kinds for doc in documents):
+            continue
+        parent = yaml.safe_load((path.parent / 'kustomization.yaml').read_text())
+        resources = {(path.parent / resource).resolve() for resource in parent.get('resources', [])}
+        assert path.resolve() in resources, f"Unused workload manifest: {path.relative_to(ROOT)}"

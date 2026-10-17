@@ -81,32 +81,4 @@ spec:
       config:
         enabled: true
         existingClaim: home-assistant-config
-    addons:
-      codeserver:
-        enabled: false
-        image:
-          repository: ghcr.io/coder/code-server
-          tag: 4.20.0
-        workingDir: /config
-        args:
-        - --auth
-        - none
-        - --user-data-dir
-        - /config/.vscode
-        - --extensions-dir
-        - /config/.vscode
-        ingress:
-          enabled: false
-          annotations: {}
-          hosts:
-          - host: hass-config.${SECRET_DOMAIN}
-            paths:
-            - path: /
-              pathType: Prefix
-          tls:
-          - hosts:
-            - hass-config.${SECRET_DOMAIN}
-        volumeMounts:
-        - name: config
-          mountPath: /config
   suspend: false
