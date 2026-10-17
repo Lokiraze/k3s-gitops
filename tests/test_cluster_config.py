@@ -24,8 +24,8 @@ def test_cilium_and_k3s_network_agree():
     assert server['flannel-backend'] == 'none'
     assert server['disable-kube-proxy'] and server['disable-network-policy']
     assert 'flannel' not in server['disable']
-    assert cilium['cni']['binPath'] == '/var/lib/rancher/k3s/data/cni'
-    assert cilium['cni']['confPath'] == '/var/lib/rancher/k3s/agent/etc/cni/net.d'
+    assert cilium['cni']['binPath'] == '/opt/cni/bin'
+    assert cilium['cni']['confPath'] == '/etc/cni/net.d'
     assert 'devices' not in cilium  # infer each Debian NIC, not a nonexistent bond
     assert ipaddress.ip_address(network['kube_vip_addr']) in ipaddress.ip_network(network['node_cidr'])
 

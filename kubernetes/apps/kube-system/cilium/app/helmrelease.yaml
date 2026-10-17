@@ -17,8 +17,9 @@ spec:
     cni:
       # Required for pairing with Multus CNI
       exclusive: false
-      binPath: /var/lib/rancher/k3s/data/cni
-      confPath: /var/lib/rancher/k3s/agent/etc/cni/net.d
+      # k3s 1.36 with flannel disabled uses containerd default CNI paths.
+      binPath: /opt/cni/bin
+      confPath: /etc/cni/net.d
     dashboards:
       enabled: true
     endpointRoutes:

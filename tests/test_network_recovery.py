@@ -24,6 +24,19 @@ def test_capture_rejects_ambiguous_or_non_lan_defaults():
         m.management_network([{**route, 'gateway': '10.0.0.1'}], addresses)
 
 
+def test_capture_ignores_reserved_api_vip_but_rejects_other_ambiguity():
+    m = module()
+    route = {'dst': 'default', 'dev': 'eno1', 'gateway': '192.168.1.1'}
+    host = {'family': 'inet', 'local': '192.168.1.15', 'prefixlen': 24}
+    vip = {**host, 'local': '192.168.1.18'}
+    link = {'ifname': 'eno1', 'address': 'aa:bb:cc:dd:ee:ff', 'addr_info': [host, vip]}
+    assert m.management_network([route], [link])['address'] == '192.168.1.15/24'
+    with pytest.raises(ValueError):
+        m.management_network([route], [{**link, 'addr_info': [vip]}])
+    with pytest.raises(ValueError):
+        m.management_network([route], [{**link, 'addr_info': [host, {**vip, 'local': '192.168.1.19'}]}])
+
+
 def test_recovery_refuses_live_containers_and_ceph():
     m = module()
     for processes, mounts in [(['containerd-shim-runc-v2'], ''), (['cilium-agent'], ''),
@@ -40,6 +53,16 @@ def test_cleanup_stderr_is_not_treated_as_success():
     with pytest.raises(RuntimeError):
         m.check_cleanup_result(1, '')
     m.check_cleanup_result(0, '')
+
+
+def test_cleanup_accepts_cilium_unmount_info_but_not_errors():
+    m = module()
+    info = 'time="2026-10-16T18:15:06-07:00" level=info msg="Trying to unmount /run/cilium/cgroupv2"\n'
+    m.check_cleanup_result(0, info)
+    with pytest.raises(RuntimeError):
+        m.check_cleanup_result(0, info + 'Error: cannot detach BPF program\n')
+    with pytest.raises(RuntimeError):
+        m.check_cleanup_result(1, info)
 
 
 def test_restore_cannot_touch_network_before_quiescence_check(tmp_path, monkeypatch):

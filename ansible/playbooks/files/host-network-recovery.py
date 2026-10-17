@@ -45,7 +45,8 @@ def management_network(routes, addresses):
     if len(links) != 1 or not re.fullmatch(r'[a-zA-Z0-9_.-]+', route['dev']):
         raise ValueError('Ambiguous management interface')
     link = links[0]
-    ips = [a for a in link['addr_info'] if a['family'] == 'inet'
+    # Keepalived's reserved API VIP must never become the SSH rescue address.
+    ips = [a for a in link['addr_info'] if a['family'] == 'inet' and a['local'] != '192.168.1.18'
            and ipaddress.ip_address(a['local']) in LAN and a['prefixlen'] == 24]
     if len(ips) != 1:
         raise ValueError('Require one management /24 address')
@@ -64,8 +65,11 @@ def require_quiesced(processes, mounts):
 
 
 def check_cleanup_result(code, stderr):
-    if code or stderr.strip():
-        raise RuntimeError('Cilium cleanup reported an error: ' + stderr.strip())
+    # Cilium 1.14.5 logs this normal cleanup step to stderr.
+    errors = '\n'.join(line for line in stderr.splitlines() if not re.fullmatch(
+        r'time="[^"]+" level=info msg="Trying to unmount /run/cilium/cgroupv2"', line))
+    if code or errors.strip():
+        raise RuntimeError('Cilium cleanup reported an error: ' + errors.strip())
 
 
 def cleanup_command(binary):
