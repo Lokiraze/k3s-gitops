@@ -140,6 +140,7 @@ def test_cancellation_load_does_not_need_network_or_snapshot(tmp_path, monkeypat
 
 @pytest.mark.parametrize('version, command', [
     ('1.14.5', 'cleanup'), ('1.20.2', 'post-uninstall-cleanup'),
+    ('1.20.3', 'post-uninstall-cleanup'),
 ])
 def test_restore_uses_saved_client_version_without_expanding_cleanup_scope(tmp_path, monkeypatch, version, command):
     from subprocess import CompletedProcess
