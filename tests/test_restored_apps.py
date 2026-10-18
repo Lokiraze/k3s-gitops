@@ -146,4 +146,4 @@ def test_frigate_uses_local_database_and_authenticated_route():
     assert pv['persistentVolumeReclaimPolicy'] == 'Retain'
     assert pv['local']['path'] == '/var/lib/homelab/app-data/frigate-config'
     assert values['persistence']['config']['globalMounts'] == [{'path': '/config'}]
-    assert values['persistence']['media']['advancedMounts']['main']['app'] == [{'path': '/media/frigate'}]
+    assert values['persistence']['media']['advancedMounts']['main']['app'] == [{'path': '/media'}]

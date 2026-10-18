@@ -208,7 +208,8 @@ Frigate's deployment definition now uses app-template 5.3.0 and Frigate 0.18.2.
 Its writable `/config` and database use the retained `local-frigate-config` PV on
 Bahamut's internal filesystem, prepared by `ansible/playbooks/frigate-storage.yaml`.
 Git supplies `config.yml` at startup; the database and login accounts persist.
-The existing NAS path mounts at `/media/frigate`. Snapshot behavior is preserved;
+The existing NAS path mounts at `/media`, matching the old chart. Frigate uses
+its existing `frigate/` subdirectory beneath that mount. Snapshot behavior is preserved;
 continuous recording has not been enabled.
 
 The internal `cctv.${SECRET_DOMAIN}` route targets authenticated port 8971.
@@ -218,7 +219,8 @@ On first startup, Frigate generates an admin password in its startup logs; store
 it privately and change it after signing in.
 
 On 2026-10-18, the USB Coral delegate loaded on Bahamut and all five configured
-camera URLs authenticated and provided 3840x2160 H.264 streams. Disposable checks
+camera URLs authenticated and provided 3840x2160 H.264 streams. All five also
+passed a ten-frame Intel VAAPI decoding check. Disposable checks
 verified config parsing and create/write/fsync/delete access to both storage
 paths. The unused sixth camera secret was unreachable and remains unconfigured.
 The production rollout and sustained five-camera load still need verification

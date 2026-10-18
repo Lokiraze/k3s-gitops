@@ -141,7 +141,8 @@ spec:
         advancedMounts:
           main:
             app:
-            - path: /media/frigate
+            # Preserve the old chart mount: Frigate appends /frigate beneath /media.
+            - path: /media
       shm:
         type: emptyDir
         medium: Memory
