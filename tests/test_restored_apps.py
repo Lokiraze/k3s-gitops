@@ -15,7 +15,7 @@ def apps():
         for name in names:
             yield ns, name, ROOT / 'kubernetes/apps' / ns / name
 
-DISABLED = {('home', 'frigate'), ('security', 'vaultwarden')}
+DISABLED = {('security', 'vaultwarden')}
 
 
 def test_every_restored_app_has_explicit_activation_state():
@@ -48,10 +48,10 @@ def test_vaultwarden_persists_actual_data_and_frigate_uses_secret_env():
     assert hr['spec']['values']['persistence']['config']['advancedMounts']['main']['vaultwarden'] == [{'path': '/data'}]
     hr = yaml.safe_load((ROOT / 'kubernetes/apps/home/frigate/app/helmrelease.yaml').read_text())
     values = hr['spec']['values']
-    config = values['configmap']['config']['data']['config.yml']
+    config = values['configMaps']['config']['data']['config.yml']
     assert '${PORCH_CAMERA}' not in config
     assert '{FRIGATE_PORCH_CAMERA}' in config
-    assert values['env']['FRIGATE_PORCH_CAMERA']['valueFrom']['secretKeyRef']['key'] == 'PORCH_CAMERA'
+    assert values['controllers']['main']['containers']['app']['env']['FRIGATE_PORCH_CAMERA']['valueFrom']['secretKeyRef']['key'] == 'PORCH_CAMERA'
     assert values['persistence']['usb']['hostPath'] == '/dev/bus/usb'
 
 
@@ -125,3 +125,25 @@ def test_workload_manifests_are_referenced_by_kustomize():
         parent = yaml.safe_load((path.parent / 'kustomization.yaml').read_text())
         resources = {(path.parent / resource).resolve() for resource in parent.get('resources', [])}
         assert path.resolve() in resources, f"Unused workload manifest: {path.relative_to(ROOT)}"
+
+
+def test_frigate_uses_local_database_and_authenticated_route():
+    base = ROOT / 'kubernetes/apps/home/frigate/app'
+    values = yaml.safe_load((base / 'helmrelease.yaml').read_text())['spec']['values']
+    config = yaml.safe_load(values['configMaps']['config']['data']['config.yml'])
+    assert config['database']['path'] == '/config/frigate.db'
+    assert config['auth']['enabled'] is True
+    assert config['tls']['enabled'] is False
+    assert config['ffmpeg']['hwaccel_args'] == 'preset-vaapi'
+    assert all(c['ffmpeg']['inputs'][0]['roles'] == ['detect'] for c in config['cameras'].values())
+    assert values['service']['main']['ports'] == {'http': {'port': 8971}}
+    route = yaml.safe_load((base / 'httproute.yaml').read_text())
+    assert route['spec']['rules'][0]['backendRefs'] == [{'name': 'frigate', 'port': 8971}]
+    assert route['spec']['parentRefs'][0]['name'] == 'envoy-internal'
+    pv = yaml.safe_load((base / 'config-pv.yaml').read_text())['spec']
+    pvc = yaml.safe_load((base / 'config-pvc.yaml').read_text())['spec']
+    assert pvc['volumeName'] == 'local-frigate-config'
+    assert pv['persistentVolumeReclaimPolicy'] == 'Retain'
+    assert pv['local']['path'] == '/var/lib/homelab/app-data/frigate-config'
+    assert values['persistence']['config']['globalMounts'] == [{'path': '/config'}]
+    assert values['persistence']['media']['advancedMounts']['main']['app'] == [{'path': '/media/frigate'}]

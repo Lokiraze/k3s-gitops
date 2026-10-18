@@ -204,7 +204,23 @@ Camera addresses were inert placeholders. The parser also accepted the original
 configuration; parsing alone does not prove that its old FFmpeg arguments work.
 The candidate is saved under ignored `.rebuild/frigate-0.18.2-candidate.yaml`.
 
-Frigate remains suspended at its historical deployment definition until the
-chart, writable local config/database volume, authenticated web route and NAS
-recording mounts are migrated together. These hardware checks do not validate
-live camera streams, H.265 decoding, recording retention or sustained load.
+Frigate's deployment definition now uses app-template 5.3.0 and Frigate 0.18.2.
+Its writable `/config` and database use the retained `local-frigate-config` PV on
+Bahamut's internal filesystem, prepared by `ansible/playbooks/frigate-storage.yaml`.
+Git supplies `config.yml` at startup; the database and login accounts persist.
+The existing NAS path mounts at `/media/frigate`. Snapshot behavior is preserved;
+continuous recording has not been enabled.
+
+The internal `cctv.${SECRET_DOMAIN}` route targets authenticated port 8971.
+Envoy terminates TLS; Frigate authentication remains enabled. Port 5000 is used
+only for pod health probes and is not exposed by the Kubernetes Service.
+On first startup, Frigate generates an admin password in its startup logs; store
+it privately and change it after signing in.
+
+On 2026-10-18, the USB Coral delegate loaded on Bahamut and all five configured
+camera URLs authenticated and provided 3840x2160 H.264 streams. Disposable checks
+verified config parsing and create/write/fsync/delete access to both storage
+paths. The unused sixth camera secret was unreachable and remains unconfigured.
+The production rollout and sustained five-camera load still need verification
+after these Git changes are merged and Flux reconciles them.
+

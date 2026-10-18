@@ -1,9 +1,10 @@
----
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: frigate-config
   namespace: home
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   accessModes:
   - ReadWriteOnce
@@ -11,3 +12,4 @@ spec:
     requests:
       storage: 5Gi
   storageClassName: local-app-data
+  volumeName: local-frigate-config

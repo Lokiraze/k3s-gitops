@@ -1,9 +1,14 @@
----
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: frigate
   namespace: home
+  annotations:
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/name: Cameras
+    gethomepage.dev/group: Home
+    gethomepage.dev/icon: frigate.svg
+    gethomepage.dev/href: https://cctv.${SECRET_DOMAIN}
 spec:
   parentRefs:
   - name: envoy-internal
@@ -14,4 +19,4 @@ spec:
   rules:
   - backendRefs:
     - name: frigate
-      port: 5000
+      port: 8971
