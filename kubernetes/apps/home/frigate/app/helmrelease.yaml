@@ -121,6 +121,8 @@ spec:
         ports:
           http:
             port: 8971
+          rtsp:
+            port: 8554
     persistence:
       config:
         existingClaim: frigate-config
@@ -190,6 +192,18 @@ spec:
             ffmpeg:
               input_args: preset-rtsp-generic
               hwaccel_args: preset-vaapi
+            go2rtc:
+              streams:
+                porch:
+                - '{FRIGATE_PORCH_CAMERA}'
+                garage:
+                - '{FRIGATE_GARAGE_CAMERA}'
+                backyard_pathway_1:
+                - '{FRIGATE_BACKYARD_PATHWAY_CAMERA_1}'
+                side_alley_1:
+                - '{FRIGATE_SIDE_ALLEY_CAMERA_1}'
+                side_alley_2:
+                - '{FRIGATE_SIDE_ALLEY_CAMERA_2}'
             cameras:
               porch:
                 ffmpeg:

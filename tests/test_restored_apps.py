@@ -136,7 +136,10 @@ def test_frigate_uses_local_database_and_authenticated_route():
     assert config['tls']['enabled'] is False
     assert config['ffmpeg']['hwaccel_args'] == 'preset-vaapi'
     assert all(c['ffmpeg']['inputs'][0]['roles'] == ['detect'] for c in config['cameras'].values())
-    assert values['service']['main']['ports'] == {'http': {'port': 8971}}
+    assert values['service']['main']['ports'] == {'http': {'port': 8971}, 'rtsp': {'port': 8554}}
+    assert config['go2rtc']['streams'] == {
+        name: [camera['ffmpeg']['inputs'][0]['path']] for name, camera in config['cameras'].items()
+    }
     route = yaml.safe_load((base / 'httproute.yaml').read_text())
     assert route['spec']['rules'][0]['backendRefs'] == [{'name': 'frigate', 'port': 8971}]
     assert route['spec']['parentRefs'][0]['name'] == 'envoy-internal'
