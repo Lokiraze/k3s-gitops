@@ -1,0 +1,235 @@
+title: Home Controls
+views:
+- title: Home
+  path: home
+  type: sections
+  max_columns: 2
+  sections:
+  - type: grid
+    cards:
+    - type: heading
+      heading: Home controls
+      icon: mdi:home-automation
+    - type: entities
+      title: Door lock
+      show_header_toggle: false
+      entities:
+      - entity: lock.assure_touchscreen_deadbolt
+        name: Yale lock
+    - type: button
+      name: Manage door codes
+      icon: mdi:form-textbox-password
+      tap_action:
+        action: navigate
+        navigation_path: /home-controls/codes
+      grid_options:
+        columns: 12
+        rows: 2
+    - type: thermostat
+      entity: climate.z_wave_plus_thermostat
+      name: Thermostat
+    - type: heading
+      heading: Maintenance
+      icon: mdi:wrench-clock
+    - type: entities
+      show_header_toggle: false
+      entities:
+      - entity: sensor.change_air_filters
+        name: Change air filters
+    - type: button
+      name: Mark filters changed
+      icon: mdi:check
+      tap_action:
+        action: perform-action
+        perform_action: script.change_air_filters_completed
+        confirmation:
+          text: Mark air filters changed today? The next reminder will be due in 90
+            days.
+      grid_options:
+        columns: 12
+        rows: 2
+  - type: grid
+    cards:
+    - type: heading
+      heading: Cameras
+      icon: mdi:cctv
+    - type: picture-entity
+      entity: camera.porch
+      name: Porch
+      camera_view: auto
+      show_state: false
+      tap_action:
+        action: more-info
+      grid_options:
+        columns: 6
+        rows: auto
+    - type: picture-entity
+      entity: camera.garage
+      name: Garage
+      camera_view: auto
+      show_state: false
+      tap_action:
+        action: more-info
+      grid_options:
+        columns: 6
+        rows: auto
+    - type: picture-entity
+      entity: camera.backyard_pathway_1
+      name: Backyard pathway
+      camera_view: auto
+      show_state: false
+      tap_action:
+        action: more-info
+      grid_options:
+        columns: 6
+        rows: auto
+    - type: picture-entity
+      entity: camera.side_alley_1
+      name: Side alley 1
+      camera_view: auto
+      show_state: false
+      tap_action:
+        action: more-info
+      grid_options:
+        columns: 6
+        rows: auto
+    - type: picture-entity
+      entity: camera.side_alley_2
+      name: Side alley 2
+      camera_view: auto
+      show_state: false
+      tap_action:
+        action: more-info
+      grid_options:
+        columns: 6
+        rows: auto
+- title: Door codes
+  path: codes
+  subview: true
+  cards:
+  - type: markdown
+    content: '## Front door codes
+
+      Choose an unused slot, set its name and PIN, then enable it. Check **Lock sync**
+      to confirm it reached the lock. Editing an existing slot changes that person’s
+      access.'
+  - type: entities
+    title: Code slot 1
+    show_header_toggle: false
+    entities:
+    - entity: text.frontdoor_code_slot_1_name
+      name: Name
+    - entity: text.frontdoor_code_slot_1_pin
+      name: PIN
+    - entity: switch.frontdoor_code_slot_1_enabled
+      name: Enabled
+    - entity: sensor.frontdoor_code_slot_1_sync_status
+      name: Lock sync
+  - type: entities
+    title: Code slot 2
+    show_header_toggle: false
+    entities:
+    - entity: text.frontdoor_code_slot_2_name
+      name: Name
+    - entity: text.frontdoor_code_slot_2_pin
+      name: PIN
+    - entity: switch.frontdoor_code_slot_2_enabled
+      name: Enabled
+    - entity: sensor.frontdoor_code_slot_2_sync_status
+      name: Lock sync
+  - type: entities
+    title: Code slot 3
+    show_header_toggle: false
+    entities:
+    - entity: text.frontdoor_code_slot_3_name
+      name: Name
+    - entity: text.frontdoor_code_slot_3_pin
+      name: PIN
+    - entity: switch.frontdoor_code_slot_3_enabled
+      name: Enabled
+    - entity: sensor.frontdoor_code_slot_3_sync_status
+      name: Lock sync
+  - type: entities
+    title: Code slot 4
+    show_header_toggle: false
+    entities:
+    - entity: text.frontdoor_code_slot_4_name
+      name: Name
+    - entity: text.frontdoor_code_slot_4_pin
+      name: PIN
+    - entity: switch.frontdoor_code_slot_4_enabled
+      name: Enabled
+    - entity: sensor.frontdoor_code_slot_4_sync_status
+      name: Lock sync
+  - type: entities
+    title: Code slot 5
+    show_header_toggle: false
+    entities:
+    - entity: text.frontdoor_code_slot_5_name
+      name: Name
+    - entity: text.frontdoor_code_slot_5_pin
+      name: PIN
+    - entity: switch.frontdoor_code_slot_5_enabled
+      name: Enabled
+    - entity: sensor.frontdoor_code_slot_5_sync_status
+      name: Lock sync
+  - type: entities
+    title: Code slot 6
+    show_header_toggle: false
+    entities:
+    - entity: text.frontdoor_code_slot_6_name
+      name: Name
+    - entity: text.frontdoor_code_slot_6_pin
+      name: PIN
+    - entity: switch.frontdoor_code_slot_6_enabled
+      name: Enabled
+    - entity: sensor.frontdoor_code_slot_6_sync_status
+      name: Lock sync
+  - type: entities
+    title: Code slot 7
+    show_header_toggle: false
+    entities:
+    - entity: text.frontdoor_code_slot_7_name
+      name: Name
+    - entity: text.frontdoor_code_slot_7_pin
+      name: PIN
+    - entity: switch.frontdoor_code_slot_7_enabled
+      name: Enabled
+    - entity: sensor.frontdoor_code_slot_7_sync_status
+      name: Lock sync
+  - type: entities
+    title: Code slot 8
+    show_header_toggle: false
+    entities:
+    - entity: text.frontdoor_code_slot_8_name
+      name: Name
+    - entity: text.frontdoor_code_slot_8_pin
+      name: PIN
+    - entity: switch.frontdoor_code_slot_8_enabled
+      name: Enabled
+    - entity: sensor.frontdoor_code_slot_8_sync_status
+      name: Lock sync
+  - type: entities
+    title: Code slot 9
+    show_header_toggle: false
+    entities:
+    - entity: text.frontdoor_code_slot_9_name
+      name: Name
+    - entity: text.frontdoor_code_slot_9_pin
+      name: PIN
+    - entity: switch.frontdoor_code_slot_9_enabled
+      name: Enabled
+    - entity: sensor.frontdoor_code_slot_9_sync_status
+      name: Lock sync
+  - type: entities
+    title: Code slot 10
+    show_header_toggle: false
+    entities:
+    - entity: text.frontdoor_code_slot_10_name
+      name: Name
+    - entity: text.frontdoor_code_slot_10_pin
+      name: PIN
+    - entity: switch.frontdoor_code_slot_10_enabled
+      name: Enabled
+    - entity: sensor.frontdoor_code_slot_10_sync_status
+      name: Lock sync

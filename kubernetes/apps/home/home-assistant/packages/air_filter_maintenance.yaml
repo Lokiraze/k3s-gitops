@@ -1,0 +1,45 @@
+# No initial date: Home Assistant restores the last completion across restarts.
+# A restored completion flag keeps a fresh installation overdue.
+input_boolean:
+  air_filters_completed_once:
+    name: Air filters have been changed
+
+input_datetime:
+  air_filters_last_changed:
+    name: Air filters last changed
+    has_date: true
+    has_time: false
+
+script:
+  change_air_filters_completed:
+    alias: Change air filters - mark completed
+    icon: mdi:air-filter
+    mode: single
+    sequence:
+      - action: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.air_filters_last_changed
+        data:
+          date: "{{ now().date().isoformat() }}"
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.air_filters_completed_once
+
+template:
+  - sensor:
+      - name: Change air filters
+        unique_id: change_air_filters_maintenance
+        icon: mdi:air-filter
+        state: >-
+          {% set last = states('input_datetime.air_filters_last_changed') %}
+          {% set completed = as_datetime(last, none) %}
+          {% if not is_state('input_boolean.air_filters_completed_once', 'on') or completed is none or completed.year < 2000 %}
+            Overdue
+          {% else %}
+            {% set days = (completed.date() + timedelta(days=90) - now().date()).days %}
+            {{ 'Overdue' if days < 0 else ('Due today' if days == 0 else 'Due in ' ~ days ~ ' days') }}
+          {% endif %}
+        attributes:
+          next_due: >-
+            {% set completed = as_datetime(states('input_datetime.air_filters_last_changed'), none) %}
+            {{ (completed.date() + timedelta(days=90)).isoformat() if is_state('input_boolean.air_filters_completed_once', 'on') and completed is not none and completed.year >= 2000 else 'Overdue' }}
