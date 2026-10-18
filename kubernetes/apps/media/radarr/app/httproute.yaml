@@ -8,8 +8,12 @@ metadata:
     gethomepage.dev/enabled: 'true'
     gethomepage.dev/name: Movies
     gethomepage.dev/group: Media
-    gethomepage.dev/icon: mdi-movie
+    gethomepage.dev/icon: radarr.svg
     gethomepage.dev/href: https://movies.${SECRET_DOMAIN}
+    gethomepage.dev/description: Movies and download queue
+    gethomepage.dev/widget.type: radarr
+    gethomepage.dev/widget.url: http://radarr.media.svc.cluster.local:80
+    gethomepage.dev/widget.key: '{{HOMEPAGE_VAR_RADARR_KEY}}'
 spec:
   parentRefs:
   - name: envoy-internal

@@ -8,8 +8,12 @@ metadata:
     gethomepage.dev/enabled: 'true'
     gethomepage.dev/name: Subtitles
     gethomepage.dev/group: Media
-    gethomepage.dev/icon: mdi-subtitles
+    gethomepage.dev/icon: bazarr.svg
     gethomepage.dev/href: https://bazarr.${SECRET_DOMAIN}
+    gethomepage.dev/description: Missing movie and episode subtitles
+    gethomepage.dev/widget.type: bazarr
+    gethomepage.dev/widget.url: http://bazarr.media.svc.cluster.local:6767
+    gethomepage.dev/widget.key: '{{HOMEPAGE_VAR_BAZARR_KEY}}'
 spec:
   parentRefs:
   - name: envoy-internal

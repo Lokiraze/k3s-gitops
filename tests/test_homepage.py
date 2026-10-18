@@ -34,3 +34,26 @@ def test_themes_use_local_server_and_supported_linuxserver_mods():
         assert target['env']['DOCKER_MODS'] == f'ghcr.io/themepark-dev/theme.park:{app}'
         assert target['env']['TP_DOMAIN'] == 'theme-park.${SECRET_DOMAIN}'
         assert target['env']['TP_THEME'] == 'aquamarine'
+
+
+def test_discovered_widgets_reference_encrypted_credentials():
+    base = 'kubernetes/apps/default/homepage/app/'
+    values = read(base + 'helmrelease.yaml')['spec']['values']
+    app = values['controllers']['main']['containers']['app']
+    assert {'secretRef': {'name': 'homepage-widgets'}} in app['envFrom']
+    secret = read(base + 'secret.sops.yaml')
+    assert secret['metadata'] == {'name': 'homepage-widgets', 'namespace': 'default'}
+    assert 'sops' in secret
+    assert './secret.sops.yaml' in read(base + 'kustomization.yaml')['resources']
+    for name, kind in [('sonarr', 'sonarr'), ('radarr', 'radarr'), ('lidarr', 'lidarr'),
+                       ('prowlarr', 'prowlarr'), ('bazarr', 'bazarr'), ('jellyseer', 'seerr')]:
+        route = read(f'kubernetes/apps/media/{name}/app/httproute.yaml')
+        annotations = route['metadata']['annotations']
+        key = f'HOMEPAGE_VAR_{name.upper()}_KEY'
+        assert annotations['gethomepage.dev/widget.type'] == kind
+        assert annotations['gethomepage.dev/widget.key'] == '{{' + key + '}}'
+        assert secret['stringData'][key].startswith('ENC[AES256_GCM,')
+        backend = route['spec']['rules'][0]['backendRefs'][0]
+        assert annotations['gethomepage.dev/widget.url'] == (
+            f"http://{backend['name']}.media.svc.cluster.local:{backend['port']}"
+        )

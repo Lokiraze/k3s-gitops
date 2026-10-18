@@ -39,6 +39,9 @@ spec:
             env:
               TZ: ${TIMEZONE}
               HOMEPAGE_ALLOWED_HOSTS: ${SECRET_DOMAIN}
+            envFrom:
+            - secretRef:
+                name: homepage-widgets
             probes:
               startup:
                 enabled: true
@@ -116,9 +119,22 @@ spec:
 
             '
           widgets.yaml: "- search:\n    provider: duckduckgo\n    target: _blank\n"
-          settings.yaml: "title: Home\ntheme: dark\ncolor: teal\nheaderStyle: clean\n\
-            statusStyle: dot\nbackground:\n  opacity: 100\nlayout:\n  Home:\n    style:\
-            \ row\n    columns: 3\n  Media:\n    style: row\n    columns: 4\n  Infrastructure:\n\
-            \    style: row\n    columns: 3\n"
+          settings.yaml: |
+            title: Home
+            theme: dark
+            color: slate
+            headerStyle: underlined
+            statusStyle: dot
+            iconStyle: flat
+            layout:
+              Home:
+                style: row
+                columns: 3
+              Media:
+                style: row
+                columns: 3
+              Infrastructure:
+                style: row
+                columns: 3
           custom.css: ''
           custom.js: ''

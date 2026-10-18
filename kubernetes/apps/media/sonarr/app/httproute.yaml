@@ -8,8 +8,12 @@ metadata:
     gethomepage.dev/enabled: 'true'
     gethomepage.dev/name: TV Shows
     gethomepage.dev/group: Media
-    gethomepage.dev/icon: mdi-television
+    gethomepage.dev/icon: sonarr.svg
     gethomepage.dev/href: https://tv.${SECRET_DOMAIN}
+    gethomepage.dev/description: Series, missing episodes and queue
+    gethomepage.dev/widget.type: sonarr
+    gethomepage.dev/widget.url: http://sonarr.media.svc.cluster.local:80
+    gethomepage.dev/widget.key: '{{HOMEPAGE_VAR_SONARR_KEY}}'
 spec:
   parentRefs:
   - name: envoy-internal
