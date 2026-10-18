@@ -7,7 +7,7 @@ runner:
     CARGO_BUILD_JOBS: "3"
   timeout: 6h
   labels:
-    - release:docker://node:22-bookworm
+    - release:docker://release-ci:1
     - rust:docker://rust-ci:1.99.1
 cache:
   enabled: false

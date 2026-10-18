@@ -9,3 +9,4 @@ configMapGenerator:
     files:
       - config.yaml
       - Dockerfile
+      - Dockerfile.release

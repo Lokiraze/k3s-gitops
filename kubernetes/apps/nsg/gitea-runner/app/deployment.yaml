@@ -45,11 +45,13 @@ spec:
               mountPath: /var/lib/docker
             - name: docker-socket
               mountPath: /var/run
-        - name: build-rust-image
+        - name: build-job-images
           image: docker:27.5.1-cli
           command: [sh, -ec]
           args:
-            - docker build -t rust-ci:1.99.1 /config
+            - |
+              docker build -t rust-ci:1.99.1 /config
+              docker build -t release-ci:1 -f /config/Dockerfile.release /config
           volumeMounts:
             - name: docker-socket
               mountPath: /var/run
@@ -66,7 +68,7 @@ spec:
                 act_runner register --no-interactive --config /config/config.yaml \
                   --instance https://git.noshamegames.com \
                   --token "$REGISTRATION_TOKEN" --name gitea-home-phoenix \
-                  --labels 'release:docker://node:22-bookworm,rust:docker://rust-ci:1.99.1'
+                  --labels 'release:docker://release-ci:1,rust:docker://rust-ci:1.99.1'
               fi
               exec act_runner daemon --config /config/config.yaml
           env:
