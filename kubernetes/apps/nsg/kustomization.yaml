@@ -8,3 +8,4 @@ resources:
 - colony/ks.yaml
 - steamtactics/bootstrap-ks.yaml
 - steamtactics/ks.yaml
+- gitea-runner/ks.yaml

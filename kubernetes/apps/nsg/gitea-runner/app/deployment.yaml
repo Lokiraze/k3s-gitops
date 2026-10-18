@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitea-runner
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: gitea-runner
+  template:
+    metadata:
+      labels:
+        app: gitea-runner
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 60
+      nodeSelector:
+        kubernetes.io/hostname: k8s-phoenix
+      initContainers:
+        - name: docker
+          image: docker:27.5.1-dind
+          restartPolicy: Always
+          args: ["dockerd", "--host=unix:///var/run/docker.sock", "--storage-driver=overlay2"]
+          env:
+            - name: DOCKER_TLS_CERTDIR
+              value: ""
+          securityContext:
+            privileged: true
+          startupProbe:
+            exec:
+              command: [docker, info]
+            periodSeconds: 5
+            failureThreshold: 60
+          resources:
+            requests:
+              cpu: "1"
+              memory: 2Gi
+            limits:
+              cpu: "3"
+              memory: 6Gi
+          volumeMounts:
+            - name: docker-data
+              mountPath: /var/lib/docker
+            - name: docker-socket
+              mountPath: /var/run
+        - name: build-rust-image
+          image: docker:27.5.1-cli
+          command: [sh, -ec]
+          args:
+            - docker build -t rust-ci:1.99.1 /config
+          volumeMounts:
+            - name: docker-socket
+              mountPath: /var/run
+            - name: config
+              mountPath: /config
+      containers:
+        - name: runner
+          image: gitea/act_runner:0.6.1
+          workingDir: /data
+          command: [sh, -ec]
+          args:
+            - |
+              if [ ! -s /data/.runner ]; then
+                act_runner register --no-interactive --config /config/config.yaml \
+                  --instance https://git.noshamegames.com \
+                  --token "$REGISTRATION_TOKEN" --name gitea-home-phoenix \
+                  --labels 'home:docker://node:22-bookworm,home-rust:docker://rust-ci:1.99.1'
+              fi
+              exec act_runner daemon --config /config/config.yaml
+          env:
+            - name: REGISTRATION_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: gitea-runner-registration
+                  key: token
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 256Mi
+          volumeMounts:
+            - name: docker-socket
+              mountPath: /var/run
+            - name: runner-data
+              mountPath: /data
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: docker-socket
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: gitea-runner-config
+        - name: docker-data
+          hostPath:
+            path: /var/lib/homelab/ci/gitea/docker
+            type: DirectoryOrCreate
+        - name: runner-data
+          hostPath:
+            path: /var/lib/homelab/ci/gitea/runner
+            type: DirectoryOrCreate

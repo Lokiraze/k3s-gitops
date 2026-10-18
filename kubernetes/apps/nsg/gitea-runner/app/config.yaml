@@ -1,0 +1,22 @@
+log:
+  level: info
+runner:
+  file: /data/.runner
+  capacity: 1
+  timeout: 6h
+  labels:
+    - home:docker://node:22-bookworm
+    - home-rust:docker://rust-ci:1.99.1
+cache:
+  enabled: false
+container:
+  docker_host: unix:///var/run/docker.sock
+  valid_volumes:
+    - gitea-cargo-registry
+    - gitea-cargo-git
+    - gitea-rust-target
+  options: >-
+    --cpus=3 --memory=5g
+    -v gitea-cargo-registry:/usr/local/cargo/registry
+    -v gitea-cargo-git:/usr/local/cargo/git
+    -v gitea-rust-target:/workspace/target
