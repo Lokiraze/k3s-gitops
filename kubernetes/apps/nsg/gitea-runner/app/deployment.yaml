@@ -66,7 +66,7 @@ spec:
                 act_runner register --no-interactive --config /config/config.yaml \
                   --instance https://git.noshamegames.com \
                   --token "$REGISTRATION_TOKEN" --name gitea-home-phoenix \
-                  --labels 'home:docker://node:22-bookworm,home-rust:docker://rust-ci:1.99.1'
+                  --labels 'release:docker://node:22-bookworm,rust:docker://rust-ci:1.99.1'
               fi
               exec act_runner daemon --config /config/config.yaml
           env:

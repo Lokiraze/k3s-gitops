@@ -3,10 +3,12 @@ log:
 runner:
   file: /data/.runner
   capacity: 1
+  envs:
+    CARGO_BUILD_JOBS: "3"
   timeout: 6h
   labels:
-    - home:docker://node:22-bookworm
-    - home-rust:docker://rust-ci:1.99.1
+    - release:docker://node:22-bookworm
+    - rust:docker://rust-ci:1.99.1
 cache:
   enabled: false
 container:
