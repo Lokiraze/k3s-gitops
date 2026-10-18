@@ -1,0 +1,32 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: steamtactics-portal
+spec:
+  parentRefs:
+  - name: envoy-internal
+    namespace: network
+    sectionName: https
+  hostnames:
+  - nsg.lokiraze.dev
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /api
+    backendRefs:
+    - name: steamtactics-api
+      port: 8080
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /games/steamtactics
+    filters:
+    - type: RequestRedirect
+      requestRedirect:
+        scheme: https
+        hostname: steamtactics.lokiraze.dev
+        path:
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /
+        statusCode: 302

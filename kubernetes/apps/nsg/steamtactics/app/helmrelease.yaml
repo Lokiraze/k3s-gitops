@@ -1,0 +1,67 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: steamtactics
+  namespace: nsg
+spec:
+  interval: 5m
+  timeout: 15m
+  chartRef:
+    kind: OCIRepository
+    name: steamtactics
+  values:
+    existingSecret: steamtactics-runtime
+    imagePullSecrets:
+    - name: gitea-registry
+    api:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+        kubernetes.io/hostname: k8s-bahamut
+      resources: &id001
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          memory: 256Mi
+    admin:
+      enabled: false
+    adminWeb:
+      enabled: false
+    playerWeb:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          memory: 128Mi
+    room:
+      replicas: 1
+      resources: *id001
+    runtime:
+      starterPackID: 73ec0f80-d8b8-525c-9679-401d4216a21f
+      allowedOrigins: https://nsg.lokiraze.dev,https://steamtactics.lokiraze.dev
+    player:
+      portalOrigin: https://nsg.lokiraze.dev
+    identity:
+      adminUpstream: http://identity-api.nsg.svc.cluster.local:8080
+    artwork:
+      mode: existingClaim
+      existingClaim: steamtactics-artwork
+    routes:
+      parentRefs:
+      - name: envoy-internal
+        namespace: network
+        sectionName: https
+      player:
+        enabled: true
+        hostname: steamtactics.lokiraze.dev
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          group: agones.dev
+          version: v1
+          kind: Fleet
+          name: game-servers-steamtactics
+        patch: "- op: replace\n  path: /spec/strategy/rollingUpdate/maxUnavailable\n\
+          \  value: 1\n"

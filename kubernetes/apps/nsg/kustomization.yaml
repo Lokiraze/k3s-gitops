@@ -6,3 +6,5 @@ resources:
 - identity/ks.yaml
 - colony/database-ks.yaml
 - colony/ks.yaml
+- steamtactics/bootstrap-ks.yaml
+- steamtactics/ks.yaml

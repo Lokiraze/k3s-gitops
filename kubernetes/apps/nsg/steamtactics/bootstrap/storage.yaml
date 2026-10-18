@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-steamtactics-artwork
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-app-data
+  claimRef:
+    namespace: nsg
+    name: steamtactics-artwork
+  local:
+    path: /var/lib/homelab/app-data/steamtactics-artwork
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k8s-bahamut
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: steamtactics-artwork
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-app-data
+  volumeName: local-steamtactics-artwork
+  resources:
+    requests:
+      storage: 1Gi

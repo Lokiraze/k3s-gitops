@@ -1,0 +1,130 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: steamtactics-seed-v005
+data:
+  seed.sql: "-- SteamTactics content seed. Runs on a fresh PostgreSQL volume before\
+    \ GORM AutoMigrate.\n-- Content uses fixed UUIDs. Artwork paths use the shared\
+    \ assets; stats and relative pack weights retain the archive values.\n-- Player\
+    \ accounts, balances, collections and matches are not seed content.\nBEGIN;\n\
+    CREATE TABLE IF NOT EXISTS factions (\n id UUID PRIMARY KEY, created_at TIMESTAMPTZ\
+    \ DEFAULT CURRENT_TIMESTAMP, key TEXT NOT NULL, version BIGINT NOT NULL, status\
+    \ TEXT NOT NULL DEFAULT 'draft', name TEXT NOT NULL, description TEXT NOT NULL\n\
+    );\nALTER TABLE factions ADD COLUMN IF NOT EXISTS primary_color text NOT NULL\
+    \ DEFAULT '';\nCREATE UNIQUE INDEX IF NOT EXISTS idx_factions_key_version ON factions(key,version);\n\
+    INSERT INTO factions(id,key,version,status,name,description) VALUES ('16b2190f-7432-52ab-b6b4-3cacaf0636c3','feral',1,'published','Feral','')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO factions(id,key,version,status,name,description)\
+    \ VALUES ('bbdbcfe0-4d46-5fed-a57c-045e3354ef4d','oceanic',1,'published','Oceanic','')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO factions(id,key,version,status,name,description)\
+    \ VALUES ('fb3d38e9-77a1-5401-b048-dc7bd08a2218','charred',1,'published','Charred','')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO factions(id,key,version,status,name,description)\
+    \ VALUES ('0e9cd105-b5f9-5106-a7ef-ddf717405b57','aero',1,'draft','Aero','') ON\
+    \ CONFLICT (id) DO NOTHING;\nUPDATE factions SET primary_color = CASE key WHEN\
+    \ 'feral' THEN '#47743a' WHEN 'oceanic' THEN '#366e9d' WHEN 'charred' THEN '#a33e2e'\
+    \ WHEN 'aero' THEN '#ac8c28' ELSE primary_color END WHERE primary_color = '';\n\
+    CREATE TABLE IF NOT EXISTS creature_types (\n id UUID PRIMARY KEY, created_at\
+    \ TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP, key TEXT NOT NULL, version BIGINT NOT\
+    \ NULL, status TEXT NOT NULL DEFAULT 'draft', name TEXT NOT NULL, description\
+    \ TEXT NOT NULL, rank BIGINT NOT NULL,\n min_arrows BIGINT NOT NULL, max_arrows\
+    \ BIGINT NOT NULL,\n CONSTRAINT rank_positive CHECK(rank > 0),\n CONSTRAINT min_arrows_valid\
+    \ CHECK(min_arrows BETWEEN 1 AND 8),\n CONSTRAINT max_arrows_valid CHECK(max_arrows\
+    \ BETWEEN min_arrows AND 8)\n);\nCREATE UNIQUE INDEX IF NOT EXISTS idx_creature_types_key_version\
+    \ ON creature_types(key,version);\nCREATE TABLE IF NOT EXISTS creatures (\n id\
+    \ UUID PRIMARY KEY, created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP, key TEXT\
+    \ NOT NULL, version BIGINT NOT NULL, status TEXT NOT NULL DEFAULT 'draft', name\
+    \ TEXT NOT NULL, description TEXT NOT NULL, stats TEXT NOT NULL,\n faction_id\
+    \ UUID NOT NULL, type_id UUID NOT NULL, thumbnail TEXT NOT NULL, image TEXT NOT\
+    \ NULL,\n CONSTRAINT fk_creatures_faction FOREIGN KEY(faction_id) REFERENCES factions(id)\
+    \ ON DELETE RESTRICT,\n CONSTRAINT fk_creatures_type FOREIGN KEY(type_id) REFERENCES\
+    \ creature_types(id) ON DELETE RESTRICT\n);\nCREATE UNIQUE INDEX IF NOT EXISTS\
+    \ idx_creatures_key_version ON creatures(key,version);\nCREATE TABLE IF NOT EXISTS\
+    \ packs (\n id UUID PRIMARY KEY, created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,\
+    \ key TEXT NOT NULL, version BIGINT NOT NULL, status TEXT NOT NULL DEFAULT 'draft',\
+    \ name TEXT NOT NULL, description TEXT NOT NULL, faction_id UUID,\n amount BIGINT\
+    \ NOT NULL, price BIGINT NOT NULL, image TEXT NOT NULL, weights JSONB NOT NULL,\n\
+    \ CONSTRAINT fk_packs_faction FOREIGN KEY(faction_id) REFERENCES factions(id)\
+    \ ON DELETE RESTRICT,\n CONSTRAINT pack_amount_valid CHECK(amount BETWEEN 1 AND\
+    \ 100),\n CONSTRAINT pack_price_valid CHECK(price >= 0)\n);\nCREATE UNIQUE INDEX\
+    \ IF NOT EXISTS idx_packs_key_version ON packs(key,version);\n\nINSERT INTO creature_types(id,name,description,rank,min_arrows,max_arrows,key,version,status)\
+    \ VALUES ('570e5cb4-6056-5234-8542-8b251a993590','core','These are the most common\
+    \ types of creatures. They are also amongst the weakest','1','4','6','core','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creature_types(id,name,description,rank,min_arrows,max_arrows,key,version,status)\
+    \ VALUES ('e31d8d7e-3f1c-51ae-ad08-152b858d19bf','heavy','These are the second\
+    \ common types of creatures.','2','3','6','heavy','1','published') ON CONFLICT\
+    \ (id) DO NOTHING;\nINSERT INTO creature_types(id,name,description,rank,min_arrows,max_arrows,key,version,status)\
+    \ VALUES ('88a23001-4769-592f-ba09-36758828af2d','lieutenant','These are the third\
+    \ common types of creatures.','3','3','5','lieutenant','1','published') ON CONFLICT\
+    \ (id) DO NOTHING;\nINSERT INTO creature_types(id,name,description,rank,min_arrows,max_arrows,key,version,status)\
+    \ VALUES ('24f8e92d-712a-5834-ba6c-b3aca21d9c38','general','These are the fourth\
+    \ common types of creatures.','4','3','5','general','1','published') ON CONFLICT\
+    \ (id) DO NOTHING;\nINSERT INTO creature_types(id,name,description,rank,min_arrows,max_arrows,key,version,status)\
+    \ VALUES ('cf12e1c4-1955-57df-845a-17ba88e13118','monstrosity','Amongst the strongest\
+    \ creatures ever.','5','3','4','monstrosity','1','published') ON CONFLICT (id)\
+    \ DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('771aac2b-b2cf-5cda-9967-432a1779c1cc','Alakdan Mata','The scorpion''s\
+    \ exoskeleton is thick and durable, providing good protection from predators.\
+    \ The laser''s a good deterrant too.','6|7|P|9|5','fb3d38e9-77a1-5401-b048-dc7bd08a2218','570e5cb4-6056-5234-8542-8b251a993590','/api/artwork/alakdan-mata-portrait.jpg','/api/artwork/alakdan-mata.jpg','alakdan_mata','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('6d858459-003c-5251-83bd-e4e82777d210','Bloedzuiger','Just...don''t\
+    \ go in the water','5|4|P|2|2','16b2190f-7432-52ab-b6b4-3cacaf0636c3','570e5cb4-6056-5234-8542-8b251a993590','/api/artwork/bloedzuiger-portrait.jpg','/api/artwork/bloedzuiger.jpg','bloedzuiger','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('63bcdfc3-f24a-5934-b921-1c25fb8a2746','Brennen Lok','Able to detect\
+    \ ill-fated livestock crossing anywhere along his web of tracks. *munch*','14|15|M|16|12','fb3d38e9-77a1-5401-b048-dc7bd08a2218','88a23001-4769-592f-ba09-36758828af2d','/api/artwork/brennen-lok-portrait.jpg','/api/artwork/brennen-lok.jpg','brennen_lok','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('f1334d25-0065-5753-b41c-703d23700a42','Diver','Risking the dangers\
+    \ of sea monsters, ravenous schools of fish, and frequently suffering from scury,\
+    \ the Diver wanders the deep for the promise of treasure','18|18|P|15|17','bbdbcfe0-4d46-5fed-a57c-045e3354ef4d','24f8e92d-712a-5834-ba6c-b3aca21d9c38','/api/artwork/diver-portrait.jpg','/api/artwork/diver.png','diver','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('ab81fca5-abab-5a55-b09a-119d3dc614b3','Fonranha','A mysterious lifeform\
+    \ whose origins are believed to be old leather boot, pocket watch and a pair of\
+    \ headphones; its diet is unknown','6|8|P|4|9','16b2190f-7432-52ab-b6b4-3cacaf0636c3','570e5cb4-6056-5234-8542-8b251a993590','/api/artwork/fonranha-portrait.jpg','/api/artwork/fonranha.jpg','fonranha','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('28ba766e-c3e5-5284-96f7-c5dc0efd6d24','Inter Patcher','These wingless\
+    \ bees are constantly at work inside the shattered planet, patching the water\
+    \ dishes. Stop asking how the water was bottled in the first place, he''''s got\
+    \ leaks to fix.','13|8|M|12|10','fb3d38e9-77a1-5401-b048-dc7bd08a2218','e31d8d7e-3f1c-51ae-ad08-152b858d19bf','/api/artwork/inter-patcher-portrait.jpg','/api/artwork/inter-patcher.png','inter_patcher','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('322e92d9-5bdb-55c5-9efb-dccd5b23c618','Kindle','A wildcat found only\
+    \ in the lower caverns of volcanoes. It stalks its prey mainly from the billowing\
+    \ smoke plumes and nests primarily in the glowing pools.','4|5|P|1|5','fb3d38e9-77a1-5401-b048-dc7bd08a2218','570e5cb4-6056-5234-8542-8b251a993590','/api/artwork/kindle-portrait.jpg','/api/artwork/kindle.jpg','kindle','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('9f030661-305f-555e-8490-d6fafff73b6c','Lumbering Lumberer','An abandoned\
+    \ tree cutting automation. With no one to give him orders, he doesn''''t do much\
+    \ anymore but clear away under-brush and make scenic paths to walk on.','12|8|M|12|9','16b2190f-7432-52ab-b6b4-3cacaf0636c3','e31d8d7e-3f1c-51ae-ad08-152b858d19bf','/api/artwork/lumbering-lumberer-portrait.jpg','/api/artwork/lumbering-lumberer.jpg','lumbering_lumberer','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('5dc9569b-0086-503a-9d14-4bee7c0ab30c','Mist Cloaker','This frog uses\
+    \ its steam engine to create a croa- *ehem* cloaking mist to conceal it from predators.','12|8|M|12|9','16b2190f-7432-52ab-b6b4-3cacaf0636c3','e31d8d7e-3f1c-51ae-ad08-152b858d19bf','/api/artwork/mist-cloaker-portrait.jpg','/api/artwork/mist-cloaker.png','mist_cloaker','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('569453b9-ab56-5d54-acae-a1a230ebb2ca','Reig Rim','About the size of\
+    \ an adult human''''s hand. Their glass wings are prized finds among the leaf\
+    \ litter, and often used to decorate. Warning: Carniverous','6|7|P|9|5','16b2190f-7432-52ab-b6b4-3cacaf0636c3','570e5cb4-6056-5234-8542-8b251a993590','/api/artwork/reig-rim-portrait.jpg','/api/artwork/reig-rim.jpg','reig_rim','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('72d9477a-209f-53c9-bc0e-f79daed0e44b','Sparklurk','A not so mild-mannered\
+    \ bot in charge of the paper work for the mines. His inbox is always immaculate,\
+    \ his outbox... full of ashes.','6|7|P|9|5','fb3d38e9-77a1-5401-b048-dc7bd08a2218','570e5cb4-6056-5234-8542-8b251a993590','/api/artwork/sparklurk-portrait.jpg','/api/artwork/sparklurk.jpg','sparklurk','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('7caf0d64-777d-50b7-b15a-3ae250d3f344','Subaqueous Gigantine','A whaleship\
+    \ that runs on the excess energy of photosynthesis that the plankton travelling\
+    \ through it. It dislikes stormy days as it has to dive and run on low power.','21|16|F|25|22','bbdbcfe0-4d46-5fed-a57c-045e3354ef4d','cf12e1c4-1955-57df-845a-17ba88e13118','/api/artwork/subaqueous-gigantine-portrait.jpg','/api/artwork/subaqueous-gigantine.jpg','subaqueous_gigantine','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('8994239a-62d2-587f-a548-3ec52695d27a','Suuntu Pesuuchi','The description\
+    \ here is ''''highly edible'''' but that must be a misprint...something''''s fishy.','4|1|P|5|8','bbdbcfe0-4d46-5fed-a57c-045e3354ef4d','570e5cb4-6056-5234-8542-8b251a993590','/api/artwork/suuntu-pesuuchi-portrait.jpg','/api/artwork/suuntu-pesuuchi.jpg','suuntu_pesuuchi','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('63a3ba7e-5b5e-5ffc-ad3f-26a0d16f7775','Varastama','Senescent alchemist.\
+    \ ''''This solution should tell me just about how much time you have left...''''','19|13|P|19|16','fb3d38e9-77a1-5401-b048-dc7bd08a2218','24f8e92d-712a-5834-ba6c-b3aca21d9c38','/api/artwork/varastama-portrait.jpg','/api/artwork/varastama.jpg','varastama','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('29dbdde5-8bae-55b6-92b5-32f2301308c3','Veteran Bomb Maker','Mastery\
+    \ of his work took quite some time...and most of his limbs.','14|16|P|16|13','fb3d38e9-77a1-5401-b048-dc7bd08a2218','88a23001-4769-592f-ba09-36758828af2d','/api/artwork/veteran-bomb-maker-portrait.jpg','/api/artwork/veteran-bomb-maker.jpg','veteran_bomb_maker','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('669acd82-7c49-57bc-94cb-25a6eb4d0116','Vetro Anguilla','Also known\
+    \ as a glass leviathan, this gargantuan serpent coils through the murky roots\
+    \ of the kelp forests, its recent prey clearly visible through its glass hide','24|25|A|23|21','bbdbcfe0-4d46-5fed-a57c-045e3354ef4d','cf12e1c4-1955-57df-845a-17ba88e13118','/api/artwork/vetro-anguilla-portrait.jpg','/api/artwork/vetro-anguilla.jpg','vetro_anguilla','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO creatures(id,name,description,stats,faction_id,type_id,thumbnail,image,key,version,status)\
+    \ VALUES ('bd5bad4d-9d86-5581-9480-566768e3cbff','Zahagar','A meticulous forest\
+    \ hunter. Studies show less than 2% of prey it has selected escapes.','10|6|P|12|11','16b2190f-7432-52ab-b6b4-3cacaf0636c3','e31d8d7e-3f1c-51ae-ad08-152b858d19bf','/api/artwork/zahagar-portrait.jpg','/api/artwork/zahagar.jpg','zahagar','1','published')\
+    \ ON CONFLICT (id) DO NOTHING;\nINSERT INTO packs(id,name,description,faction_id,amount,price,image,weights,key,version,status)\
+    \ VALUES ('73ec0f80-d8b8-525c-9679-401d4216a21f','test','A test booster pack for\
+    \ buying cards',NULL,'10','50','/api/artwork/test-pack.svg','{\"570e5cb4-6056-5234-8542-8b251a993590\"\
+    : 65, \"e31d8d7e-3f1c-51ae-ad08-152b858d19bf\": 33, \"88a23001-4769-592f-ba09-36758828af2d\"\
+    : 1, \"24f8e92d-712a-5834-ba6c-b3aca21d9c38\": 1, \"cf12e1c4-1955-57df-845a-17ba88e13118\"\
+    : 1}','test','1','published') ON CONFLICT (id) DO NOTHING;\nCOMMIT;\n"

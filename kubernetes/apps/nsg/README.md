@@ -90,3 +90,33 @@ that setting. This can temporarily leave no unallocated spare during updates.
 The published chart documents incompatible token-generator arguments and game
 metadata contracts. Deployment readiness does not prove native multiplayer is
 working; these application contracts still need verification/fixes in Colony.
+
+## SteamTactics
+
+Flux follows stable private chart versions `>=0.0.5 <1.0.0`. API/player web and
+one Agones room use the published image digests. No Redis or NATS is needed by
+this runtime. The existing `steamtactics` PostgreSQL owner/database and Identity
+player JWT signing key are referenced through the encrypted runtime Secret.
+
+The bootstrap Job seeds only an empty database, before API schema migration.
+`seed-configmap.yaml` is copied from SteamTactics tag `v0.0.5` (commit
+`41405db2d9309d4b57b48b29026d26e2be59c051`), not a continuously synchronized
+catalog. Existing databases are left unchanged; later catalog changes require a
+separate deliberate migration. The published test booster pack supplies the
+configured starter pack. API artwork initialization copies missing baked-in
+files to a retained 1Gi local claim on Bahamut; the API is pinned there. Run the
+NSG storage playbook before merging. This capacity does not preallocate disk or
+impose a filesystem quota.
+
+Use `https://nsg.lokiraze.dev/steamtactics` for the Identity-authenticated player.
+The portal's `/api` route reaches SteamTactics, while `/identity` keeps reaching
+Identity. `/games/steamtactics/*` redirects to `https://steamtactics.lokiraze.dev/*`
+for federation assets with CORS allowing the portal origin. The standalone
+SteamTactics host serves only a signed-out preview and assets; it is not a
+replacement login flow. Browser federation, login and a real completed match
+must be verified after installation.
+
+Admin/API administration and admin web are disabled pending authenticated access.
+The same Agones 1.61.0 `maxUnavailable: 1` post-render compatibility override used
+for Colony is applied to this chart's room Fleet. One ready room provides initial
+capacity; multiple simultaneous games may require increasing room replicas.

@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: steamtactics-seed-v005
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: OnFailure
+      containers:
+      - name: seed
+        image: postgres:17.11-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826
+        env:
+        - name: DATABASE_DSN
+          valueFrom:
+            secretKeyRef:
+              name: steamtactics-runtime
+              key: database-dsn
+        command: [sh, -ec]
+        args:
+        - |
+          tables=$(psql "$DATABASE_DSN" -v ON_ERROR_STOP=1 -Atc "SELECT count(*) FROM information_schema.tables WHERE table_schema='public'")
+          if [ "$tables" = 0 ]; then
+            psql "$DATABASE_DSN" -v ON_ERROR_STOP=1 -f /seed/seed.sql
+          else
+            echo 'Existing SteamTactics database left unchanged.'
+          fi
+        resources:
+          requests: {cpu: 10m, memory: 32Mi}
+          limits: {memory: 128Mi}
+        volumeMounts:
+        - name: seed
+          mountPath: /seed
+          readOnly: true
+      volumes:
+      - name: seed
+        configMap:
+          name: steamtactics-seed-v005

@@ -1,0 +1,18 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: steamtactics
+  namespace: flux-system
+spec:
+  interval: 30m
+  path: ./kubernetes/apps/nsg/steamtactics/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  dependsOn:
+  - name: steamtactics-bootstrap
+  - name: agones
+  targetNamespace: nsg
+  wait: false
+  timeout: 10m

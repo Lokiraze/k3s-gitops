@@ -1,0 +1,15 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: steamtactics
+  namespace: nsg
+spec:
+  interval: 1m
+  url: oci://git.noshamegames.com/games/charts/steamtactics
+  ref:
+    semver: '>=0.0.5 <1.0.0'
+  secretRef:
+    name: gitea-registry
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
