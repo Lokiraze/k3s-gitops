@@ -1,5 +1,5 @@
 ---
-- name: Prepare NSG PostgreSQL storage on Bahamut's internal filesystem
+- name: Prepare NSG database storage on Bahamut's internal filesystem
   hosts: k8s-bahamut
   become: true
   gather_facts: false
@@ -20,4 +20,11 @@
         state: directory
         owner: '999'
         group: '999'
+        mode: '0700'
+    - name: Create the shared Redis directory without changing existing contents
+      ansible.builtin.file:
+        path: /var/lib/homelab/app-data/nsg-redis
+        state: directory
+        owner: '999'
+        group: '1000'
         mode: '0700'

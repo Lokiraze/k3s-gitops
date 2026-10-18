@@ -25,3 +25,31 @@ spec:
           operator: In
           values:
           - k8s-bahamut
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-nsg-redis
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-app-data
+  claimRef:
+    namespace: nsg
+    name: redis-data
+  local:
+    path: /var/lib/homelab/app-data/nsg-redis
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k8s-bahamut
