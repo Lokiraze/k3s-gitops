@@ -120,3 +120,9 @@ Admin/API administration and admin web are disabled pending authenticated access
 The same Agones 1.61.0 `maxUnavailable: 1` post-render compatibility override used
 for Colony is applied to this chart's room Fleet. One ready room provides initial
 capacity; multiple simultaneous games may require increasing room replicas.
+
+SteamTactics 0.0.5 also binds rooms to port 8080, which conflicts with the
+Agones SDK sidecar's health listener. The Fleet post-render patch moves the
+room environment variable and both container/Agones port declarations to 8081.
+The named readiness probe follows that port. API and web services stay on 8080.
+Remove this override once the upstream chart offers a nonconflicting room port.

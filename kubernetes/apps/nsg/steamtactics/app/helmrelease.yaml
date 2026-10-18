@@ -64,4 +64,8 @@ spec:
           kind: Fleet
           name: game-servers-steamtactics
         patch: "- op: replace\n  path: /spec/strategy/rollingUpdate/maxUnavailable\n\
-          \  value: 1\n"
+          \  value: 1\n- op: test\n  path: /spec/template/spec/template/spec/containers/0/env/1/name\n\
+          \  value: STEAMTACTICS_PORT\n- op: replace\n  path: /spec/template/spec/template/spec/containers/0/env/1/value\n\
+          \  value: \"8081\"\n- op: replace\n  path: /spec/template/spec/template/spec/containers/0/ports/0/containerPort\n\
+          \  value: 8081\n- op: replace\n  path: /spec/template/spec/ports/0/containerPort\n\
+          \  value: 8081\n"
