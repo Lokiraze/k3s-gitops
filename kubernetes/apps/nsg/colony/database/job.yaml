@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: colony-database-v1
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      automountServiceAccountToken: false
+      containers:
+      - name: create-database
+        image: postgres:17.11-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826
+        env:
+        - name: PGHOST
+          value: postgres.nsg.svc.cluster.local
+        - name: PGUSER
+          value: postgres
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nsg-dependencies
+              key: POSTGRES_PASSWORD
+        - name: COLONY_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: colony-database
+              key: COLONY_DB_PASSWORD
+        command: [sh, -ec]
+        args:
+        - |
+          psql --dbname=postgres --set=ON_ERROR_STOP=1 --set=colony_password="$COLONY_DB_PASSWORD" <<'SQL'
+          SELECT format('CREATE ROLE colony LOGIN PASSWORD %L', :'colony_password')
+          WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'colony') \gexec
+          SELECT 'CREATE DATABASE colony OWNER colony'
+          WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'colony') \gexec
+          SQL
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 128Mi

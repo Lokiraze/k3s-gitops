@@ -1,0 +1,44 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: colony
+  namespace: nsg
+spec:
+  interval: 5m
+  timeout: 15m
+  chartRef:
+    kind: OCIRepository
+    name: colony
+  values:
+    imagePullSecrets:
+    - name: gitea-registry
+    redis:
+      host: redis.nsg.svc.cluster.local:6379
+      db: 1
+    api:
+      existingSecret: colony-api-runtime
+    admin:
+      enabled: false
+    server:
+      existingSecret: colony-server-runtime
+      savesClaim: colony-saves
+      nodeSelector:
+        kubernetes.io/arch: amd64
+        kubernetes.io/hostname: k8s-bahamut
+    routes:
+      enabled: true
+      parentRefs:
+      - name: envoy-internal
+        namespace: network
+        sectionName: https
+      apiHost: colony.lokiraze.dev
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          group: agones.dev
+          version: v1
+          kind: Fleet
+          name: colony-colony-server
+        patch: "- op: replace\n  path: /spec/strategy/rollingUpdate/maxUnavailable\n\
+          \  value: 1\n"

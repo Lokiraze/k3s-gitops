@@ -4,3 +4,5 @@ resources:
 - namespace.yaml
 - dependencies/ks.yaml
 - identity/ks.yaml
+- colony/database-ks.yaml
+- colony/ks.yaml

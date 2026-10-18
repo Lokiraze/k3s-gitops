@@ -60,3 +60,33 @@ failure. Automatic AOF rewriting compacts the log. Redis uses retained local
 storage, so a pod replacement can recover data but Bahamut must be available.
 After this change is merged, verify `aof_enabled:1`, `aof_last_write_status:ok`,
 and a disposable key surviving a Redis restart before deploying game state.
+
+## Colony
+
+The `colony` Flux Kustomization follows stable chart versions `>=0.0.2 <1.0.0`
+from the private Gitea registry. It waits for Agones and the `colony-database`
+Job, which creates the Colony PostgreSQL role/database without resetting existing
+ones. Credentials and the shared Identity JWT signing key are SOPS-encrypted.
+Changing the stored database password later requires a database role rotation;
+the initialization Job does not rotate existing passwords.
+
+Colony uses shared Redis database **1**; Identity uses database **0**. Reserve a
+separate database or supported key prefix for subsequent games. The API is LAN
+only at `https://colony.lokiraze.dev`; this is an API for the native client, not a
+player website. Identity remains `https://nsg.lokiraze.dev`.
+
+Admin is disabled because the shipped admin service lacks user authentication.
+The Fleet has one server, pinned to Bahamut with a retained 5Gi local save claim
+at `/var/lib/homelab/app-data/colony-saves`. This does not preallocate 5Gi or impose
+a filesystem quota. Multiple rolling-update pods can mount the RWO claim on the
+same node; the chart separates saves by pod name. This deliberately avoids an
+additional RWX storage service. Bahamut must be available, and retained files
+alone do not automatically restore a session into a replacement server.
+
+Chart 0.0.2 emits `maxUnavailable: 0`, rejected by Agones 1.61.0. A Helm
+post-render patch sets it to 1; remove the patch when the upstream chart fixes
+that setting. This can temporarily leave no unallocated spare during updates.
+
+The published chart documents incompatible token-generator arguments and game
+metadata contracts. Deployment readiness does not prove native multiplayer is
+working; these application contracts still need verification/fixes in Colony.

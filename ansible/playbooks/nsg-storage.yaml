@@ -28,3 +28,10 @@
         owner: '999'
         group: '1000'
         mode: '0700'
+    - name: Create Colony save storage without changing existing contents
+      ansible.builtin.file:
+        path: /var/lib/homelab/app-data/colony-saves
+        state: directory
+        owner: '0'
+        group: '0'
+        mode: '0755'

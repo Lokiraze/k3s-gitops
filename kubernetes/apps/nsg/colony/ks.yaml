@@ -1,0 +1,18 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: colony
+  namespace: flux-system
+spec:
+  interval: 30m
+  path: ./kubernetes/apps/nsg/colony/app
+  prune: true
+  dependsOn:
+  - name: colony-database
+  - name: agones
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: nsg
+  wait: false
+  timeout: 10m
