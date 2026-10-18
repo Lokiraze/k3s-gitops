@@ -80,9 +80,10 @@ spec:
           resources:
             requests:
               cpu: 50m
-              memory: 64Mi
+              memory: 128Mi
             limits:
-              memory: 256Mi
+              # Action repository downloads run inside act_runner, outside job limits.
+              memory: 1Gi
           volumeMounts:
             - name: docker-socket
               mountPath: /var/run
