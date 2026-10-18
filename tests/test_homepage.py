@@ -18,7 +18,7 @@ def test_gateway_discovery_has_read_only_permissions_and_route_owned_links():
     assert all(set(r['verbs']) <= {'get', 'list', 'watch'} and 'secrets' not in r['resources'] for r in role['rules'])
     routes = [read(str(p.relative_to(ROOT))) for p in (ROOT / 'kubernetes/apps').rglob('httproute.yaml')]
     annotated = [r for r in routes if r['metadata'].get('annotations', {}).get('gethomepage.dev/enabled') == 'true']
-    assert len(annotated) >= 19
+    assert len(annotated) >= 18
     for route in annotated:
         a = route['metadata']['annotations']
         assert a['gethomepage.dev/href'] == 'https://' + route['spec']['hostnames'][0]

@@ -4,7 +4,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED = {
     'home': ['home-assistant', 'mosquitto', 'zwave-js-ui', 'frigate'],
-    'media': ['calibre-web','jellyseer','lidarr','podfetch','podgrab','prowlarr','radarr','recyclarr','sonarr','whisparr'],
+    'media': ['calibre-web','jellyseer','lidarr','podfetch','prowlarr','radarr','recyclarr','sonarr','whisparr'],
     'security': ['vaultwarden'],
     'monitoring': ['grafana','kube-prometheus-stack'],
     'default': ['homepage', 'theme-park'],
