@@ -26,3 +26,22 @@ The SOPS-encrypted `gitea-registry` Secret in `nsg` uses a dedicated `read:packa
 Game and Identity pod specifications must reference `imagePullSecrets: [{name: gitea-registry}]`. Flux OCIRepository resources in `nsg` can use `secretRef: {name: gitea-registry}` for chart downloads. Sources in other namespaces need their own Secret there. The chart must be published before Flux can fetch it.
 
 An authenticated manifest request for `games/colony:latest` succeeded during credential setup. That checks registry access, not a live Kubernetes image pull or an unpublished Helm chart. The Secret becomes available after merge and Flux reconciliation.
+
+## Agones
+
+The shared controller is managed by the `agones` Flux Kustomization in
+`kubernetes/apps/agones-system`, using the official Agones 1.61.0 chart.
+Game servers and their `agones-sdk` service account live in `nsg`.
+Future game Kustomizations should depend on `agones` so their Fleet resources
+are applied only after its HelmRelease and CRDs are ready.
+
+Game APIs allocate through the Kubernetes GameServerAllocation API; the external
+allocator and ping services are disabled. Dynamic game ports are 7000–7100 on
+the selected node's LAN address (UDP for Colony). HTTP Gateway routes do not
+carry that traffic. No router WAN forwarding is required for LAN play.
+
+There is one controller and one extensions replica, with 512Mi memory limits
+each. Maintenance can briefly interrupt new allocations. CRD cleanup on
+uninstall is disabled to preserve game resources. After Flux installs the chart,
+verify a disposable GameServer reaches Ready and can be allocated, then test its
+UDP endpoint from a LAN client before declaring gameplay networking ready.

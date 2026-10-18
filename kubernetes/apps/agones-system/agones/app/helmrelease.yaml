@@ -1,0 +1,56 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: agones
+spec:
+  interval: 30m
+  timeout: 10m
+  chart:
+    spec:
+      chart: agones
+      version: 1.61.0
+      sourceRef:
+        kind: HelmRepository
+        name: agones
+  values:
+    gameservers:
+      namespaces: [nsg]
+      minPort: 7000
+      maxPort: 7100
+    agones:
+      crds:
+        cleanupOnDelete: false
+      # In-cluster game APIs use GameServerAllocation, not the external allocator.
+      allocator:
+        install: false
+      ping:
+        install: false
+      metrics:
+        prometheusEnabled: false
+        prometheusServiceDiscovery: false
+      controller:
+        replicas: 1
+        nodeSelector:
+          kubernetes.io/arch: amd64
+        persistentLogs: false
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            memory: 512Mi
+        pdb:
+          minAvailable: 0
+      extensions:
+        replicas: 1
+        nodeSelector:
+          kubernetes.io/arch: amd64
+        persistentLogs: false
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            memory: 512Mi
+        pdb:
+          minAvailable: 0
