@@ -27,4 +27,10 @@ spec:
           cpu: 10m
           memory: 32Mi
     route:
-      enabled: false
+      enabled: true
+      hostnames:
+      - nsg.lokiraze.dev
+      parentRefs:
+      - name: envoy-internal
+        namespace: network
+        sectionName: https
