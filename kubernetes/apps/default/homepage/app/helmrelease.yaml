@@ -50,6 +50,9 @@ spec:
                   httpGet:
                     path: /
                     port: 3000
+                    httpHeaders:
+                    - name: Host
+                      value: ${SECRET_DOMAIN}
                   initialDelaySeconds: 10
                   periodSeconds: 10
                   failureThreshold: 30
@@ -60,6 +63,9 @@ spec:
                   httpGet:
                     path: /
                     port: 3000
+                    httpHeaders:
+                    - name: Host
+                      value: ${SECRET_DOMAIN}
                   initialDelaySeconds: 10
                   periodSeconds: 10
                   failureThreshold: 3

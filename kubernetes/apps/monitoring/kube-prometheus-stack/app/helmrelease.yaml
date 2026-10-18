@@ -33,6 +33,12 @@ spec:
   values:
     # Keep the operator/CRDs for ServiceMonitors supplied by other app charts.
     cleanPrometheusOperatorObjectNames: true
+    defaultRules:
+      create: false
+    coreDns:
+      enabled: false
+    kubeDns:
+      enabled: false
     kubeStateMetrics:
       enabled: false
     nodeExporter:
@@ -63,7 +69,7 @@ spec:
             - __meta_kubernetes_pod_node_name
             targetLabel: kubernetes_node
     kubelet:
-      enabled: true
+      enabled: false
       serviceMonitor:
         metricRelabelings:
         - sourceLabels:
@@ -75,7 +81,7 @@ spec:
           targetLabel: instance
           action: replace
     kubeApiServer:
-      enabled: true
+      enabled: false
       serviceMonitor:
         metricRelabelings:
         - sourceLabels:
@@ -91,7 +97,7 @@ spec:
           regex: (apiserver_response_sizes_bucket|apiserver_watch_events_sizes_bucket)
           action: drop
     kubeControllerManager:
-      enabled: true
+      enabled: false
       endpoints: &id001
       - 192.168.1.15
       serviceMonitor:
@@ -101,12 +107,12 @@ spec:
           regex: (apiserver_audit|apiserver_client|apiserver_delegated|apiserver_envelope|apiserver_storage|apiserver_webhooks|attachdetach_controller|authenticated_user|authentication|cronjob_controller|disabled_metric|endpoint_slice|ephemeral_volume|garbagecollector_controller|get_token|go|hidden_metric|job_controller|kubernetes_build|kubernetes_feature|leader_election|node_collector|node_ipam|process_cpu|process_max|process_open|process_resident|process_start|process_virtual|pv_collector|registered_metric|replicaset_controller|rest_client|retroactive_storageclass|root_ca|running_managed|scrape_duration|scrape_samples|scrape_series|service_controller|storage_count|storage_operation|ttl_after|volume_operation|workqueue)_(.+)
           action: keep
     kubeEtcd:
-      enabled: true
+      enabled: false
       endpoints: *id001
     kubeProxy:
       enabled: false
     kubeScheduler:
-      enabled: true
+      enabled: false
       endpoints: *id001
       serviceMonitor:
         metricRelabelings:
