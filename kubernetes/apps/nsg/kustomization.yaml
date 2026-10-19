@@ -9,3 +9,5 @@ resources:
 - steamtactics/bootstrap-ks.yaml
 - steamtactics/ks.yaml
 - gitea-runner/ks.yaml
+- tds/bootstrap-ks.yaml
+- tds/ks.yaml

@@ -11,3 +11,6 @@ resources:
 - redis.yaml
 - redis-service.yaml
 - registry-secret.sops.yaml
+- nats-secret.sops.yaml
+- nats.yaml
+- nats-service.yaml

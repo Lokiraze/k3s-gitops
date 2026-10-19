@@ -1,0 +1,63 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: tds
+  namespace: nsg
+spec:
+  interval: 5m
+  timeout: 15m
+  chartRef:
+    kind: OCIRepository
+    name: tds
+  values:
+    existingSecret: tds-runtime
+    imagePullSecrets:
+    - name: gitea-registry
+    api:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          memory: 256Mi
+    admin:
+      enabled: false
+    player:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          memory: 128Mi
+    server:
+      replicas: 1
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          memory: 1Gi
+    redis:
+      host: redis.nsg.svc.cluster.local:6379
+      database: 2
+      prefix: 'nsg:tds:'
+    nats:
+      subject: tds.game.results
+    corsAllowedOrigins:
+    - https://nsg.lokiraze.dev
+    - https://tds.lokiraze.dev
+    websocketAllowedOrigins:
+    - nsg.lokiraze.dev
+    - tds.lokiraze.dev
+    routes:
+      enabled: true
+      parentRefs:
+      - name: envoy-internal
+        namespace: network
+        sectionName: https
+      hostnames:
+      - tds.lokiraze.dev

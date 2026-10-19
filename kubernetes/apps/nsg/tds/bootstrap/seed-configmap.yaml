@@ -1,0 +1,513 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tds-seed-v002
+data:
+  seed.sql: |
+    -- TDS Asset Database Seed
+    -- All entries: version 1, status 'published'
+    --
+    -- Tables are created here so the seed can run during postgres init
+    -- (before GORM AutoMigrate). AutoMigrate only adds missing columns/tables
+    -- so these definitions won't conflict.
+
+    BEGIN;
+
+    -- ============================================
+    -- Schema (matches GORM AutoMigrate output)
+    -- ============================================
+
+    CREATE TABLE IF NOT EXISTS weapon_behaviors (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        key TEXT NOT NULL,
+        version BIGINT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft',
+        name TEXT NOT NULL,
+        on_trigger_hit JSONB,
+        on_trigger_held JSONB,
+        UNIQUE (key, version)
+    );
+
+    CREATE TABLE IF NOT EXISTS melee_weapons (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        key TEXT NOT NULL,
+        version BIGINT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft',
+        name TEXT NOT NULL,
+        animation_type TEXT NOT NULL,
+        data JSONB NOT NULL,
+        UNIQUE (key, version)
+    );
+
+    CREATE TABLE IF NOT EXISTS ranged_weapons (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        key TEXT NOT NULL,
+        version BIGINT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft',
+        name TEXT NOT NULL,
+        ammo_category TEXT,
+        behavior_key TEXT NOT NULL,
+        data JSONB NOT NULL,
+        UNIQUE (key, version)
+    );
+
+    CREATE TABLE IF NOT EXISTS thrown_weapons (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        key TEXT NOT NULL,
+        version BIGINT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft',
+        name TEXT NOT NULL,
+        trigger_mode TEXT NOT NULL,
+        behavior_key TEXT NOT NULL,
+        data JSONB NOT NULL,
+        UNIQUE (key, version)
+    );
+
+    CREATE TABLE IF NOT EXISTS enemies (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        key TEXT NOT NULL,
+        version BIGINT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft',
+        name TEXT NOT NULL,
+        disposition TEXT NOT NULL,
+        color JSONB,
+        attributes JSONB NOT NULL,
+        loadout JSONB NOT NULL,
+        UNIQUE (key, version)
+    );
+
+    CREATE TABLE IF NOT EXISTS deployables (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        key TEXT NOT NULL,
+        version BIGINT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft',
+        name TEXT NOT NULL,
+        kind TEXT NOT NULL,
+        health REAL NOT NULL,
+        duration_secs REAL NOT NULL,
+        config JSONB NOT NULL,
+        UNIQUE (key, version)
+    );
+
+    CREATE TABLE IF NOT EXISTS skills (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        key TEXT NOT NULL,
+        version BIGINT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft',
+        name TEXT NOT NULL,
+        cooldown REAL NOT NULL,
+        target TEXT NOT NULL,
+        deployable_key TEXT,
+        data JSONB NOT NULL,
+        UNIQUE (key, version)
+    );
+
+    CREATE TABLE IF NOT EXISTS objectives (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        key TEXT NOT NULL,
+        version BIGINT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft',
+        name TEXT NOT NULL,
+        objective_type TEXT NOT NULL,
+        discovery_radius REAL NOT NULL DEFAULT 0,
+        data JSONB NOT NULL,
+        UNIQUE (key, version)
+    );
+
+    CREATE TABLE IF NOT EXISTS prefabs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        key TEXT NOT NULL,
+        version BIGINT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft',
+        name TEXT NOT NULL,
+        mode TEXT NOT NULL,
+        data JSONB NOT NULL,
+        UNIQUE (key, version)
+    );
+
+    CREATE TABLE IF NOT EXISTS map_configs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        key TEXT NOT NULL,
+        version BIGINT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft',
+        name TEXT NOT NULL,
+        width BIGINT NOT NULL,
+        height BIGINT NOT NULL,
+        tile_size BIGINT NOT NULL,
+        tileset TEXT NOT NULL,
+        pipeline JSONB NOT NULL,
+        spawners JSONB NOT NULL,
+        seed BIGINT,
+        UNIQUE (key, version)
+    );
+
+    CREATE TABLE IF NOT EXISTS maps (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        key TEXT NOT NULL,
+        version BIGINT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft',
+        name TEXT NOT NULL,
+        min_players BIGINT NOT NULL,
+        max_players BIGINT NOT NULL,
+        map_config_key TEXT NOT NULL,
+        enemy_keys JSONB NOT NULL,
+        objective_keys JSONB NOT NULL,
+        escalation JSONB NOT NULL,
+        engagement JSONB NOT NULL,
+        UNIQUE (key, version)
+    );
+
+    CREATE TABLE IF NOT EXISTS player_profiles (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        user_id UUID NOT NULL,
+        salvage REAL NOT NULL DEFAULT 0,
+        CONSTRAINT uni_player_profiles_user_id UNIQUE (user_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS player_weapons (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL,
+        weapon_id UUID NOT NULL,
+        weapon_type TEXT NOT NULL,
+        acquired_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE (user_id, weapon_id, weapon_type)
+    );
+
+    CREATE TABLE IF NOT EXISTS weapon_rotations (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        weapon_id UUID NOT NULL,
+        weapon_type TEXT NOT NULL,
+        started_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        ended_at TIMESTAMPTZ
+    );
+    CREATE INDEX IF NOT EXISTS idx_rotation_lookup ON weapon_rotations (weapon_id, weapon_type, ended_at);
+
+    CREATE TABLE IF NOT EXISTS game_results (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        key TEXT NOT NULL,
+        version BIGINT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft',
+        map_id UUID NOT NULL,
+        user_id UUID NOT NULL,
+        is_victory BOOLEAN NOT NULL,
+        damage_dealt REAL NOT NULL DEFAULT 0,
+        damage_taken REAL NOT NULL DEFAULT 0,
+        player_kills BIGINT NOT NULL DEFAULT 0,
+        npc_kills BIGINT NOT NULL DEFAULT 0,
+        assists BIGINT NOT NULL DEFAULT 0,
+        shots_fired BIGINT NOT NULL DEFAULT 0,
+        shots_hit BIGINT NOT NULL DEFAULT 0,
+        enemies_encountered BIGINT NOT NULL DEFAULT 0,
+        time_survived_secs REAL NOT NULL DEFAULT 0,
+        salvage REAL NOT NULL DEFAULT 0,
+        exploration_percent REAL NOT NULL DEFAULT 0,
+        exploration_bonus REAL NOT NULL DEFAULT 0,
+        survive_bonus REAL NOT NULL DEFAULT 0,
+        betrayal_extract_bonus REAL NOT NULL DEFAULT 0,
+        UNIQUE (key, version)
+    );
+
+    CREATE TABLE IF NOT EXISTS weapon_stats (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        key TEXT NOT NULL,
+        version BIGINT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft',
+        game_result_id UUID,
+        player_id UUID,
+        weapon_id UUID,
+        slot TEXT,
+        damage_dealt REAL,
+        kills BIGINT,
+        uses BIGINT,
+        hits BIGINT,
+        time_active_secs REAL,
+        UNIQUE (key, version)
+    );
+
+    -- ============================================
+    -- Weapon Behaviors
+    -- ============================================
+
+    INSERT INTO weapon_behaviors (id, key, version, status, name, on_trigger_hit, on_trigger_held) VALUES
+    (gen_random_uuid(), 'semi', 1, 'published', 'semi',
+      '{"ammo_consumption":1,"trigger_fire_cooldown":true,"behaviors":[{"behavior_type":"Aimed","values":{"projectile_type":"Spawn"}}]}',
+      NULL),
+    (gen_random_uuid(), 'auto-fire', 1, 'published', 'auto-fire',
+      '{"ammo_consumption":1,"trigger_fire_cooldown":true,"behaviors":[{"behavior_type":"Aimed","values":{"projectile_type":"Spawn"}}]}',
+      '{"ammo_consumption":1,"trigger_fire_cooldown":true,"behaviors":[{"behavior_type":"Aimed","values":{"projectile_type":"Spawn"}}]}'),
+    (gen_random_uuid(), 'burst', 1, 'published', 'burst',
+      '{"ammo_consumption":3,"trigger_fire_cooldown":true,"cooldown_override_ms":350,"behaviors":[{"behavior_type":"Aimed","values":{"projectile_type":"Spawn"}},{"behavior_type":"Delay","values":50},{"behavior_type":"Aimed","values":{"projectile_type":"Spawn"}},{"behavior_type":"Delay","values":50},{"behavior_type":"Aimed","values":{"projectile_type":"Spawn"}}]}',
+      NULL),
+    (gen_random_uuid(), 'wide-spread', 1, 'published', 'wide-spread',
+      '{"ammo_consumption":1,"trigger_fire_cooldown":true,"behaviors":[{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":-0.26}}},{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":-0.17}}},{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":-0.09}}},{"behavior_type":"Aimed","values":{"projectile_type":"Spawn"}},{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":0.09}}},{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":0.17}}},{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":0.26}}}]}',
+      NULL),
+    (gen_random_uuid(), 'tight-blast', 1, 'published', 'tight-blast',
+      '{"ammo_consumption":1,"trigger_fire_cooldown":true,"behaviors":[{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":-0.12}}},{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":-0.06}}},{"behavior_type":"Aimed","values":{"projectile_type":"Spawn"}},{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":0.06}}},{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":0.12}}}]}',
+      NULL),
+    (gen_random_uuid(), 'auto-spread', 1, 'published', 'auto-spread',
+      '{"ammo_consumption":1,"trigger_fire_cooldown":true,"behaviors":[{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":-0.18}}},{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":-0.06}}},{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":0.06}}},{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":0.18}}}]}',
+      '{"ammo_consumption":1,"trigger_fire_cooldown":true,"behaviors":[{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":-0.18}}},{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":-0.06}}},{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":0.06}}},{"behavior_type":"Aimed","values":{"projectile_type":{"SpawnWithSpread":0.18}}}]}'),
+    (gen_random_uuid(), 'arc-explosive', 1, 'published', 'arc-explosive',
+      '{"ammo_consumption":0,"trigger_fire_cooldown":false,"behaviors":[{"behavior_type":"ArcShot","values":{"arc_height":40.0,"effect_radius":48.0}}]}',
+      NULL),
+    (gen_random_uuid(), 'launcher-arc', 1, 'published', 'launcher-arc',
+      '{"ammo_consumption":1,"trigger_fire_cooldown":true,"behaviors":[{"behavior_type":"ArcShot","values":{"arc_height":35.0,"effect_radius":48.0}}]}',
+      NULL);
+
+    -- ============================================
+    -- Ranged Weapons
+    -- ============================================
+
+    INSERT INTO ranged_weapons (id, key, version, status, name, ammo_category, behavior_key, data) VALUES
+    (gen_random_uuid(), 'pistol', 1, 'published', 'Pistol', 'Light', 'semi',
+      '{"fire_rate":300.0,"magazine_size":9,"range":400.0,"reload_time":1.5,"projectile_speed":600.0,"damage":{"attack":{"Flat":15.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":true,"base_spread":0.15,"knockback":20.0,"damage_falloff_start":140.0,"damage_falloff_min":0.6,"weight":1.0,"bloom_per_shot":0.08,"bloom_decay":3.5,"max_bloom":2.0}'),
+    (gen_random_uuid(), 'revolver', 1, 'published', 'Revolver', 'Light', 'semi',
+      '{"fire_rate":450.0,"magazine_size":6,"range":450.0,"reload_time":2.5,"projectile_speed":650.0,"damage":{"attack":{"Flat":18.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":false,"base_spread":0.12,"knockback":45.0,"armor_piercing":25.0,"damage_falloff_start":200.0,"damage_falloff_min":0.65,"weight":2.0,"lossy_reload":true,"bloom_per_shot":0.08,"bloom_decay":3.5,"max_bloom":2.0}'),
+    (gen_random_uuid(), 'compact', 1, 'published', 'Compact', 'Light', 'semi',
+      '{"fire_rate":300.0,"magazine_size":15,"range":300.0,"reload_time":1.0,"projectile_speed":550.0,"damage":{"attack":{"Flat":10.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":true,"base_spread":0.18,"knockback":16.0,"damage_falloff_start":105.0,"damage_falloff_min":0.55,"weight":1.0,"bloom_per_shot":0.08,"bloom_decay":3.5,"max_bloom":2.0}'),
+    (gen_random_uuid(), 'magnum', 1, 'published', 'Magnum', 'Light', 'semi',
+      '{"fire_rate":120.0,"magazine_size":1,"range":500.0,"reload_time":1.5,"projectile_speed":700.0,"damage":{"attack":{"Flat":55.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":false,"self_knockback":20.0,"self_effect":{"name":"Fire Root","description":"Rooted after firing","duration_secs":0.5,"vitals":[],"stats":[],"disables":["Move","Skill"],"stacking":"Refresh"},"base_spread":0.08,"knockback":65.0,"armor_piercing":50.0,"damage_falloff_start":225.0,"damage_falloff_min":0.65,"weight":3.0,"bloom_per_shot":0.05,"bloom_decay":4.0,"max_bloom":1.5}'),
+    (gen_random_uuid(), 'assault-rifle', 1, 'published', 'Assault Rifle', 'Medium', 'auto-fire',
+      '{"fire_rate":420.0,"magazine_size":30,"range":450.0,"reload_time":2.2,"projectile_speed":700.0,"damage":{"attack":{"Flat":13.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":true,"base_spread":0.08,"knockback":25.0,"damage_falloff_start":160.0,"damage_falloff_min":0.55,"weight":5.0,"lossy_reload":true,"bloom_per_shot":0.12,"bloom_decay":2.0,"max_bloom":3.0}'),
+    (gen_random_uuid(), 'suppressed-smg', 1, 'published', 'Suppressed SMG', 'Medium', 'auto-fire',
+      '{"fire_rate":480.0,"magazine_size":25,"range":350.0,"reload_time":1.8,"projectile_speed":550.0,"damage":{"attack":{"Flat":7.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":true,"base_spread":0.06,"knockback":10.0,"damage_falloff_start":105.0,"damage_falloff_min":0.5,"weight":2.0,"bloom_per_shot":0.18,"bloom_decay":1.2,"max_bloom":4.0}'),
+    (gen_random_uuid(), 'drum-smg', 1, 'published', 'Drum SMG', 'Medium', 'auto-fire',
+      '{"fire_rate":420.0,"magazine_size":50,"range":280.0,"reload_time":3.5,"projectile_speed":500.0,"damage":{"attack":{"Flat":8.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":true,"base_spread":0.22,"knockback":10.0,"damage_falloff_start":85.0,"damage_falloff_min":0.5,"weight":4.0,"lossy_reload":true,"bloom_per_shot":0.18,"bloom_decay":1.2,"max_bloom":4.0}'),
+    (gen_random_uuid(), 'heavy-smg', 1, 'published', 'Heavy SMG', 'Medium', 'auto-fire',
+      '{"fire_rate":360.0,"magazine_size":30,"range":380.0,"reload_time":2.2,"projectile_speed":600.0,"damage":{"attack":{"Flat":12.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":true,"self_effect":{"name":"Fire Root","description":"Rooted after firing","duration_secs":0.1,"vitals":[],"stats":[],"disables":["Move","Skill"],"stacking":"Refresh"},"base_spread":0.08,"knockback":20.0,"damage_falloff_start":115.0,"damage_falloff_min":0.5,"weight":4.0,"lossy_reload":true,"bloom_per_shot":0.12,"bloom_decay":2.0,"max_bloom":3.0}'),
+    (gen_random_uuid(), 'burst-smg', 1, 'published', 'Burst SMG', 'Medium', 'burst',
+      '{"fire_rate":600.0,"magazine_size":24,"range":300.0,"reload_time":1.5,"projectile_speed":550.0,"damage":{"attack":{"Flat":9.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":true,"self_effect":{"name":"Fire Root","description":"Rooted after firing","duration_secs":0.1,"vitals":[],"stats":[],"disables":["Move","Skill"],"stacking":"Refresh"},"base_spread":0.1,"knockback":12.0,"damage_falloff_start":90.0,"damage_falloff_min":0.5,"weight":2.0,"lossy_reload":true,"bloom_per_shot":0.15,"bloom_decay":2.5,"max_bloom":2.5}'),
+    (gen_random_uuid(), 'burst-rifle', 1, 'published', 'Burst Rifle', 'Medium', 'burst',
+      '{"fire_rate":180.0,"magazine_size":24,"range":480.0,"reload_time":2.0,"projectile_speed":750.0,"damage":{"attack":{"Flat":16.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":true,"base_spread":0.05,"knockback":30.0,"damage_falloff_start":170.0,"damage_falloff_min":0.55,"weight":5.0,"lossy_reload":true,"bloom_per_shot":0.15,"bloom_decay":2.5,"max_bloom":2.5}'),
+    (gen_random_uuid(), 'heavy-rifle', 1, 'published', 'Heavy Rifle', 'Heavy', 'auto-fire',
+      '{"fire_rate":360.0,"magazine_size":60,"range":400.0,"reload_time":3.5,"projectile_speed":650.0,"damage":{"attack":{"Flat":14.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":true,"self_effect":{"name":"Fire Root","description":"Rooted after firing","duration_secs":0.3,"vitals":[],"stats":[],"disables":["Move","Skill"],"stacking":"Refresh"},"base_spread":0.12,"knockback":50.0,"damage_falloff_start":140.0,"damage_falloff_min":0.55,"weight":8.0,"lossy_reload":true,"bloom_per_shot":0.12,"bloom_decay":2.0,"max_bloom":3.0}'),
+    (gen_random_uuid(), 'marksman-rifle', 1, 'published', 'Marksman Rifle', 'Heavy', 'semi',
+      '{"fire_rate":180.0,"magazine_size":12,"range":550.0,"reload_time":2.5,"projectile_speed":800.0,"damage":{"attack":{"Flat":25.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":true,"self_effect":{"name":"Fire Root","description":"Rooted after firing","duration_secs":0.1,"vitals":[],"stats":[],"disables":["Move","Skill"],"stacking":"Refresh"},"base_spread":0.06,"knockback":60.0,"armor_piercing":30.0,"damage_falloff_start":250.0,"damage_falloff_min":0.7,"weight":6.0,"bloom_per_shot":0.05,"bloom_decay":4.0,"max_bloom":1.5}'),
+    (gen_random_uuid(), 'pump-shotgun', 1, 'published', 'Pump Shotgun', 'Shell', 'wide-spread',
+      '{"fire_rate":60.0,"magazine_size":5,"range":150.0,"reload_time":2.5,"projectile_speed":400.0,"damage":{"attack":{"Flat":16.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":false,"self_effect":{"name":"Fire Root","description":"Rooted after firing","duration_secs":0.1,"vitals":[],"stats":[],"disables":["Move","Skill"],"stacking":"Refresh"},"base_spread":0.06,"knockback":55.0,"damage_falloff_start":70.0,"damage_falloff_min":0.3,"weight":5.0}'),
+    (gen_random_uuid(), 'sawed-off', 1, 'published', 'Sawed-Off', 'Shell', 'tight-blast',
+      '{"fire_rate":80.0,"magazine_size":2,"range":100.0,"reload_time":3.0,"projectile_speed":350.0,"damage":{"attack":{"Flat":28.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":false,"self_knockback":40.0,"self_effect":{"name":"Fire Root","description":"Rooted after firing","duration_secs":0.1,"vitals":[],"stats":[],"disables":["Move","Skill"],"stacking":"Refresh"},"base_spread":0.1,"knockback":50.0,"armor_piercing":20.0,"damage_falloff_start":45.0,"damage_falloff_min":0.25,"weight":3.0}'),
+    (gen_random_uuid(), 'auto-shotgun', 1, 'published', 'Auto-Shotgun', 'Shell', 'auto-spread',
+      '{"fire_rate":150.0,"magazine_size":8,"range":180.0,"reload_time":2.0,"projectile_speed":450.0,"damage":{"attack":{"Flat":11.0},"defend":{"Flat":0.0},"evasion":"DamageReduction","combine":"Subtract"},"auto_reload":true,"base_spread":0.08,"knockback":30.0,"damage_falloff_start":80.0,"damage_falloff_min":0.35,"weight":6.0}'),
+    (gen_random_uuid(), 'rocket-launcher', 1, 'published', 'Rocket Launcher', 'Ordnance', 'semi',
+      '{"fire_rate":20.0,"magazine_size":1,"range":350.0,"reload_time":3.5,"projectile_speed":400.0,"damage":{"attack":{"Flat":60.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"effect_radius":64.0,"self_knockback":30.0,"base_spread":0.04,"knockback":40.0,"weight":10.0}'),
+    (gen_random_uuid(), 'grenade-launcher', 1, 'published', 'Grenade Launcher', 'Ordnance', 'launcher-arc',
+      '{"fire_rate":40.0,"magazine_size":6,"range":250.0,"reload_time":3.0,"projectile_speed":200.0,"damage":{"attack":{"Flat":40.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"self_knockback":15.0,"base_spread":0.08,"weight":6.0,"on_hit_effect":{"name":"Concussion","description":"Movement slowed by explosion impact","duration_secs":2.0,"tick_interval_secs":0.0,"vitals":[],"stats":[["MovementSpeed","Add",-30]],"stacking":"Refresh"},"zone":{"damage_per_tick":6.0,"tick_interval":0.5,"duration":3.0},"lossy_reload":true}');
+
+    -- ============================================
+    -- Melee Weapons
+    -- ============================================
+
+    INSERT INTO melee_weapons (id, key, version, status, name, animation_type, data) VALUES
+    (gen_random_uuid(), 'combat-knife', 1, 'published', 'Combat Knife', 'Stab',
+      '{"range":24.0,"speed":1.2,"cooldown":0.25,"anticipation_time":0.05,"attack_time":0.1,"recovery_time":0.1,"damage":{"attack":{"Flat":15.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"size":[24.0,24.0]}'),
+    (gen_random_uuid(), 'sword', 1, 'published', 'Sword', 'Slash',
+      '{"range":36.0,"speed":1.0,"cooldown":0.5,"anticipation_time":0.1,"attack_time":0.2,"recovery_time":0.2,"damage":{"attack":{"Flat":25.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"size":[48.0,48.0]}'),
+    (gen_random_uuid(), 'machete', 1, 'published', 'Machete', 'Slash',
+      '{"range":32.0,"speed":1.0,"cooldown":0.4,"anticipation_time":0.08,"attack_time":0.15,"recovery_time":0.15,"damage":{"attack":{"Flat":20.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"size":[40.0,40.0]}'),
+    (gen_random_uuid(), 'baseball-bat', 1, 'published', 'Baseball Bat', 'Slash',
+      '{"range":42.0,"speed":1.0,"cooldown":0.8,"anticipation_time":0.2,"attack_time":0.25,"recovery_time":0.25,"damage":{"attack":{"Flat":35.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"size":[56.0,56.0]}'),
+    (gen_random_uuid(), 'sledgehammer', 1, 'published', 'Sledgehammer', 'Point',
+      '{"range":30.0,"speed":1.0,"cooldown":1.2,"anticipation_time":0.4,"attack_time":0.3,"recovery_time":0.2,"damage":{"attack":{"Flat":50.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"size":[48.0,48.0]}'),
+    (gen_random_uuid(), 'sentinel-blade', 1, 'published', 'Sentinel Blade', 'Slash',
+      '{"range":32.0,"speed":1.0,"cooldown":0.6,"anticipation_time":0.15,"attack_time":0.25,"recovery_time":0.15,"damage":{"attack":{"Flat":15.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"size":[48.0,48.0]}'),
+    (gen_random_uuid(), 'zombie-claws', 1, 'published', 'Zombie Claws', 'Slash',
+      '{"range":28.0,"speed":1.0,"cooldown":1.0,"anticipation_time":0.3,"attack_time":0.3,"recovery_time":0.2,"damage":{"attack":{"Flat":12.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"size":[40.0,40.0]}'),
+    (gen_random_uuid(), 'slime-bite', 1, 'published', 'Slime Bite', 'Stab',
+      '{"range":24.0,"speed":1.0,"cooldown":1.2,"anticipation_time":0.4,"attack_time":0.2,"recovery_time":0.2,"damage":{"attack":{"Flat":8.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"size":[32.0,32.0]}'),
+    (gen_random_uuid(), 'chain-hook', 1, 'published', 'Chain Hook', 'Stab',
+      '{"range":200.0,"speed":1.0,"cooldown":2.0,"anticipation_time":0.1,"attack_time":0.15,"recovery_time":0.1,"damage":{"attack":{"Flat":5.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"size":[24.0,24.0],"positional_effect":{"Pull":{"distance":200.0,"speed":300.0,"collision_damage_per_tile":8}}}'),
+    (gen_random_uuid(), 'chain-flail', 1, 'published', 'Chain Flail', 'Slash',
+      '{"range":140.0,"speed":1.0,"cooldown":4.0,"anticipation_time":0.15,"attack_time":0.2,"recovery_time":0.15,"damage":{"attack":{"Flat":15.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"size":[32.0,32.0],"positional_effect":{"Pull":{"distance":140.0,"speed":200.0,"collision_damage_per_tile":12}}}');
+
+    -- ============================================
+    -- Thrown Weapons
+    -- ============================================
+
+    INSERT INTO thrown_weapons (id, key, version, status, name, trigger_mode, behavior_key, data) VALUES
+    (gen_random_uuid(), 'frag-grenade', 1, 'published', 'Frag Grenade', 'OnHit', 'arc-explosive',
+      '{"range":200.0,"speed":250.0,"cooldown":15.0,"effect_radius":48.0,"arc_height":40.0,"damage":{"attack":{"Flat":60.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"starting_stock":3,"max_stock":4}'),
+    (gen_random_uuid(), 'molotov', 1, 'published', 'Molotov', 'OnHit', 'arc-explosive',
+      '{"range":180.0,"speed":220.0,"cooldown":18.0,"effect_radius":56.0,"arc_height":45.0,"damage":{"attack":{"Flat":45.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"on_hit_effect":{"name":"Burn","description":"Taking fire damage over time","duration_secs":4.0,"tick_interval_secs":1.0,"vitals":[["Health",-5.0]],"stats":[],"stacking":"Refresh"},"zone":{"damage_per_tick":8.0,"tick_interval":0.5,"duration":4.0},"starting_stock":2,"max_stock":3}'),
+    (gen_random_uuid(), 'throwing-knife', 1, 'published', 'Throwing Knife', 'OnHit', 'arc-explosive',
+      '{"range":250.0,"speed":500.0,"cooldown":5.0,"effect_radius":0.0,"arc_height":0.0,"damage":{"attack":{"Flat":30.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"starting_stock":6,"max_stock":8}'),
+    (gen_random_uuid(), 'proximity-mine', 1, 'published', 'Proximity Mine', 'Proximity', 'arc-explosive',
+      '{"range":150.0,"speed":200.0,"cooldown":25.0,"effect_radius":36.0,"arc_height":30.0,"damage":{"attack":{"Flat":80.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"starting_stock":2,"max_stock":3}'),
+    (gen_random_uuid(), 'smoke-grenade', 1, 'published', 'Smoke Grenade', 'OnHit', 'arc-explosive',
+      '{"range":200.0,"speed":240.0,"cooldown":10.0,"effect_radius":72.0,"arc_height":40.0,"damage":{"attack":{"Flat":15.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"on_hit_effect":{"name":"Obscured","description":"Reduced vision and accuracy","duration_secs":3.0,"vitals":[],"stats":[["VisionRange","Multiply",0.5],["RangedAccuracy","Multiply",0.5]],"disables":[],"stacking":"Refresh"},"starting_stock":3,"max_stock":4}'),
+    (gen_random_uuid(), 'flashbang', 1, 'published', 'Flashbang', 'OnHit', 'arc-explosive',
+      '{"range":220.0,"speed":280.0,"cooldown":12.0,"effect_radius":64.0,"arc_height":35.0,"damage":{"attack":{"Flat":25.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"on_hit_effect":{"name":"Daze","description":"Slowed movement, cannot fire or use skills","duration_secs":2.0,"vitals":[],"stats":[["MovementSpeed","Add",-120]],"disables":["Fire","Skill"],"stacking":"Refresh"},"starting_stock":3,"max_stock":4}'),
+    (gen_random_uuid(), 'shuriken', 1, 'published', 'Shuriken', 'OnHit', 'arc-explosive',
+      '{"range":200.0,"speed":600.0,"cooldown":8.0,"effect_radius":0.0,"arc_height":0.0,"damage":{"attack":{"Flat":12.0},"defend":{"Flat":0.0},"evasion":"DamageReduction"},"on_hit_effect":{"name":"Poison","description":"Toxin dealing damage over time","duration_secs":6.0,"tick_interval_secs":1.0,"vitals":[["Health",-4.0]],"stats":[],"stacking":"Refresh"},"starting_stock":6,"max_stock":8}');
+
+    -- ============================================
+    -- Enemies
+    -- ============================================
+
+    INSERT INTO enemies (id, key, version, status, name, disposition, color, attributes, loadout) VALUES
+    (gen_random_uuid(), 'zombie', 1, 'published', 'Zombie', 'Aggressive',
+      '[0.4,0.7,0.3,1.0]', '[["physical",4.0],["finesse",1.1],["perception",1.67],["mental",3.77]]', '{"melee":"zombie-claws","skill1":"dash"}'),
+    (gen_random_uuid(), 'slime', 1, 'published', 'Slime', 'Neutral',
+      '[0.3,0.8,0.3,1.0]', '[["physical",2.0],["finesse",0.13]]', '{"melee":"slime-bite"}'),
+    (gen_random_uuid(), 'skulker', 1, 'published', 'Skulker', 'Aggressive',
+      '[0.3,0.3,0.6,1.0]', '[["physical",2.0],["finesse",3.5],["perception",2.5],["mental",2.28]]', '{"melee":"combat-knife","skill1":"dash"}'),
+    (gen_random_uuid(), 'gunner', 1, 'published', 'Gunner', 'Aggressive',
+      '[0.6,0.2,0.2,1.0]', '[["physical",1.0],["finesse",0.73],["perception",3.33],["mental",3.48]]', '{"ranged1":"burst-smg","melee":"zombie-claws"}'),
+    (gen_random_uuid(), 'sniper', 1, 'published', 'Sniper', 'KeepDistance',
+      '[0.3,0.3,0.6,1.0]', '[["physical",0.33],["finesse",0.13],["perception",4.0],["mental",4.35]]', '{"ranged1":"revolver","thrown":"throwing-knife","skill1":"dash"}'),
+    (gen_random_uuid(), 'brute', 1, 'published', 'Brute', 'Aggressive',
+      '[0.7,0.3,0.2,1.0]', '[["physical",5.0],["finesse",2.0],["perception",1.0],["mental",2.0]]', '{"ranged1":"pump-shotgun","melee":"zombie-claws","skill1":"dash"}'),
+    (gen_random_uuid(), 'sentinel', 1, 'published', 'Sentinel', 'Guard',
+      '[0.6,0.3,0.8,1.0]', '[["physical",9.0],["finesse",1.27],["perception",1.0],["mental",4.9]]', '{"ranged1":"heavy-rifle","melee":"sentinel-blade"}'),
+    (gen_random_uuid(), 'bomber', 1, 'published', 'Bomber', 'Aggressive',
+      '[0.9,0.3,0.1,1.0]', '[["physical",3.0],["finesse",1.0],["perception",2.0],["mental",1.0]]', '{"thrown":"frag-grenade","melee":"combat-knife"}'),
+    (gen_random_uuid(), 'sapper', 1, 'published', 'Sapper', 'KeepDistance',
+      '[0.8,0.6,0.2,1.0]', '[["physical",2.0],["finesse",0.5],["perception",2.0],["mental",3.0]]', '{"ranged1":"drum-smg","skill1":"deploy-turret"}'),
+    (gen_random_uuid(), 'witch-doctor', 1, 'published', 'Witch Doctor', 'KeepDistance',
+      '[0.3,0.9,0.4,1.0]', '[["physical",1.5],["finesse",1.0],["perception",1.0],["mental",5.0]]', '{"ranged1":"compact","skill1":"heal-ally"}'),
+    (gen_random_uuid(), 'wraith', 1, 'published', 'Wraith', 'Aggressive',
+      '[0.6,0.5,0.9,1.0]', '[["physical",0.5],["finesse",6.5],["perception",2.0],["mental",1.0]]', '{"melee":"combat-knife","skill1":"hamstring"}'),
+    (gen_random_uuid(), 'flanker', 1, 'published', 'Flanker', 'Flanker',
+      '[0.2,0.6,0.3,1.0]', '[["physical",1.5],["finesse",3.0],["perception",3.5],["mental",2.0]]', '{"ranged1":"auto-shotgun","melee":"baseball-bat"}'),
+    (gen_random_uuid(), 'ambusher', 1, 'published', 'Ambusher', 'Ambush',
+      '[0.4,0.15,0.4,1.0]', '[["physical",2.5],["finesse",3.5],["perception",3.0],["mental",1.0]]', '{"thrown":"throwing-knife","skill1":"dash"}'),
+    (gen_random_uuid(), 'arsonist', 1, 'published', 'Arsonist', 'Aggressive',
+      '[1.0,0.4,0.0,1.0]', '[["physical",3.5],["finesse",1.5],["perception",2.0],["mental",1.0]]', '{"thrown":"molotov","melee":"machete"}'),
+    (gen_random_uuid(), 'breacher', 1, 'published', 'Breacher', 'Flanker',
+      '[0.5,0.35,0.2,1.0]', '[["physical",6.0],["finesse",2.0],["perception",1.5],["mental",1.5]]', '{"ranged1":"pump-shotgun","thrown":"flashbang","melee":"chain-flail","skill1":"charge"}'),
+    (gen_random_uuid(), 'enforcer', 1, 'published', 'Enforcer', 'Aggressive',
+      '[0.4,0.4,0.45,1.0]', '[["physical",7.0],["finesse",1.0],["perception",2.0],["mental",2.0]]', '{"ranged1":"magnum","melee":"sledgehammer","skill1":"iron-skin"}'),
+    (gen_random_uuid(), 'juggernaut', 1, 'published', 'Juggernaut', 'Aggressive',
+      '[0.3,0.15,0.15,1.0]', '[["physical",10.0],["finesse",0.5],["perception",1.0],["mental",3.0]]', '{"ranged1":"heavy-rifle","melee":"chain-hook","skill1":"bloodlust"}'),
+    (gen_random_uuid(), 'shinobi', 1, 'published', 'Shinobi', 'Ambush',
+      '[0.15,0.1,0.25,1.0]', '[["physical",1.5],["finesse",3.5],["perception",2.5],["mental",1.0]]', '{"melee":"combat-knife","thrown":"shuriken","skill1":"dash"}'),
+    (gen_random_uuid(), 'smoker', 1, 'published', 'Smoker', 'KeepDistance',
+      '[0.5,0.5,0.5,1.0]', '[["physical",1.5],["finesse",1.0],["perception",3.0],["mental",3.5]]', '{"ranged1":"suppressed-smg","thrown":"smoke-grenade","skill1":"dash"}'),
+    (gen_random_uuid(), 'trapper', 1, 'published', 'Trapper', 'KeepDistance',
+      '[0.6,0.5,0.2,1.0]', '[["physical",1.0],["finesse",2.0],["perception",3.5],["mental",3.0]]', '{"ranged1":"compact","thrown":"proximity-mine","skill1":"slow-field"}');
+
+    -- ============================================
+    -- Deployables
+    -- ============================================
+
+    INSERT INTO deployables (id, key, version, status, name, kind, health, duration_secs, config) VALUES
+    -- kind is the domain discriminator and must be lowercase; the capitalised form
+    -- ("Turret") belongs to the game-client file format and is translated by
+    -- DeployableMapper on import/export.
+    (gen_random_uuid(), 'turret', 1, 'published', 'Sentry Turret', 'turret', 80.0, 25.0,
+      '{"fire_rate":3.0,"damage":10.0,"range":250.0,"projectile_speed":600.0,"scan_interval":0.5}'),
+    (gen_random_uuid(), 'flamethrower', 1, 'published', 'Flame Sweeper', 'flamethrower', 60.0, 20.0,
+      '{"rotation_speed":1.0,"damage_per_tick":5.0,"tick_interval":0.3,"range":120.0,"sweep_half_angle":0.35}');
+
+    -- ============================================
+    -- Skills
+    -- ============================================
+
+    INSERT INTO skills (id, key, version, status, name, cooldown, target, deployable_key, data) VALUES
+    (gen_random_uuid(), 'dash', 1, 'published', 'Dash', 5.0, 'Self', NULL,
+      '{"ai_condition":{"TargetWithinRange":100.0},"self_effect":{"name":"Dash","description":"Increased movement speed","duration_secs":0.5,"vitals":[],"stats":[["MovementSpeed","Multiply",2]],"stacking":"Refresh"}}'),
+    (gen_random_uuid(), 'heal', 1, 'published', 'Heal', 12.0, 'Self', NULL,
+      '{"ai_condition":{"HealthBelow":0.4},"self_effect":{"name":"Heal","description":"Instant heal","vitals":[["Health",30.0]],"stats":[],"stacking":"Refresh"}}'),
+    (gen_random_uuid(), 'regenerate', 1, 'published', 'Regenerate', 20.0, 'Self', NULL,
+      '{"ai_condition":{"HealthBelow":0.6},"self_effect":{"name":"Regeneration","description":"Restores 8 HP per second for 5 seconds","duration_secs":5.0,"tick_interval_secs":1.0,"vitals":[["Health",8.0]],"stats":[],"stacking":"Refresh"}}'),
+    (gen_random_uuid(), 'iron-skin', 1, 'published', 'Iron Skin', 20.0, 'Self', NULL,
+      '{"ai_condition":{"HealthBelow":0.3},"self_effect":{"name":"Iron Skin","description":"Brief invincibility","duration_secs":1.5,"vitals":[],"stats":[],"disables":["Invincible"],"stacking":"Refresh"}}'),
+    (gen_random_uuid(), 'stasis', 1, 'published', 'Stasis', 25.0, 'Self', NULL,
+      '{"ai_condition":{"HealthBelow":0.15},"self_effect":{"name":"Stasis Field","description":"Full invincibility but cannot act","duration_secs":2.0,"vitals":[],"stats":[],"disables":["Invincible","Move","Fire","Skill","Throw"],"stacking":"Refresh"}}'),
+    (gen_random_uuid(), 'deploy-turret', 1, 'published', 'Deploy Turret', 30.0, 'Area', 'turret',
+      '{"ai_condition":"Always","skill_type":{"Deploy":{"max_range":150.0,"deployable_key":"turret"}}}'),
+    (gen_random_uuid(), 'deploy-flamethrower', 1, 'published', 'Deploy Flamethrower', 35.0, 'Area', 'flamethrower',
+      '{"ai_condition":"Always","skill_type":{"Deploy":{"max_range":150.0,"deployable_key":"flamethrower"}}}'),
+    (gen_random_uuid(), 'blink', 1, 'published', 'Blink', 8.0, 'Self', NULL,
+      '{"ai_condition":{"TargetWithinRange":150.0},"skill_type":{"InstantMovement":{"distance":120.0}}}'),
+    (gen_random_uuid(), 'warp', 1, 'published', 'Warp', 12.0, 'Self', NULL,
+      '{"ai_condition":"Always","skill_type":{"PositionedMovement":{"max_range":200.0}}}'),
+    (gen_random_uuid(), 'heal-ally', 1, 'published', 'Heal Ally', 15.0, 'Ally', NULL,
+      '{"ai_condition":{"AllyHealthBelow":0.5},"max_range":200.0,"self_effect":{"name":"Ally Heal","description":"Heals a nearby ally","vitals":[["Health",40.0]],"stats":[],"stacking":"Refresh"}}'),
+    (gen_random_uuid(), 'hamstring', 1, 'published', 'Hamstring', 12.0, 'Enemy', NULL,
+      '{"ai_condition":{"TargetWithinRange":40.0},"max_range":40.0,"on_hit_effect":{"name":"Hamstring","description":"Slows movement speed","duration_secs":3.0,"vitals":[],"stats":[["MovementSpeed","Multiply",0.4]],"stacking":"Refresh"}}'),
+    (gen_random_uuid(), 'bloodlust', 1, 'published', 'Bloodlust', 15.0, 'Self', NULL,
+      '{"ai_condition":{"TargetWithinRange":80.0},"self_effect":{"name":"Bloodlust","description":"Melee hits restore HP","duration_secs":5.0,"vitals":[],"stats":[],"stacking":"Refresh"}}'),
+    (gen_random_uuid(), 'charge', 1, 'published', 'Charge', 8.0, 'Self', NULL,
+      '{"ai_condition":{"TargetWithinRange":150.0},"skill_type":{"Charge":{"base_distance":80.0,"physical_scaling":40.0,"speed":400.0,"base_damage":15.0,"knockback_distance":40.0,"hit_half_width":30.0}}}'),
+    (gen_random_uuid(), 'reflect', 1, 'published', 'Reflect', 18.0, 'Self', NULL,
+      '{"ai_condition":{"HealthBelow":0.6},"self_effect":{"name":"Reflect","description":"Reflects a portion of incoming damage back to attackers","duration_secs":3.0,"vitals":[],"stats":[],"stacking":"Refresh"}}'),
+    (gen_random_uuid(), 'pulse', 1, 'published', 'Pulse', 20.0, 'Self', NULL,
+      '{"ai_condition":"Always","skill_type":{"Aura":{"base_radius":200.0,"perception_scaling":40.0,"mental_scaling":0.0,"reveal":true}},"self_effect":{"name":"Pulse","description":"Reveals all nearby entities through walls","duration_secs":4.0,"vitals":[],"stats":[],"stacking":"Refresh"}}'),
+    (gen_random_uuid(), 'slow-field', 1, 'published', 'Slow Field', 22.0, 'Self', NULL,
+      '{"ai_condition":{"TargetWithinRange":100.0},"skill_type":{"Aura":{"base_radius":80.0,"perception_scaling":0.0,"mental_scaling":20.0}},"on_hit_effect":{"name":"Slowed","description":"Movement slowed by aura","duration_secs":999.0,"tick_interval_secs":1.0,"vitals":[],"stats":[["MovementSpeed","Multiply",0.5]],"stacking":"Refresh"},"self_effect":{"name":"Slow Field","description":"Slows nearby enemies","duration_secs":4.0,"vitals":[],"stats":[],"stacking":"Refresh"}}'),
+    (gen_random_uuid(), 'suppress', 1, 'published', 'Suppress', 25.0, 'Self', NULL,
+      '{"ai_condition":{"TargetWithinRange":80.0},"skill_type":{"Aura":{"base_radius":60.0,"perception_scaling":0.0,"mental_scaling":16.0}},"on_hit_effect":{"name":"Suppressed","description":"Fire disabled by aura","duration_secs":999.0,"tick_interval_secs":1.0,"vitals":[],"stats":[],"disables":["Fire"],"stacking":"Refresh"},"self_effect":{"name":"Suppress","description":"Disables ranged fire for nearby enemies","duration_secs":2.5,"vitals":[],"stats":[],"stacking":"Refresh"}}');
+
+    -- ============================================
+    -- Objectives
+    -- ============================================
+
+    INSERT INTO objectives (id, key, version, status, name, objective_type, discovery_radius, data) VALUES
+    -- objective_type is the domain discriminator and must be lowercase; the
+    -- capitalised enum form ("Collect") belongs to the game-client file format and
+    -- is translated by ObjectiveMapper on import/export.
+    (gen_random_uuid(), 'weapon_chest', 1, 'published', 'Weapon Chest', 'collect', 150.0,
+      '{"type_params":{"interaction_duration":3.0},"color":[0.9,0.8,0.2,1.0],"interaction_radius":24.0,"salvage_value":100.0,"reward":{"Weapon":{"key":"pistol","weapon_type":"Ranged"}}}'),
+    (gen_random_uuid(), 'map_exploration', 1, 'published', 'Explore the Map', 'explore', 0.0,
+      '{"type_params":{"threshold":0.80},"color":[0.2,0.8,0.9,1.0],"reward":{"Salvage":{"amount":500.0}}}'),
+    (gen_random_uuid(), 'survive_5min', 1, 'published', 'Survive 5 Minutes', 'survive', 0.0,
+      '{"type_params":{"duration_secs":300.0},"color":[0.9,0.6,0.2,1.0],"reward":{"Salvage":{"amount":750.0}}}'),
+    -- BetrayalExtract has no ObjectiveKind constant, so it stays in the client's
+    -- PascalCase form: capitalizeFirst cannot rebuild it from snake_case.
+    (gen_random_uuid(), 'betrayal_extract', 1, 'published', 'Betrayal Extraction', 'BetrayalExtract', 0.0,
+      '{"color":[0.85,0.2,0.2,1.0],"reward":{"Salvage":{"amount":1000.0}}}');
+
+    -- ============================================
+    -- Prefabs
+    -- ============================================
+
+    INSERT INTO prefabs (id, key, version, status, name, mode, data) VALUES
+    -- data.mode carries the PrefabMode discriminator. It is required: PrefabStepConfig
+    -- decodes it through PrefabMode.UnmarshalJSON, which rejects an empty type.
+    (gen_random_uuid(), 'swarm_goal', 1, 'published', 'swarm_goal', 'Vault',
+      '{"mode":{"type":"Vault"},"width":5,"height":5,"template":"......^^^..^!...^^^......","mapping":[{"character":".","tile_type":"Free"},{"character":"^","tile_type":"Free","entity":"enemy_spawn:zombie"},{"character":"!","tile_type":"Free","entity":"objective:weapon_chest"}]}');
+
+    -- ============================================
+    -- Map Configs
+    -- ============================================
+
+    INSERT INTO map_configs (id, key, version, status, name, width, height, tile_size, tileset, pipeline, spawners) VALUES
+    (gen_random_uuid(), 'bsp-waveform', 1, 'published', 'BSP Waveform Dungeon', 100, 100, 32, 'scifitiles-sheet',
+      '[{"type":"BspDungeon","config":{"tries":240}},{"type":"RoomDrawer"},{"type":"BspHallways","config":{"width":3}},{"type":"WaveformCollapse","config":{"chunk_size":7}},{"type":"CullDeadends","config":{"iterations":10}},{"type":"CullUnreachable"},{"type":"Prefab","config":{"mode":{"type":"Vault"},"template":"..... .^^^. .^!.. .^^^. .....","width":5,"height":5,"mapping":[{"character":"#","tile_type":"Blocked"},{"character":" ","tile_type":"Free"},{"character":"^","tile_type":"Free","entity":"enemy_spawn:zombie"},{"character":"!","tile_type":"Free","entity":"objective:weapon_chest"}]}}]',
+      '[{"type":"AreaPosition","config":{"x":"Left","y":"Top","entity":"player_spawn"}},{"type":"AreaPosition","config":{"x":"Right","y":"Bottom","entity":"player_spawn"}},{"type":"AreaPosition","config":{"x":"Right","y":"Top","entity":"player_spawn"}},{"type":"AreaPosition","config":{"x":"Left","y":"Bottom","entity":"player_spawn"}},{"type":"DistantPosition","config":{"from_entity":"player_spawn","entity":"exit"}},{"type":"DistantPosition","config":{"from_entity":"player_spawn","entity":"objective:weapon_chest"}},{"type":"Voronoi","config":{"choices":[{"entity":"enemy_spawn:zombie","weight":10},{"entity":"enemy_spawn:slime","weight":5},{"entity":"enemy_spawn:gunner","weight":4},{"entity":"enemy_spawn:skulker","weight":3},{"entity":"enemy_spawn:sniper","weight":2},{"entity":"enemy_spawn:sentinel","weight":1},{"entity":"enemy_spawn:brute","weight":1},{"entity":"enemy_spawn:sapper","weight":2},{"entity":"enemy_spawn:bomber","weight":2},{"entity":"enemy_spawn:witch-doctor","weight":3},{"entity":"enemy_spawn:wraith","weight":2},{"entity":"enemy_spawn:flanker","weight":2}],"max_per_cell":3,"frequency":0.08,"exclusion_radius":null,"exclude_around":[{"entity":"player_spawn","radius":10},{"entity":"exit","radius":5}]}}]'),
+    (gen_random_uuid(), 'drunkards-maze', 1, 'published', 'Drunkards Walk Maze', 100, 100, 32, 'scifitiles-sheet',
+      '[{"type":"DrunkardsWalk","config":{"spawn_mode":"Random","lifetime":10,"floor_percent":0.4,"brush_size":3,"symmetry":"None"}},{"type":"BspDungeon","config":{"tries":1000}},{"type":"RoomDrawer"},{"type":"Maze","config":{"algorithm":"RecursiveBacktracking"}}]',
+      '[{"type":"AreaPosition","config":{"x":"Left","y":"Top","entity":"player_spawn"}},{"type":"AreaPosition","config":{"x":"Right","y":"Bottom","entity":"player_spawn"}},{"type":"AreaPosition","config":{"x":"Right","y":"Top","entity":"player_spawn"}},{"type":"AreaPosition","config":{"x":"Left","y":"Bottom","entity":"player_spawn"}},{"type":"DistantPosition","config":{"from_entity":"player_spawn","entity":"exit"}},{"type":"DistantPosition","config":{"from_entity":"player_spawn","entity":"objective:weapon_chest"}},{"type":"Voronoi","config":{"choices":[{"entity":"enemy_spawn:zombie","weight":10},{"entity":"enemy_spawn:slime","weight":5},{"entity":"enemy_spawn:gunner","weight":4},{"entity":"enemy_spawn:skulker","weight":3},{"entity":"enemy_spawn:sniper","weight":2},{"entity":"enemy_spawn:sentinel","weight":1},{"entity":"enemy_spawn:brute","weight":1},{"entity":"enemy_spawn:sapper","weight":2},{"entity":"enemy_spawn:bomber","weight":2},{"entity":"enemy_spawn:witch-doctor","weight":3},{"entity":"enemy_spawn:wraith","weight":2},{"entity":"enemy_spawn:flanker","weight":2}],"max_per_cell":3,"frequency":0.08,"exclusion_radius":null,"exclude_around":[{"entity":"player_spawn","radius":10},{"entity":"exit","radius":5}]}}]');
+
+    -- ============================================
+    -- Maps (Game Configs)
+    -- ============================================
+
+    INSERT INTO maps (id, key, version, status, name, min_players, max_players, map_config_key, enemy_keys, objective_keys, escalation, engagement) VALUES
+    (gen_random_uuid(), 'bsp-waveform-default', 1, 'published', 'BSP Waveform - Default', 1, 4, 'bsp-waveform',
+      '["zombie","slime","skulker","gunner","sniper","brute","sentinel","bomber","sapper","witch-doctor","wraith","flanker","ambusher","arsonist","breacher","enforcer","juggernaut","shinobi","smoker","trapper"]',
+      '["weapon_chest","map_exploration","survive_5min","betrayal_extract"]',
+      '{"health_growth_per_sec":0.001,"damage_growth_per_sec":0.0008,"speed_growth_per_sec":0.0005,"detection_growth_per_sec":0.0003,"reinforcement_base_interval":30.0,"reinforcement_interval_decay":0.05,"reinforcement_min_interval":5.0,"reinforcement_count_growth":0.005,"reinforcement_min_player_distance":15,"reinforcement_pool":[{"enemy_key":"zombie","weight":1.0},{"enemy_key":"slime","weight":0.5}],"exit_pressure_delay":180.0,"exit_pressure_base_interval":45.0,"exit_pressure_interval_decay":0.03,"exit_pressure_min_interval":10.0,"exit_pressure_spawn_radius":12,"exit_pressure_pool":[{"enemy_key":"brute","weight":1.0}],"extraction_base_duration":9.0,"extraction_duration_growth":0.015}',
+      '{"max_melee_engagers":5,"max_ranged_engagers":3}'),
+    (gen_random_uuid(), 'drunkards-maze-default', 1, 'published', 'Drunkards Maze - Default', 1, 4, 'drunkards-maze',
+      '["zombie","slime","skulker","gunner","sniper","brute","sentinel","bomber","sapper","witch-doctor","wraith","flanker","ambusher","arsonist","breacher","enforcer","juggernaut","shinobi","smoker","trapper"]',
+      '["weapon_chest","map_exploration","survive_5min","betrayal_extract"]',
+      '{"health_growth_per_sec":0.001,"damage_growth_per_sec":0.0008,"speed_growth_per_sec":0.0005,"detection_growth_per_sec":0.0003,"reinforcement_base_interval":30.0,"reinforcement_interval_decay":0.05,"reinforcement_min_interval":5.0,"reinforcement_count_growth":0.005,"reinforcement_min_player_distance":15,"reinforcement_pool":[{"enemy_key":"zombie","weight":1.0},{"enemy_key":"slime","weight":0.5}],"exit_pressure_delay":180.0,"exit_pressure_base_interval":45.0,"exit_pressure_interval_decay":0.03,"exit_pressure_min_interval":10.0,"exit_pressure_spawn_radius":12,"exit_pressure_pool":[{"enemy_key":"brute","weight":1.0}],"extraction_base_duration":9.0,"extraction_duration_growth":0.015}',
+      '{"max_melee_engagers":5,"max_ranged_engagers":3}');
+
+    COMMIT;
