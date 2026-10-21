@@ -42,6 +42,8 @@ spec:
               repository: ghcr.io/linuxserver/lidarr
               tag: latest@sha256:d8549ff9ea29b4015c32257360652c1000c31ea471a2b3f0835ae77292faf35b
             env:
+              LIDARR__AUTH__METHOD: External
+              LIDARR__AUTH__REQUIRED: Enabled
               DOCKER_MODS: ghcr.io/themepark-dev/theme.park:lidarr
               TP_DOMAIN: theme-park.${SECRET_DOMAIN}
               TP_SCHEME: https

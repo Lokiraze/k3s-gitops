@@ -41,6 +41,7 @@ spec:
           bazarr:
             image: *id001
             env:
+              DYNACONF_AUTH__TYPE: "@none"
               DOCKER_MODS: ghcr.io/themepark-dev/theme.park:bazarr
               TP_DOMAIN: theme-park.${SECRET_DOMAIN}
               TP_SCHEME: https

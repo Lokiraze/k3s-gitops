@@ -13,7 +13,13 @@ authentication_backend:
 access_control:
   default_policy: deny
   rules:
-  - domain: tv.${SECRET_DOMAIN}
+  - domain:
+    - tv.${SECRET_DOMAIN}
+    - movies.${SECRET_DOMAIN}
+    - grooves.${SECRET_DOMAIN}
+    - prowlarr.${SECRET_DOMAIN}
+    - bazarr.${SECRET_DOMAIN}
+    - whisparr.${SECRET_DOMAIN}
     subject: user:lokiraze
     policy: one_factor
 session:

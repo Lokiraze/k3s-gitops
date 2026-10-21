@@ -7,3 +7,6 @@ resources:
 - ./config-pvc.yaml
 - ./httproute.yaml
 - ./config-pv.yaml
+- ./securitypolicy.yaml
+- ./api-httproute.yaml
+- ./networkpolicy.yaml
