@@ -15,7 +15,7 @@ def apps():
         for name in names:
             yield ns, name, ROOT / 'kubernetes/apps' / ns / name
 
-DISABLED = {('security', 'vaultwarden')}
+DISABLED = set()
 
 
 def test_every_restored_app_has_explicit_activation_state():
