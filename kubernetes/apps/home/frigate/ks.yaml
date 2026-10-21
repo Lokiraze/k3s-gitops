@@ -21,3 +21,5 @@ spec:
       name: legacy-app-secrets
   targetNamespace: home
   wait: false
+  dependsOn:
+  - name: cluster-apps-authelia

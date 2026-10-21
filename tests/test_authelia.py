@@ -20,7 +20,7 @@ def test_only_lokiraze_can_open_apps_and_failures_deny_access(app, host, port):
     access = read(AUTH / 'configuration.yaml')['access_control']
     assert access['default_policy'] == 'deny'
     assert access['rules'] == [{
-        'domain': [host + '.${SECRET_DOMAIN}' for _, host, _ in APPS],
+        'domain': [host + '.${SECRET_DOMAIN}' for _, host, _ in APPS] + ['zwave.${SECRET_DOMAIN}', 'cctv.${SECRET_DOMAIN}'],
         'subject': 'user:lokiraze', 'policy': 'one_factor',
     }]
     policy = read(directory / 'securitypolicy.yaml')['spec']
@@ -76,3 +76,62 @@ def test_ldap_secrets_are_encrypted_and_session_storage_is_retained():
     assert pvc['spec']['volumeName'] == pv['metadata']['name']
     ks = read(SONARR.parent / 'ks.yaml')['spec']
     assert {'name': 'cluster-apps-authelia'} in ks['dependsOn']
+
+
+def test_zwave_ui_is_protected_without_blocking_home_assistant():
+    directory = ROOT / 'kubernetes/apps/home/zwave-js-ui/app'
+    policy = read(directory / 'securitypolicy.yaml')['spec']
+    assert policy['targetRefs'] == [{
+        'group': 'gateway.networking.k8s.io', 'kind': 'HTTPRoute', 'name': 'zwave-js-ui',
+    }]
+    assert policy['extAuth']['failOpen'] is False
+    assert policy['extAuth']['http']['backendRefs'] == [{'name': 'authelia', 'namespace': 'security', 'port': 9091}]
+    grant = read(AUTH / 'referencegrant.yaml')['spec']
+    assert {'group': 'gateway.envoyproxy.io', 'kind': 'SecurityPolicy', 'namespace': 'home'} in grant['from']
+    network = read(directory / 'networkpolicy.yaml')['spec']
+    assert network['podSelector']['matchLabels'] == {'app.kubernetes.io/name': 'zwave-js-ui'}
+    assert network['policyTypes'] == ['Ingress']
+    assert len(network['ingress']) == 2
+    for rule, namespace, labels, port in zip(network['ingress'], ['network', 'home'], [
+        {'gateway.envoyproxy.io/owning-gateway-name': 'envoy-internal'},
+        {'app.kubernetes.io/name': 'home-assistant'},
+    ], [8091, 3000]):
+        assert rule == {'from': [{
+            'namespaceSelector': {'matchLabels': {'kubernetes.io/metadata.name': namespace}},
+            'podSelector': {'matchLabels': labels},
+        }], 'ports': [{'protocol': 'TCP', 'port': port}]}
+    resources = read(directory / 'kustomization.yaml')['resources']
+    assert './securitypolicy.yaml' in resources and './networkpolicy.yaml' in resources
+    assert not (directory / 'api-httproute.yaml').exists()
+    assert {'name': 'cluster-apps-authelia'} in read(directory.parent / 'ks.yaml')['spec']['dependsOn']
+
+
+def test_frigate_browser_is_protected_and_home_assistant_keeps_api_and_rtsp():
+    directory = ROOT / 'kubernetes/apps/home/frigate/app'
+    policy = read(directory / 'securitypolicy.yaml')['spec']
+    assert policy['targetRefs'] == [{
+        'group': 'gateway.networking.k8s.io', 'kind': 'HTTPRoute', 'name': 'frigate',
+    }]
+    assert policy['extAuth']['failOpen'] is False
+    assert policy['extAuth']['http']['backendRefs'] == [{'name': 'authelia', 'namespace': 'security', 'port': 9091}]
+    network = read(directory / 'networkpolicy.yaml')['spec']
+    assert network['podSelector']['matchLabels'] == {'app.kubernetes.io/name': 'frigate'}
+    assert network['policyTypes'] == ['Ingress']
+    assert len(network['ingress']) == 2
+    for rule, namespace, labels, ports in zip(network['ingress'], ['network', 'home'], [
+        {'gateway.envoyproxy.io/owning-gateway-name': 'envoy-internal'},
+        {'app.kubernetes.io/name': 'home-assistant'},
+    ], [[8971], [8971, 8554]]):
+        assert rule == {'from': [{
+            'namespaceSelector': {'matchLabels': {'kubernetes.io/metadata.name': namespace}},
+            'podSelector': {'matchLabels': labels},
+        }], 'ports': [{'protocol': 'TCP', 'port': port} for port in ports]}
+    values = read(directory / 'helmrelease.yaml')['spec']['values']
+    config = yaml.safe_load(values['configMaps']['config']['data']['config.yml'])
+    assert config['auth']['enabled'] is False
+    assert config['proxy'] == {'header_map': {'user': 'remote-user'}, 'default_role': 'admin'}
+    assert 'Remote-User' in policy['extAuth']['http']['headersToBackend']
+    resources = read(directory / 'kustomization.yaml')['resources']
+    assert './securitypolicy.yaml' in resources and './networkpolicy.yaml' in resources
+    assert not (directory / 'api-httproute.yaml').exists()
+    assert {'name': 'cluster-apps-authelia'} in read(directory.parent / 'ks.yaml')['spec']['dependsOn']

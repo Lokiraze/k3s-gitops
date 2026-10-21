@@ -132,7 +132,10 @@ def test_frigate_uses_local_database_and_authenticated_route():
     values = yaml.safe_load((base / 'helmrelease.yaml').read_text())['spec']['values']
     config = yaml.safe_load(values['configMaps']['config']['data']['config.yml'])
     assert config['database']['path'] == '/config/frigate.db'
-    assert config['auth']['enabled'] is True
+    assert config['auth']['enabled'] is False
+    assert config['proxy']['header_map']['user'] == 'remote-user'
+    policy = yaml.safe_load((base / 'securitypolicy.yaml').read_text())['spec']
+    assert policy['extAuth']['failOpen'] is False
     assert config['tls']['enabled'] is False
     assert config['ffmpeg']['hwaccel_args'] == 'preset-vaapi'
     assert all(c['ffmpeg']['inputs'][0]['roles'] == ['detect'] for c in config['cameras'].values())

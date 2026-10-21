@@ -20,6 +20,8 @@ access_control:
     - prowlarr.${SECRET_DOMAIN}
     - bazarr.${SECRET_DOMAIN}
     - whisparr.${SECRET_DOMAIN}
+    - zwave.${SECRET_DOMAIN}
+    - cctv.${SECRET_DOMAIN}
     subject: user:lokiraze
     policy: one_factor
 session:

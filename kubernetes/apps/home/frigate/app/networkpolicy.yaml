@@ -1,0 +1,35 @@
+# Keep Home Assistant API and RTSP access separate from the protected browser route.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frigate
+  namespace: home
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: frigate
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: network
+      podSelector:
+        matchLabels:
+          gateway.envoyproxy.io/owning-gateway-name: envoy-internal
+    ports:
+    - protocol: TCP
+      port: 8971
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: home
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: home-assistant
+    ports:
+    - protocol: TCP
+      port: 8971
+    - protocol: TCP
+      port: 8554

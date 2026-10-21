@@ -7,3 +7,5 @@ resources:
 - ./helmrelease.yaml
 - ./httproute.yaml
 - ./config-pv.yaml
+- ./securitypolicy.yaml
+- ./networkpolicy.yaml

@@ -266,6 +266,11 @@ spec:
                   width: 3840
                   fps: 5
             auth:
-              enabled: true
+              enabled: false
+            proxy:
+              header_map:
+                user: remote-user
+              # Authelia permits only lokiraze; NetworkPolicy limits direct access to Home Assistant.
+              default_role: admin
             tls:
               enabled: false
