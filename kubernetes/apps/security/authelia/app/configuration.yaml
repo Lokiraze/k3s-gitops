@@ -22,6 +22,7 @@ access_control:
     - whisparr.${SECRET_DOMAIN}
     - zwave.${SECRET_DOMAIN}
     - cctv.${SECRET_DOMAIN}
+    - librarian.${SECRET_DOMAIN}
     subject: user:lokiraze
     policy: one_factor
 session:

@@ -20,7 +20,7 @@ def test_only_lokiraze_can_open_apps_and_failures_deny_access(app, host, port):
     access = read(AUTH / 'configuration.yaml')['access_control']
     assert access['default_policy'] == 'deny'
     assert access['rules'] == [{
-        'domain': [host + '.${SECRET_DOMAIN}' for _, host, _ in APPS] + ['zwave.${SECRET_DOMAIN}', 'cctv.${SECRET_DOMAIN}'],
+        'domain': [host + '.${SECRET_DOMAIN}' for _, host, _ in APPS] + ['zwave.${SECRET_DOMAIN}', 'cctv.${SECRET_DOMAIN}', 'librarian.${SECRET_DOMAIN}'],
         'subject': 'user:lokiraze', 'policy': 'one_factor',
     }]
     policy = read(directory / 'securitypolicy.yaml')['spec']

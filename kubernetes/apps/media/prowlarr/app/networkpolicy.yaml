@@ -29,6 +29,7 @@ spec:
           - sonarr
           - radarr
           - lidarr
+          - lazylibrarian
           - whisparr
     - namespaceSelector:
         matchLabels:

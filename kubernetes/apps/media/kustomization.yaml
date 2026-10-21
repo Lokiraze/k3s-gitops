@@ -6,6 +6,7 @@ resources:
 - ./bazarr/ks.yaml
 - ./calibre-web/ks.yaml
 - ./jellyseer/ks.yaml
+- ./lazylibrarian/ks.yaml
 - ./lidarr/ks.yaml
 - ./podfetch/ks.yaml
 - ./prowlarr/ks.yaml

@@ -153,3 +153,33 @@ def test_frigate_uses_local_database_and_authenticated_route():
     assert pv['local']['path'] == '/var/lib/homelab/app-data/frigate-config'
     assert values['persistence']['config']['globalMounts'] == [{'path': '/config'}]
     assert values['persistence']['media']['advancedMounts']['main']['app'] == [{'path': '/media'}]
+
+
+def test_lazylibrarian_has_persistent_storage_and_protected_internal_route():
+    base = ROOT / 'kubernetes/apps/media/lazylibrarian/app'
+    values = yaml.safe_load((base / 'helmrelease.yaml').read_text())['spec']['values']
+    assert 'initContainers' not in values['controllers']['main']
+    assert values['controllers']['main']['strategy'] == 'Recreate'
+    assert values['service']['main']['ports']['http']['port'] == 5299
+    assert values['persistence']['config']['existingClaim'] == 'lazylibrarian-config'
+    assert values['persistence']['books']['path'] == '/mnt/user/media/books'
+    assert values['persistence']['downloads']['path'] == '/mnt/user/downloads'
+    pv = yaml.safe_load((base / 'config-pv.yaml').read_text())['spec']
+    pvc = yaml.safe_load((base / 'config-pvc.yaml').read_text())['spec']
+    assert pv['persistentVolumeReclaimPolicy'] == 'Retain'
+    assert pv['claimRef']['name'] == 'lazylibrarian-config'
+    assert pvc['volumeName'] == 'local-lazylibrarian-config'
+    route = yaml.safe_load((base / 'httproute.yaml').read_text())['spec']
+    assert route['hostnames'] == ['librarian.${SECRET_DOMAIN}']
+    assert route['parentRefs'][0]['name'] == 'envoy-internal'
+    policy = yaml.safe_load((base / 'securitypolicy.yaml').read_text())['spec']
+    assert policy['targetRefs'][0]['name'] == 'lazylibrarian'
+    assert policy['extAuth']['failOpen'] is False
+    network = yaml.safe_load((base / 'networkpolicy.yaml').read_text())['spec']
+    assert network['podSelector']['matchLabels']['app.kubernetes.io/name'] == 'lazylibrarian'
+    assert network['ingress'] == [{'from': [{
+        'namespaceSelector': {'matchLabels': {'kubernetes.io/metadata.name': 'network'}},
+        'podSelector': {'matchLabels': {'gateway.envoyproxy.io/owning-gateway-name': 'envoy-internal'}},
+    }], 'ports': [{'protocol': 'TCP', 'port': 5299}]}]
+    prowlarr = yaml.safe_load((base.parent.parent / 'prowlarr/app/networkpolicy.yaml').read_text())
+    assert 'lazylibrarian' in prowlarr['spec']['ingress'][0]['from'][1]['podSelector']['matchExpressions'][0]['values']
