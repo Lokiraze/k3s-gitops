@@ -53,6 +53,8 @@ spec:
               SONARR__PORT: 80
               SONARR__APPLICATION_URL: https://tv.${SECRET_DOMAIN}
               SONARR__LOG_LEVEL: info
+              SONARR__AUTH__METHOD: External
+              SONARR__AUTH__REQUIRED: Enabled
             probes:
               liveness:
                 enabled: true

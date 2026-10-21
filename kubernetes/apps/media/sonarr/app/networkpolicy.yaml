@@ -1,0 +1,53 @@
+# Only the internal gateway and existing integrations may reach Sonarr directly.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sonarr
+  namespace: media
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: sonarr
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: network
+      podSelector:
+        matchLabels:
+          gateway.envoyproxy.io/owning-gateway-name: envoy-internal
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: media
+      podSelector:
+        matchExpressions:
+        - key: app.kubernetes.io/name
+          operator: In
+          values:
+          - jellyseer
+          - prowlarr
+          - recyclarr
+          - bazarr
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: home
+      podSelector:
+        matchExpressions:
+        - key: app.kubernetes.io/name
+          operator: In
+          values:
+          - home-assistant
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: default
+      podSelector:
+        matchExpressions:
+        - key: app.kubernetes.io/name
+          operator: In
+          values:
+          - homepage
+    ports:
+    - protocol: TCP
+      port: 80

@@ -1,0 +1,33 @@
+server:
+  address: tcp://:9091/
+log:
+  level: info
+authentication_backend:
+  password_reset:
+    disable: true
+  ldap:
+    address: ldap://192.168.1.50:3890
+    implementation: lldap
+    base_dn: dc=lokiraze,dc=dev
+    user: uid=readonly,ou=people,dc=lokiraze,dc=dev
+access_control:
+  default_policy: deny
+  rules:
+  - domain: tv.${SECRET_DOMAIN}
+    subject: user:lokiraze
+    policy: one_factor
+session:
+  name: authelia_session
+  same_site: lax
+  expiration: 8h
+  inactivity: 1h
+  cookies:
+  - domain: ${SECRET_DOMAIN}
+    authelia_url: https://auth.${SECRET_DOMAIN}
+    default_redirection_url: https://tv.${SECRET_DOMAIN}
+storage:
+  local:
+    path: /data/db.sqlite3
+notifier:
+  filesystem:
+    filename: /data/notifications.txt
