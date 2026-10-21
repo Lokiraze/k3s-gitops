@@ -1,2 +1,6 @@
 https://dash.cloudflare.com/profile/api-tokens
 https://www.mend.io/free-developer-tools/renovate/
+# Home-network services are not reachable from GitHub-hosted runners.
+^https?://([a-zA-Z0-9-]+\.)*lokiraze\.dev(:[0-9]+)?(/|$)
+# OpenSubtitles rejects automated link checks with HTTP 403.
+^https://www\.opensubtitles\.com/?$
