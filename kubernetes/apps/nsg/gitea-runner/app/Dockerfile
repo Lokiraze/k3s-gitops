@@ -1,4 +1,4 @@
-FROM node:22-bookworm AS node
+FROM node:24-bookworm AS node
 FROM rust:1.99.1-bookworm
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
 RUN apt-get update && apt-get install -y --no-install-recommends \
