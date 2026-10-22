@@ -80,6 +80,9 @@ def test_media_claims_have_retained_node_bound_volumes_and_restore_guards():
         if base.parent.name == 'bazarr':
             # Fresh installation; its non-overwriting config seed is covered in test_bazarr.py.
             continue
+        if base.parent.name == 'lazylibrarian':
+            # Fresh installation, not restored data; storage is covered in test_restored_apps.py.
+            continue
         guard = hr['spec']['values']['controllers']['main']['initContainers']['verify-restored-data']
         assert pvc['metadata']['name'] in guard['command'][-1]
         assert hr['spec']['values']['persistence']['config']['advancedMounts']['main']['verify-restored-data'][0]['readOnly'] is True
