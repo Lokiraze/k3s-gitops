@@ -24,7 +24,7 @@ spec:
       savesClaim: colony-saves
       nodeSelector:
         kubernetes.io/arch: amd64
-        kubernetes.io/hostname: k8s-bahamut
+        kubernetes.io/hostname: k8s-odin
     routes:
       enabled: true
       parentRefs:

@@ -71,4 +71,4 @@ spec:
           name: postgres-init
           defaultMode: 365
       nodeSelector:
-        kubernetes.io/hostname: k8s-bahamut
+        kubernetes.io/hostname: k8s-odin

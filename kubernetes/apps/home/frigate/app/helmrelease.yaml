@@ -30,6 +30,11 @@ spec:
         strategy: Recreate
         pod:
           automountServiceAccountToken: false
+          tolerations:
+          - key: dedicated
+            operator: Equal
+            value: frigate
+            effect: NoSchedule
           nodeSelector:
             kubernetes.io/hostname: k8s-bahamut
             tpu: google-coral
@@ -111,10 +116,11 @@ spec:
                   failureThreshold: 6
             resources:
               requests:
-                cpu: 250m
-                memory: 512Mi
-              limits:
+                cpu: "2"
                 memory: 4Gi
+              limits:
+                cpu: "3"
+                memory: 6Gi
     service:
       main:
         controller: main

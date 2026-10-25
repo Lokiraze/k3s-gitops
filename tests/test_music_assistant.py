@@ -34,5 +34,5 @@ def test_music_assistant_retains_data_on_bahamut():
     assert pvc['spec']['volumeName'] == pv['metadata']['name']
     assert data['existingClaim'] == pvc['metadata']['name'] == pv['spec']['claimRef']['name']
     assert pv['spec']['local']['path'] == '/var/lib/homelab/app-data/music-assistant-data'
-    assert pv['spec']['nodeAffinity']['required']['nodeSelectorTerms'][0]['matchExpressions'][0]['values'] == ['k8s-bahamut']
+    assert pv['spec']['nodeAffinity']['required']['nodeSelectorTerms'][0]['matchExpressions'][0]['values'] == ['k8s-summoner']
     assert data['globalMounts'] == [{'path': '/data'}]

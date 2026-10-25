@@ -24,7 +24,7 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - k8s-bahamut
+          - k8s-odin
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -52,4 +52,4 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - k8s-bahamut
+          - k8s-odin

@@ -25,4 +25,4 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - k8s-bahamut
+          - k8s-summoner

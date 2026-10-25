@@ -1,6 +1,6 @@
 ---
-- name: Prepare NSG database storage on Bahamut's internal filesystem
-  hosts: k8s-bahamut
+- name: Prepare NSG database storage on Odin's internal filesystem
+  hosts: k8s-odin
   become: true
   gather_facts: false
   tasks:

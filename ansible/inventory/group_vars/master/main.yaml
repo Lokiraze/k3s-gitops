@@ -1,6 +1,7 @@
 ---
 k3s_control_node: true
 k3s_server:
+  node-taint: "{{ k3s_node_taints | default([]) }}"
   node-label: "{{ k3s_node_labels | default([]) }}"
   node-ip: "{{ ansible_host }}"
   tls-san: ["{{ kube_vip_addr }}"]

@@ -183,3 +183,18 @@ def test_lazylibrarian_has_persistent_storage_and_protected_internal_route():
     }], 'ports': [{'protocol': 'TCP', 'port': 5299}]}]
     prowlarr = yaml.safe_load((base.parent.parent / 'prowlarr/app/networkpolicy.yaml').read_text())
     assert 'lazylibrarian' in prowlarr['spec']['ingress'][0]['from'][1]['podSelector']['matchExpressions'][0]['values']
+
+
+def test_frigate_is_dedicated_and_has_bounded_resources():
+    inventory = yaml.safe_load((ROOT / 'ansible/inventory/hosts.yaml').read_text())
+    node = inventory['kubernetes']['children']['master']['hosts']['k8s-bahamut']
+    assert node['k3s_node_taints'] == ['dedicated=frigate:NoSchedule']
+    hr = yaml.safe_load((ROOT / 'kubernetes/apps/home/frigate/app/helmrelease.yaml').read_text())
+    main = hr['spec']['values']['controllers']['main']
+    assert main['pod']['tolerations'] == [{
+        'key': 'dedicated', 'operator': 'Equal', 'value': 'frigate', 'effect': 'NoSchedule',
+    }]
+    assert main['containers']['app']['resources']['limits'] == {'cpu': '3', 'memory': '6Gi'}
+    for path in (ROOT / 'kubernetes/apps').rglob('*.yaml'):
+        if '/frigate/' not in str(path):
+            assert 'k8s-bahamut' not in path.read_text(), str(path)

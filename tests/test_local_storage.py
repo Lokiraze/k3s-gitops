@@ -17,7 +17,7 @@ def test_local_storage_never_dynamically_provisions_empty_data():
 
 def test_home_restores_are_bound_to_the_right_claim_and_node():
     for app, claim, node, required_file in [
-        ('home-assistant', 'home-assistant-config', 'k8s-bahamut', '.storage/core.config_entries'),
+        ('home-assistant', 'home-assistant-config', 'k8s-summoner', '.storage/core.config_entries'),
         ('zwave-js-ui', 'zwavejs-config', 'k8s-ifrit', 'settings.json'),
     ]:
         base = APPS / 'home' / app / 'app'

@@ -17,6 +17,7 @@ kubernetes:
           ansible_host: 192.168.1.17
           internal_disk_serial: 2M032LCJ78G7
           k3s_node_labels: [tpu=google-coral]
+          k3s_node_taints: [dedicated=frigate:NoSchedule]
     worker:
       hosts:
         k8s-odin:
