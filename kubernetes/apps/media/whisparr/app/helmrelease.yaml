@@ -40,7 +40,7 @@ spec:
           whisparr:
             image:
               repository: ghcr.io/hotio/whisparr
-              tag: v3-3.6.5-release.1886@sha256:f17d0280144d09d215f9d8fbeee6bfc91910394892a7620c0319ee2396d0a136
+              tag: v3-3.6.5-release.1886@sha256:7c874bb68fb8ecc66df58ffb91281d13ce3591a5ba4477d2a7209e169a3ebd89
             env:
               WHISPARR__AUTH__METHOD: External
               WHISPARR__AUTH__REQUIRED: Enabled
