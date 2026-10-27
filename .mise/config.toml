@@ -7,7 +7,7 @@ SOPS_CONFIG = "{{config_root}}/.sops.yaml"
 SOPS_AGE_KEY_FILE = "{{config_root}}/age.key"
 
 [tools]
-uv = "0.13.5"
+uv = "0.13.6"
 age = "1.3.2"
 cloudflared = "2026.10.4"
 flux2 = "2.9.6"
