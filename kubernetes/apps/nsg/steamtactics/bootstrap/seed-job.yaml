@@ -1,6 +1,9 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
+  annotations:
+    # Bootstrap scripts preserve existing databases when recreated after image updates.
+    kustomize.toolkit.fluxcd.io/force: enabled
   name: steamtactics-seed-v005
 spec:
   backoffLimit: 3
