@@ -25,7 +25,7 @@ credentials remain alongside it.
 |---|---|---|---|---|
 | summoner | 192.168.1.15 | Minisforum GK41, 8 GB | Control plane + workloads | LCMLCCC11202554 |
 | phoenix | 192.168.1.16 | HP EliteDesk 800 G2, 16 GB | Control plane + workloads | 2M0329SJGQFJ |
-| bahamut | 192.168.1.17 | HP EliteDesk 800 G2, 16 GB | Control plane + workloads | 2M032LCJ78G7 |
+| bahamut | 192.168.1.17 | HP EliteDesk 800 G2, 16 GB | Control plane + Frigate only | 2M032LCJ78G7 |
 | odin | 192.168.1.14 | Minisforum GK41, 8 GB | Worker | LCMLCCC11202425 |
 | ifrit | 192.168.1.11 | Raspberry Pi 4, 4 GB | Radio worker | SD CID recorded in inventory |
 
@@ -45,8 +45,9 @@ No Ceph or Longhorn controller is included in the new tree.
 The static local StorageClass and home, media and monitoring PV bindings are defined; there is
 no dynamic provisioner. Production volume ownership, backup schedules and final
 application restores remain prerequisites. Test node affinity, retained data, reboot recovery
-and a restore from NAS before activating stateful workloads. No automatic
-stateful failover is required: applications can wait for their owning node.
+and a restore from NAS before activating stateful workloads. Local volumes do not provide automatic stateful failover: a service is unavailable while its storage node is unreachable.
+
+Bahamut is reserved for Frigate with the `dedicated=frigate:NoSchedule` taint; only Frigate tolerates it among application workloads. Kubernetes system services still run there. Frigate requests 2 CPU cores and 4 GiB of memory and is limited to 3 cores and 6 GiB. Home Assistant and Music Assistant use Summoner storage. PostgreSQL, Redis, Colony saves, and SteamTactics artwork use Odin storage. Moving these volumes requires stopping writers and verifying a data copy before rebinding; changing node affinity alone does not migrate data.
 
 ## Network and secrets
 

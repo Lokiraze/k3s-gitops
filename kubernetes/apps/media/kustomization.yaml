@@ -5,6 +5,7 @@ resources:
 - ./namespace.yaml
 - ./bazarr/ks.yaml
 - ./calibre-web/ks.yaml
+- ./flaresolverr/ks.yaml
 - ./jellyseer/ks.yaml
 - ./lazylibrarian/ks.yaml
 - ./lidarr/ks.yaml
