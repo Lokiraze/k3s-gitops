@@ -27,6 +27,7 @@ spec:
           operator: In
           values:
           - prowlarr
+          - cleanuparr
     - namespaceSelector:
         matchLabels:
           kubernetes.io/metadata.name: home

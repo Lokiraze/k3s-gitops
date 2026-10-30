@@ -180,6 +180,9 @@ def test_lazylibrarian_has_persistent_storage_and_protected_internal_route():
     assert network['ingress'] == [{'from': [{
         'namespaceSelector': {'matchLabels': {'kubernetes.io/metadata.name': 'network'}},
         'podSelector': {'matchLabels': {'gateway.envoyproxy.io/owning-gateway-name': 'envoy-internal'}},
+    }, {
+        'namespaceSelector': {'matchLabels': {'kubernetes.io/metadata.name': 'media'}},
+        'podSelector': {'matchLabels': {'app.kubernetes.io/name': 'cleanuparr'}},
     }], 'ports': [{'protocol': 'TCP', 'port': 5299}]}]
     prowlarr = yaml.safe_load((base.parent.parent / 'prowlarr/app/networkpolicy.yaml').read_text())
     assert 'lazylibrarian' in prowlarr['spec']['ingress'][0]['from'][1]['podSelector']['matchExpressions'][0]['values']

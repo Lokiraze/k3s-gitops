@@ -17,6 +17,12 @@ spec:
       podSelector:
         matchLabels:
           gateway.envoyproxy.io/owning-gateway-name: envoy-internal
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: media
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: cleanuparr
     ports:
     - protocol: TCP
       port: 5299
