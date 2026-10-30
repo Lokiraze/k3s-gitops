@@ -15,3 +15,15 @@ def test_cleanuparr_has_persistent_config_and_protected_internal_route():
     policy = yaml.safe_load((APP / 'securitypolicy.yaml').read_text())
     assert policy['spec']['targetRefs'][0]['name'] == route['metadata']['name']
     assert policy['spec']['extAuth']['failOpen'] is False
+
+
+def test_cleanuparr_direct_access_is_limited_to_the_authenticated_gateway():
+    policy = yaml.safe_load((APP / 'networkpolicy.yaml').read_text())['spec']
+    assert policy['podSelector']['matchLabels'] == {'app.kubernetes.io/name': 'cleanuparr'}
+    assert policy['policyTypes'] == ['Ingress']
+    assert policy['ingress'] == [{'from': [{
+        'namespaceSelector': {'matchLabels': {'kubernetes.io/metadata.name': 'network'}},
+        'podSelector': {'matchLabels': {'gateway.envoyproxy.io/owning-gateway-name': 'envoy-internal'}},
+    }], 'ports': [{'protocol': 'TCP', 'port': 11011}]}]
+    assert './networkpolicy.yaml' in yaml.safe_load((APP / 'kustomization.yaml').read_text())['resources']
+    assert {'name': 'cluster-apps-authelia'} in yaml.safe_load((APP.parent / 'ks.yaml').read_text())['spec']['dependsOn']

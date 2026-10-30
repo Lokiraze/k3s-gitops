@@ -1,9 +1,16 @@
 # Cleanuparr
 
 Open https://cleanuparr.lokiraze.dev on the home network and sign in through
-Authelia. Complete Cleanuparr's initial setup, then add the arr applications and
-download client through its settings. Queue cleanup is disabled on a fresh
-installation; configure and review its stall rules before enabling it.
+Authelia. Cleanuparr's persisted General → Authentication settings use
+`disableAuthForLocalAddresses: true` and `trustForwardedHeaders: false`, so the
+internal gateway's requests do not require a second login. The NetworkPolicy
+allows only that gateway to reach Cleanuparr's port; keep it in place whenever
+local-address authentication bypass is enabled.
+
+A fresh configuration needs Cleanuparr's initial administrator setup once, then
+the authentication settings above. Connections and cleanup rules are stored in
+its retained configuration. Queue cleanup remains disabled until its stall
+rules have been reviewed and enabled.
 
 Configuration is retained on Phoenix at
 `/var/lib/homelab/app-data/cleanuparr-config`, owned by UID/GID 568. Prepare this

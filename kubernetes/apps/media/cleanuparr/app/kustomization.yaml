@@ -8,3 +8,4 @@ resources:
 - ./config-pvc.yaml
 - ./httproute.yaml
 - ./securitypolicy.yaml
+- ./networkpolicy.yaml
