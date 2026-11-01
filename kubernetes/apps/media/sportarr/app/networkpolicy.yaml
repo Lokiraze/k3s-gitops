@@ -22,7 +22,7 @@ spec:
           kubernetes.io/metadata.name: media
       podSelector:
         matchLabels:
-          app.kubernetes.io/name: cleanuparr
+          app.kubernetes.io/name: prowlarr
     ports:
     - protocol: TCP
       port: 1867
