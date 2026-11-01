@@ -15,7 +15,7 @@ spec:
     namespace: network
     sectionName: https
   hostnames:
-  - sportarr.${SECRET_DOMAIN}
+  - sports.${SECRET_DOMAIN}
   rules:
   - backendRefs:
     - name: sportarr
