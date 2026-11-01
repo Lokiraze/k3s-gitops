@@ -8,7 +8,7 @@ metadata:
     gethomepage.dev/name: Sportarr
     gethomepage.dev/group: Media
     gethomepage.dev/icon: sportarr.svg
-    gethomepage.dev/href: https://sportarr.${SECRET_DOMAIN}
+    gethomepage.dev/href: https://sports.${SECRET_DOMAIN}
 spec:
   parentRefs:
   - name: envoy-internal
