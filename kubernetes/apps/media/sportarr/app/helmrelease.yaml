@@ -103,7 +103,7 @@ spec:
       media:
         type: nfs
         server: ${NFS_SERVER}
-        path: /mnt/user/media
+        path: /mnt/user/media/sports
         globalMounts:
         - path: /media
       downloads:
