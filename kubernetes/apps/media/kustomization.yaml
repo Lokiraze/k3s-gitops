@@ -16,3 +16,4 @@ resources:
 - ./recyclarr/ks.yaml
 - ./sonarr/ks.yaml
 - ./whisparr/ks.yaml
+- ./sportarr/ks.yaml

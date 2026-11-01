@@ -24,6 +24,7 @@ access_control:
     - cctv.${SECRET_DOMAIN}
     - librarian.${SECRET_DOMAIN}
     - cleanuparr.${SECRET_DOMAIN}
+    - sportarr.${SECRET_DOMAIN}
     subject: user:lokiraze
     policy: one_factor
 session:
