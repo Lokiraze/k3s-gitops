@@ -40,7 +40,7 @@ spec:
           calibre-web:
             image:
               repository: ghcr.io/linuxserver/calibre-web
-              tag: latest@sha256:470b4ed9a7d6ea1475fef17dbcf957cb60880910296d226bd0dca652c05f68ca
+              tag: latest@sha256:f9c692fba85ade1ce71b98364b860f72855055a59198894cc8c2ea49fc98a840
             env:
               DOCKER_MODS: ghcr.io/themepark-dev/theme.park:calibre-web
               TP_DOMAIN: theme-park.${SECRET_DOMAIN}
