@@ -40,7 +40,7 @@ spec:
           lidarr:
             image:
               repository: ghcr.io/linuxserver/lidarr
-              tag: latest@sha256:9fddcf5c613361edfce390d4e6b7c364282e71e90a40ce7793077fed788f6e63
+              tag: latest@sha256:d5707cfe084da21a3864c7ef0edd9c0543b5e26c79c551f84dad5ef8683af8c7
             env:
               LIDARR__AUTH__METHOD: External
               LIDARR__AUTH__REQUIRED: Enabled
