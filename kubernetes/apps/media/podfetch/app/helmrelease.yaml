@@ -40,7 +40,7 @@ spec:
           podfetch:
             image:
               repository: samuel19982/podfetch
-              tag: latest@sha256:74a95b960c1bbfb6d92c2455bd1a097ac11bac830490dc906445f5a554ca83ed
+              tag: latest@sha256:90db4dbee8c9224734bea53b28fa71f2a9f4ec9cecfe63de2fe8d96f69722bb2
             env:
               TZ: ${TIMEZONE}
               DATABASE_URL: sqlite:///app/db/podcast.db
