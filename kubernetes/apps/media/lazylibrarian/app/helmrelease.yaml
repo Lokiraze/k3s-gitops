@@ -37,7 +37,7 @@ spec:
           lazylibrarian:
             image:
               repository: ghcr.io/linuxserver/lazylibrarian
-              tag: latest@sha256:e167d819d7fc29d6210d9f9d6b5dae08fa4ebc49de27b184b47c287d8bc0047e
+              tag: latest@sha256:d546cccefa324860b65848375db51010b2667b16dbcc35a660b4d3fd15e04359
             env:
               TZ: ${TIMEZONE}
               PUID: '568'
