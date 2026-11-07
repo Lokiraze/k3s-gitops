@@ -23,6 +23,12 @@ spec:
       podSelector:
         matchLabels:
           app.kubernetes.io/name: cleanuparr
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: media
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: prowlarr
     ports:
     - protocol: TCP
       port: 5299
