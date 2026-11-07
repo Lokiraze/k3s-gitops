@@ -28,6 +28,8 @@ spec:
     adminWeb:
       enabled: false
     playerWeb:
+      nodeSelector:
+        kubernetes.io/arch: amd64
       resources:
         requests:
           cpu: 10m
@@ -36,6 +38,8 @@ spec:
           memory: 128Mi
     room:
       replicas: 1
+      nodeSelector:
+        kubernetes.io/arch: amd64
       resources: *id001
     runtime:
       starterPackID: 73ec0f80-d8b8-525c-9679-401d4216a21f

@@ -14,6 +14,8 @@ spec:
     imagePullSecrets:
     - name: gitea-registry
     api:
+      nodeSelector:
+        kubernetes.io/arch: amd64
       resources:
         requests:
           cpu: 50m
@@ -23,6 +25,8 @@ spec:
     admin:
       enabled: false
     player:
+      nodeSelector:
+        kubernetes.io/arch: amd64
       resources:
         requests:
           cpu: 10m
@@ -31,6 +35,8 @@ spec:
           memory: 128Mi
     server:
       replicas: 1
+      nodeSelector:
+        kubernetes.io/arch: amd64
       resources:
         requests:
           cpu: 100m

@@ -25,6 +25,8 @@ spec:
     admin:
       enabled: false
     player:
+      nodeSelector:
+        kubernetes.io/arch: amd64
       resources:
         requests:
           cpu: 10m

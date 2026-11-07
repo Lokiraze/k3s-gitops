@@ -17,6 +17,8 @@ spec:
       db: 1
     api:
       existingSecret: colony-api-runtime
+      nodeSelector:
+        kubernetes.io/arch: amd64
     admin:
       enabled: false
     server:
