@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    # Bootstrap scripts preserve existing databases when recreated after image updates.
+    kustomize.toolkit.fluxcd.io/force: enabled
+  name: tactics-bootstrap-v005
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      automountServiceAccountToken: false
+      containers:
+      - name: create-database
+        image: postgres:17.11-bookworm@sha256:665dc7b37ac52a17e298511414c21d23ffa4e6a6ef6225b3e5d59c7afb35e994
+        env:
+        - name: PGHOST
+          value: postgres.nsg.svc.cluster.local
+        - name: PGUSER
+          value: postgres
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nsg-dependencies
+              key: POSTGRES_PASSWORD
+        - name: TACTICS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: tactics-runtime
+              key: TACTICS_DB_PASSWORD
+        command:
+        - sh
+        - -ec
+        args:
+        - |
+          psql --dbname=postgres --set=ON_ERROR_STOP=1 --set=tactics_password="$TACTICS_DB_PASSWORD" <<'SQL'
+          SELECT format('CREATE ROLE tactics LOGIN PASSWORD %L', :'tactics_password')
+          WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'tactics') \gexec
+          SELECT 'CREATE DATABASE tactics OWNER tactics'
+          WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'tactics') \gexec
+          SQL
+          export PGUSER=tactics PGPASSWORD="$TACTICS_DB_PASSWORD"
+          tables=$(psql --dbname=tactics -v ON_ERROR_STOP=1 -Atc "SELECT count(*) FROM information_schema.tables WHERE table_schema='public'")
+          if [ "$tables" = 0 ]; then
+            psql --dbname=tactics -v ON_ERROR_STOP=1 -f /seed/seed.sql
+          else
+            echo 'Existing TACTICS database left unchanged.'
+          fi
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 128Mi
+        volumeMounts:
+        - name: seed
+          mountPath: /seed
+          readOnly: true
+      volumes:
+      - name: seed
+        configMap:
+          name: tactics-seed-v005

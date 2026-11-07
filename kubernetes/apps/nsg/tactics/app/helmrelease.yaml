@@ -1,0 +1,61 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: tactics
+  namespace: nsg
+spec:
+  interval: 5m
+  timeout: 15m
+  chartRef:
+    kind: OCIRepository
+    name: tactics
+  values:
+    existingSecret: tactics-runtime
+    imagePullSecrets:
+    - name: gitea-registry
+    api:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          memory: 256Mi
+    admin:
+      enabled: false
+    player:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          memory: 128Mi
+    server:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          memory: 1Gi
+    redis:
+      address: redis.nsg.svc.cluster.local:6379
+      database: 3
+      prefix: 'nsg:tactics:'
+    nats:
+      enabled: true
+      subject: tactics.game.results
+    runtime:
+      allowedOrigins:
+      - https://nsg.lokiraze.dev
+      - https://tactics.lokiraze.dev
+      websocketAllowedOrigins:
+      - nsg.lokiraze.dev
+      - tactics.lokiraze.dev
+    routes:
+      parentRefs:
+      - name: envoy-internal
+        namespace: network
+        sectionName: https
+      player:
+        enabled: true
+        hostname: tactics.lokiraze.dev

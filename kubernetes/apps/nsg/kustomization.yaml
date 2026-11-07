@@ -11,3 +11,5 @@ resources:
 - gitea-runner/ks.yaml
 - tds/bootstrap-ks.yaml
 - tds/ks.yaml
+- tactics/bootstrap-ks.yaml
+- tactics/ks.yaml

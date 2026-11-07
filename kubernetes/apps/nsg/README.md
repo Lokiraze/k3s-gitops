@@ -126,3 +126,12 @@ Agones SDK sidecar's health listener. The Fleet post-render patch moves the
 room environment variable and both container/Agones port declarations to 8081.
 The named readiness probe follows that port. API and web services stay on 8080.
 Remove this override once the upstream chart offers a nonconflicting room port.
+
+## Tactics Battle Arena
+
+The [Tactics deployment](tactics/README.md) follows stable private chart versions
+`>=0.0.5 <1.0.0`, with a separate PostgreSQL database, shared Redis database **3**,
+authenticated NATS and one Agones server. Identity serves the signed-in player at
+`https://nsg.lokiraze.dev/tactics`; its federation assets redirect to the LAN-only
+`https://tactics.lokiraze.dev` origin, which also proxies the game API. Bootstrap
+seeds only an empty database. Admin remains disabled.
