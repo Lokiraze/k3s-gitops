@@ -25,6 +25,12 @@ version is saved at `/config/dashboards/home-controls.before-camera-codes.yaml`.
 The five-camera version is saved at
 `/config/dashboards/home-controls.before-camera-reduction-20261111.yaml`.
 
+The Home Assistant Frigate integration uses
+`http://frigate.home.svc.cluster.local:8971` with its username and password fields
+empty. Frigate uses Authelia for browser access and permits Home Assistant through
+its NetworkPolicy; saved Frigate login credentials cause setup to fail because
+Frigate's built-in authentication is disabled.
+
 ## Air filter reminder
 
 Copy `../packages/air_filter_maintenance.yaml` to
