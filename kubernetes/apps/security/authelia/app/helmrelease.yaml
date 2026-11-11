@@ -38,7 +38,14 @@ spec:
             args:
             - --config
             - /config/configuration.yaml
+            - --config
+            - /config-secrets/oidc.yaml
             env:
+              AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: authelia-secret
+                    key: AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET
               AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD:
                 valueFrom:
                   secretKeyRef:
@@ -104,4 +111,13 @@ spec:
         name: authelia-config
         globalMounts:
         - path: /config
+          readOnly: true
+      oidc:
+        type: secret
+        name: authelia-secret
+        items:
+        - key: oidc.yaml
+          path: oidc.yaml
+        globalMounts:
+        - path: /config-secrets
           readOnly: true

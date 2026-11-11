@@ -1,20 +1,5 @@
 server:
   address: tcp://:9091/
-  endpoints:
-    authz:
-      # An explicit map replaces the defaults, so keep the standard endpoints.
-      ext-authz:
-        implementation: ExtAuthz
-      auth-request:
-        implementation: AuthRequest
-      forward-auth:
-        implementation: ForwardAuth
-      legacy:
-        implementation: Legacy
-      bar-assistant:
-        implementation: ExtAuthz
-        authn_strategies:
-        - name: CookieSession
 log:
   level: info
 authentication_backend:
@@ -40,7 +25,6 @@ access_control:
     - librarian.${SECRET_DOMAIN}
     - cleanuparr.${SECRET_DOMAIN}
     - sports.${SECRET_DOMAIN}
-    - bar.${SECRET_DOMAIN}
     subject: user:lokiraze
     policy: one_factor
 session:
@@ -58,3 +42,33 @@ storage:
 notifier:
   filesystem:
     filename: /data/notifications.txt
+identity_providers:
+  oidc:
+    # HMAC and signing keys are supplied by the encrypted Secret.
+    authorization_policies:
+      bar-assistant:
+        default_policy: deny
+        rules:
+        - policy: one_factor
+          subject: user:lokiraze
+    clients:
+    - client_id: bar-assistant
+      client_name: Bar Assistant
+      # Dollar signs in this digest are escaped for Flux substitution.
+      client_secret: '$$pbkdf2-sha512$$310000$$CPUlDIfVeprEqXPfmPttqA$$HWSx5rFq67SOdSPt8.o/JFTONocCwq9n8Fqh0zSknKqKAZeEMfpveBaZAAq2vwjY6UUZPkbTRuCk5qFkq0uK5A'
+      public: false
+      authorization_policy: bar-assistant
+      consent_mode: implicit
+      require_pkce: false
+      redirect_uris:
+      - https://bar.${SECRET_DOMAIN}/oauth/callback
+      scopes:
+      - openid
+      - profile
+      - email
+      - groups
+      response_types:
+      - code
+      grant_types:
+      - authorization_code
+      token_endpoint_auth_method: client_secret_post

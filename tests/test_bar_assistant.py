@@ -27,18 +27,34 @@ def test_bar_assistant_cannot_consume_unbounded_resources_or_run_on_radio_and_ca
             assert volume['spec']['nodeAffinity']['required']['nodeSelectorTerms'][0]['matchExpressions'][0]['values'] == ['k8s-phoenix']
 
 
-def test_bar_assistant_routes_require_home_login_and_direct_access_is_restricted():
-    policy = yaml.safe_load((BASE / 'securitypolicy.yaml').read_text())['spec']
-    assert policy['targetRefs'][0]['name'] == 'bar-assistant'
-    assert policy['extAuth']['failOpen'] is False
-    # Salt Rim always sends its own Authorization header, including before login.
+def test_bar_assistant_uses_one_home_login_and_blocks_password_registration():
+    values = yaml.safe_load((BASE / 'helmrelease.yaml').read_text())['spec']['values']
+    api = values['controllers']['api']['containers']['app']['env']
+    web = values['controllers']['web']['containers']['app']['env']
+    assert api['ENABLE_PASSWORD_LOGIN'] == 'false'
+    assert web['ALLOW_REGISTRATION'] == 'false'
+    assert web['REDIRECT_TO_SSO'] == 'true'
+    assert not (BASE / 'securitypolicy.yaml').exists()
+    assert './securitypolicy.yaml' not in yaml.safe_load((BASE / 'kustomization.yaml').read_text())['resources']
+    # The API's registration service is also used internally by SSO provisioning.
+    assert api['ALLOW_REGISTRATION'] == 'true'
+    nginx = values['configMaps']['api-nginx']['data']['sso-only.conf']
+    assert 'api/auth/register' in nginx and 'return 404;' in nginx
     auth = yaml.safe_load((BASE.parents[2] / 'security/authelia/app/configuration.yaml').read_text())
-    endpoints = auth['server']['endpoints']['authz']
-    endpoint_name = policy['extAuth']['http']['path'].strip('/').split('/')[-1]
-    assert endpoints[endpoint_name]['implementation'] == 'ExtAuthz'
-    assert endpoints[endpoint_name]['authn_strategies'] == [{'name': 'CookieSession'}]
-    assert 'cookie' in policy['extAuth']['headersToExtAuth']
-    assert {'ext-authz', 'auth-request', 'forward-auth', 'legacy'} <= endpoints.keys()
+    oidc = auth['identity_providers']['oidc']
+    client = next(c for c in oidc['clients'] if c['client_id'] == api['AUTHELIA_CLIENT_ID'])
+    assert client['redirect_uris'] == [api['AUTHELIA_REDIRECT_URI']]
+    assert client['redirect_uris'] == ['https://bar.${SECRET_DOMAIN}/oauth/callback']
+    assert client['token_endpoint_auth_method'] == 'client_secret_post'
+    assert {'openid', 'profile', 'email', 'groups'} <= set(client['scopes'])
+    assert client['public'] is False
+    assert client['client_secret'].startswith('$$pbkdf2-sha512$$')
+    assert oidc['authorization_policies'][client['authorization_policy']] == {
+        'default_policy': 'deny', 'rules': [{'policy': 'one_factor', 'subject': 'user:lokiraze'}],
+    }
+
+
+def test_bar_assistant_direct_access_is_restricted():
     network = yaml.safe_load((BASE / 'networkpolicy.yaml').read_text())['spec']
     assert network['policyTypes'] == ['Ingress']
     for rule in network['ingress']:

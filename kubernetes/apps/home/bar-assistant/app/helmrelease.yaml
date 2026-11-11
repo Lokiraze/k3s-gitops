@@ -108,6 +108,15 @@ spec:
               SESSION_DRIVER: file
               QUEUE_CONNECTION: sync
               ALLOW_REGISTRATION: 'true'
+              ENABLE_PASSWORD_LOGIN: 'false'
+              AUTHELIA_BASE_URL: https://auth.${SECRET_DOMAIN}
+              AUTHELIA_CLIENT_ID: bar-assistant
+              AUTHELIA_CLIENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: bar-assistant-secret
+                    key: AUTHELIA_CLIENT_SECRET
+              AUTHELIA_REDIRECT_URI: https://bar.${SECRET_DOMAIN}/oauth/callback
               MAIL_REQUIRE_CONFIRMATION: 'false'
               PHP_OPCACHE_MEMORY_CONSUMPTION: '128'
               PHP_MEMORY_LIMIT: 256M
@@ -191,7 +200,8 @@ spec:
               API_URL: https://bar.${SECRET_DOMAIN}/bar
               MEILISEARCH_URL: https://bar.${SECRET_DOMAIN}/search
               DEFAULT_LOCALE: en-US
-              ALLOW_REGISTRATION: 'true'
+              ALLOW_REGISTRATION: 'false'
+              REDIRECT_TO_SSO: 'true'
               MAILS_ENABLED: 'false'
       search:
         type: deployment
@@ -287,6 +297,15 @@ spec:
           http:
             port: 7700
     persistence:
+      api-nginx:
+        type: configMap
+        identifier: api-nginx
+        advancedMounts:
+          api:
+            app:
+            - path: /etc/nginx/server-opts.d/100-sso-only.conf
+              subPath: sso-only.conf
+              readOnly: true
       data:
         existingClaim: bar-assistant-data
         advancedMounts:
@@ -299,3 +318,11 @@ spec:
           search:
             app:
             - path: /meili_data
+    configMaps:
+      api-nginx:
+        data:
+          sso-only.conf: |
+            # SSO uses registration internally; block the public password-signup route.
+            location ~ ^/(?:index[.]php/)?api/auth/register/?$ {
+                return 404;
+            }
