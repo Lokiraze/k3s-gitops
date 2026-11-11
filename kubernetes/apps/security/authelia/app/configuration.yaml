@@ -25,6 +25,7 @@ access_control:
     - librarian.${SECRET_DOMAIN}
     - cleanuparr.${SECRET_DOMAIN}
     - sports.${SECRET_DOMAIN}
+    - bar.${SECRET_DOMAIN}
     subject: user:lokiraze
     policy: one_factor
 session:

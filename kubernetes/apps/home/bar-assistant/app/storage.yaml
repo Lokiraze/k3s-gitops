@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-bar-assistant-data
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-app-data
+  claimRef:
+    namespace: home
+    name: bar-assistant-data
+  local:
+    path: /var/lib/homelab/ssd-data/bar-assistant-data
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k8s-phoenix
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bar-assistant-data
+  namespace: home
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: local-app-data
+  volumeName: local-bar-assistant-data
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-bar-assistant-search
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-app-data
+  claimRef:
+    namespace: home
+    name: bar-assistant-search
+  local:
+    path: /var/lib/homelab/ssd-data/bar-assistant-search
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k8s-phoenix
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bar-assistant-search
+  namespace: home
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: local-app-data
+  volumeName: local-bar-assistant-search
