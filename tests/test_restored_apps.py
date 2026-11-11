@@ -200,7 +200,14 @@ def test_frigate_is_dedicated_and_has_bounded_resources():
     assert main['pod']['tolerations'] == [{
         'key': 'dedicated', 'operator': 'Equal', 'value': 'frigate', 'effect': 'NoSchedule',
     }]
-    assert main['containers']['app']['resources']['limits'] == {'cpu': '3', 'memory': '6Gi'}
+    assert main['containers']['app']['resources']['limits'] == {
+        'cpu': '2', 'memory': '6Gi', 'ephemeral-storage': '2Gi',
+    }
+    assert hr['spec']['values']['persistence']['shm']['sizeLimit'] == '1536Mi'
+    config = yaml.safe_load(hr['spec']['values']['configMaps']['config']['data']['config.yml'])
+    assert {name for name, camera in config['cameras'].items() if camera.get('enabled', True)} == {
+        'porch', 'garage',
+    }
     for path in (ROOT / 'kubernetes/apps').rglob('*.yaml'):
         if '/frigate/' not in str(path):
             assert 'k8s-bahamut' not in path.read_text(), str(path)

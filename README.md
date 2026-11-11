@@ -47,7 +47,11 @@ no dynamic provisioner. Production volume ownership, backup schedules and final
 application restores remain prerequisites. Test node affinity, retained data, reboot recovery
 and a restore from NAS before activating stateful workloads. Local volumes do not provide automatic stateful failover: a service is unavailable while its storage node is unreachable.
 
-Bahamut is reserved for Frigate with the `dedicated=frigate:NoSchedule` taint; only Frigate tolerates it among application workloads. Kubernetes system services still run there. Frigate requests 2 CPU cores and 4 GiB of memory and is limited to 3 cores and 6 GiB. Home Assistant and Music Assistant use Summoner storage. PostgreSQL, Redis, Colony saves, and SteamTactics artwork use Odin storage. Moving these volumes requires stopping writers and verifying a data copy before rebinding; changing node affinity alone does not migrate data.
+Bahamut is reserved for Frigate with the `dedicated=frigate:NoSchedule` taint; only Frigate tolerates it among application workloads. Kubernetes system services still run there. Frigate requests 2 CPU cores and 4 GiB of memory and is limited to 2 cores, 6 GiB of memory, and 2 GiB of local ephemeral storage. Its 1.5 GiB shared-memory allocation counts toward the memory limit; NAS media and the persistent database are outside the ephemeral-storage limit. Home Assistant and Music Assistant use Summoner storage. PostgreSQL, Redis, Colony saves, and SteamTactics artwork use Odin storage. Moving these volumes requires stopping writers and verifying a data copy before rebinding; changing node affinity alone does not migrate data.
+
+Frigate currently processes only porch and garage; backyard pathway and both side-alley cameras are disabled to reduce load. Its live HelmRelease has `kustomize.toolkit.fluxcd.io/reconcile: disabled` until these settings reach `main`; remove that annotation after merging to restore Git ownership.
+
+Lidarr uses Phoenix's additional 500 GB PNY USB SSD through a bind mount that preserves its existing PV path. See [Lidarr storage](kubernetes/apps/media/lidarr/README.md) for the persistent mounts and rollback copy.
 
 ## Network and secrets
 

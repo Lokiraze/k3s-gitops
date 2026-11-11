@@ -1,5 +1,16 @@
 # Shared Gitea home build runner
 
+The home runner is disabled (`replicas: 0`). On 2026-11-09, disk pressure on
+Phoenix evicted the runner and other application pods during a launcher release.
+Both `rust` and `release` jobs should use the existing VPS runners. This also
+pauses ordinary CI at home because launcher release builds use the `rust` label.
+Keep the home runner disabled until build storage is isolated from application
+storage. Its Docker caches and registration remain on disk.
+
+The live Deployment has `kustomize.toolkit.fluxcd.io/reconcile: disabled` to
+prevent Flux from restoring a replica before this change reaches `main`. Remove
+that annotation only after Flux's source contains `replicas: 0`.
+
 Organization-scoped Gitea runner for all repositories in `games`, pinned to Phoenix. It polls
 `https://git.noshamegames.com`; no inbound router port is needed.
 
@@ -17,18 +28,15 @@ The first startup builds the Rust CI image. Subsequent starts reuse Docker layer
 The first home build has cold caches; do not judge warm-build speed from it.
 Monitor node disk usage: these build caches share Phoenix's internal disk.
 
-Repositories opt in with `runs-on: release` or `runs-on: rust`.
-Merge this configuration and the corresponding workflow changes for Flux ownership
-and future jobs. Existing jobs on the VPS are unaffected. Removing the home deployment
-stops that runner but retains its disk data; the VPS remains eligible for jobs
-using the shared labels.
+Repositories use `runs-on: release` or `runs-on: rust`; the VPS remains eligible
+for jobs using these shared labels while the home runner is disabled.
 
 Verification does not require publishing a release. Use a CI run after merging
 a repository's workflow changes; release publication remains triggered by user tags.
 
 The VPS has separate `runner-rust` (`rust`) and `runner-release` (`release`)
 Docker Compose services. The Rust runner uses the same Rust CI Dockerfile.
-The home runner advertises both labels. Gitea assigns queued jobs to an available matching
+When enabled, the home runner advertises both labels. Gitea assigns queued jobs to an available matching
 runner; it does not prefer home or migrate an in-flight job after a host failure.
 Runner configuration sets `CARGO_BUILD_JOBS` to 3 at home and 2 on the VPS.
 

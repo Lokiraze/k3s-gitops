@@ -15,13 +15,15 @@ The previous live dashboard is saved as `/config/dashboards/media.before-grid.ya
 ## Home Controls
 
 `home-controls.yaml` is the source copy of `/config/dashboards/home-controls.yaml`,
-registered under the existing `home-controls` dashboard. It shows the five Frigate
-camera previews and links to the ten existing Keymaster code slots. PIN values
-are stored by Keymaster, never in this file. Adding the dashboard does not change
-slot names, PINs, enabled state, lock pairing, or thermostat settings.
+registered under the existing `home-controls` dashboard. It shows the porch and
+garage Frigate camera previews and links to the ten existing Keymaster code slots.
+PIN values are stored by Keymaster, never in this file. Adding the dashboard does
+not change slot names, PINs, enabled state, lock pairing, or thermostat settings.
 
 The live dashboard was updated directly; Flux does not copy this file. The prior
 version is saved at `/config/dashboards/home-controls.before-camera-codes.yaml`.
+The five-camera version is saved at
+`/config/dashboards/home-controls.before-camera-reduction-20261111.yaml`.
 
 ## Air filter reminder
 

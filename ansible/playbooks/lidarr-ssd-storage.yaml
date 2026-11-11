@@ -1,0 +1,80 @@
+---
+- name: Maintain Lidarr storage on Phoenix's prepared USB SSD
+  hosts: k8s-phoenix
+  become: true
+  gather_facts: false
+  vars:
+    lidarr_ssd_device: /dev/disk/by-id/ata-PNY_CS900_500GB_SSD_PNY412022958311028CD
+    lidarr_ssd_root: /var/lib/homelab/ssd-data
+    lidarr_config: /var/lib/homelab/app-data/lidarr-config
+  tasks:
+    - name: Verify the application data parent remains on the internal root filesystem
+      ansible.builtin.command: findmnt -n -o TARGET --target /var/lib/homelab/app-data
+      register: app_mount
+      changed_when: false
+      check_mode: false
+      failed_when: app_mount.stdout != '/'
+    - name: Identify the prepared SSD without changing its contents
+      ansible.builtin.command:
+        argv: [blkid, --probe, --output, export, "{{ lidarr_ssd_device }}"]
+      register: lidarr_ssd_identity
+      changed_when: false
+      check_mode: false
+    - name: Require the expected prepared filesystem
+      ansible.builtin.assert:
+        that:
+          - "'TYPE=ext4' in lidarr_ssd_identity.stdout_lines"
+          - "'LABEL=phoenix-apps' in lidarr_ssd_identity.stdout_lines"
+          - lidarr_ssd_identity.stdout_lines | select('match', '^UUID=[0-9a-f-]+$') | list | length == 1
+        fail_msg: The recorded PNY SSD must already be formatted and migrated; this playbook never formats or copies data.
+    - name: Require the expected SSD mount or an empty prepared directory
+      ansible.builtin.shell: |
+        set -e
+        if mountpoint -q {{ lidarr_ssd_root | quote }}; then
+          test "UUID=$(findmnt -n -o UUID --mountpoint {{ lidarr_ssd_root | quote }})" = {{ lidarr_ssd_identity.stdout_lines | select('match', '^UUID=') | first | quote }}
+        else
+          contents=$(find {{ lidarr_ssd_root | quote }} -mindepth 1 -maxdepth 1 -print -quit)
+          test -z "$contents"
+        fi
+      changed_when: false
+      check_mode: false
+    - name: Persist and mount the prepared SSD
+      ansible.posix.mount:
+        path: "{{ lidarr_ssd_root }}"
+        src: "{{ lidarr_ssd_identity.stdout_lines | select('match', '^UUID=') | first }}"
+        fstype: ext4
+        opts: defaults,noatime,nofail,x-systemd.device-timeout=10s
+        passno: '2'
+        state: mounted
+    - name: Verify the SSD mount uses the discovered filesystem
+      ansible.builtin.command:
+        argv: [findmnt, --noheadings, --output, UUID, --mountpoint, "{{ lidarr_ssd_root }}"]
+      register: lidarr_ssd_mount
+      changed_when: false
+      check_mode: false
+      failed_when: "('UUID=' + lidarr_ssd_mount.stdout) not in lidarr_ssd_identity.stdout_lines"
+    - name: Require the migrated Lidarr database and restore marker
+      ansible.builtin.shell: |
+        set -e
+        test "$(cat {{ (lidarr_ssd_root + '/lidarr-config/.restore-verified') | quote }})" = lidarr-config
+        test -s {{ (lidarr_ssd_root + '/lidarr-config/lidarr.db') | quote }}
+      changed_when: false
+      check_mode: false
+    - name: Require the existing bind or an empty prepared target
+      ansible.builtin.shell: |
+        set -e
+        if mountpoint -q {{ lidarr_config | quote }}; then
+          test "$(stat -c '%d:%i' {{ lidarr_config | quote }})" = "$(stat -c '%d:%i' {{ (lidarr_ssd_root + '/lidarr-config') | quote }})"
+        else
+          contents=$(find {{ lidarr_config | quote }} -mindepth 1 -maxdepth 1 -print -quit)
+          test -z "$contents"
+        fi
+      changed_when: false
+      check_mode: false
+    - name: Persist the bind mount used by the existing Lidarr volume
+      ansible.posix.mount:
+        path: "{{ lidarr_config }}"
+        src: "{{ lidarr_ssd_root }}/lidarr-config"
+        fstype: none
+        opts: "bind,nofail,x-systemd.requires-mounts-for={{ lidarr_ssd_root }}"
+        state: mounted

@@ -118,9 +118,12 @@ spec:
               requests:
                 cpu: "2"
                 memory: 4Gi
+                ephemeral-storage: 256Mi
               limits:
-                cpu: "3"
+                # Leave half the node's CPU capacity for k3s and host services.
+                cpu: "2"
                 memory: 6Gi
+                ephemeral-storage: 2Gi
     service:
       main:
         controller: main
@@ -154,7 +157,8 @@ spec:
       shm:
         type: emptyDir
         medium: Memory
-        sizeLimit: 1Gi
+        # Camera frame buffers count toward the container's memory limit.
+        sizeLimit: 1536Mi
         advancedMounts:
           main:
             app:
@@ -236,6 +240,7 @@ spec:
                   width: 3840
                   fps: 5
               backyard_pathway_1:
+                enabled: false
                 ffmpeg:
                   inputs:
                   - path: '{FRIGATE_BACKYARD_PATHWAY_CAMERA_1}'
@@ -248,6 +253,7 @@ spec:
                   width: 3840
                   fps: 5
               side_alley_1:
+                enabled: false
                 ffmpeg:
                   inputs:
                   - path: '{FRIGATE_SIDE_ALLEY_CAMERA_1}'
@@ -260,6 +266,7 @@ spec:
                   width: 3840
                   fps: 5
               side_alley_2:
+                enabled: false
                 ffmpeg:
                   inputs:
                   - path: '{FRIGATE_SIDE_ALLEY_CAMERA_2}'

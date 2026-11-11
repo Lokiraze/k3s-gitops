@@ -73,36 +73,6 @@ views:
       grid_options:
         columns: 6
         rows: auto
-    - type: picture-entity
-      entity: camera.backyard_pathway_1
-      name: Backyard pathway
-      camera_view: auto
-      show_state: false
-      tap_action:
-        action: more-info
-      grid_options:
-        columns: 6
-        rows: auto
-    - type: picture-entity
-      entity: camera.side_alley_1
-      name: Side alley 1
-      camera_view: auto
-      show_state: false
-      tap_action:
-        action: more-info
-      grid_options:
-        columns: 6
-        rows: auto
-    - type: picture-entity
-      entity: camera.side_alley_2
-      name: Side alley 2
-      camera_view: auto
-      show_state: false
-      tap_action:
-        action: more-info
-      grid_options:
-        columns: 6
-        rows: auto
 - title: Door codes
   path: codes
   subview: true
