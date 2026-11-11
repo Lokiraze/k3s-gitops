@@ -31,6 +31,14 @@ def test_bar_assistant_routes_require_home_login_and_direct_access_is_restricted
     policy = yaml.safe_load((BASE / 'securitypolicy.yaml').read_text())['spec']
     assert policy['targetRefs'][0]['name'] == 'bar-assistant'
     assert policy['extAuth']['failOpen'] is False
+    # Salt Rim always sends its own Authorization header, including before login.
+    auth = yaml.safe_load((BASE.parents[2] / 'security/authelia/app/configuration.yaml').read_text())
+    endpoints = auth['server']['endpoints']['authz']
+    endpoint_name = policy['extAuth']['http']['path'].strip('/').split('/')[-1]
+    assert endpoints[endpoint_name]['implementation'] == 'ExtAuthz'
+    assert endpoints[endpoint_name]['authn_strategies'] == [{'name': 'CookieSession'}]
+    assert 'cookie' in policy['extAuth']['headersToExtAuth']
+    assert {'ext-authz', 'auth-request', 'forward-auth', 'legacy'} <= endpoints.keys()
     network = yaml.safe_load((BASE / 'networkpolicy.yaml').read_text())['spec']
     assert network['policyTypes'] == ['Ingress']
     for rule in network['ingress']:

@@ -25,6 +25,9 @@ The HTTPRoute exposes `/bar` for the API, `/search` for Meilisearch, and `/` for
 Salt Rim, stripping the two prefixes before forwarding. All paths require
 Authelia. Direct pod access is limited to the internal gateway and the API's
 connection to search. The route also adds a Home dashboard link automatically.
+The dedicated Authelia authorization endpoint checks the home-login cookie only;
+Salt Rim's `Authorization` header belongs to Bar Assistant and must not be
+interpreted as Authelia credentials.
 
 Home Assistant Marketplace has no default Bar Assistant entry. The community
 [HA-Bar_Assistant integration](https://github.com/Aesgarth/HA-Bar_Assistant)

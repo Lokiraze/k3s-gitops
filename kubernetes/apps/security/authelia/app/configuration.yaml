@@ -1,5 +1,20 @@
 server:
   address: tcp://:9091/
+  endpoints:
+    authz:
+      # An explicit map replaces the defaults, so keep the standard endpoints.
+      ext-authz:
+        implementation: ExtAuthz
+      auth-request:
+        implementation: AuthRequest
+      forward-auth:
+        implementation: ForwardAuth
+      legacy:
+        implementation: Legacy
+      bar-assistant:
+        implementation: ExtAuthz
+        authn_strategies:
+        - name: CookieSession
 log:
   level: info
 authentication_backend:
