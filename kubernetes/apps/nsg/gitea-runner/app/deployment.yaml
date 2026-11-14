@@ -21,7 +21,7 @@ spec:
         kubernetes.io/hostname: k8s-phoenix
       initContainers:
         - name: docker
-          image: docker:27.5.1-dind
+          image: docker:29.9.3-dind
           restartPolicy: Always
           args: ["dockerd", "--host=unix:///var/run/docker.sock", "--storage-driver=overlay2"]
           env:
@@ -47,7 +47,7 @@ spec:
             - name: docker-socket
               mountPath: /var/run
         - name: build-job-images
-          image: docker:27.5.1-cli
+          image: docker:29.9.3-cli
           command: [sh, -ec]
           args:
             - |
