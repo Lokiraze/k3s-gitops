@@ -1,5 +1,5 @@
 FROM node:26-bookworm AS node
-FROM rust:1.99.1-bookworm
+FROM rust:1.100.0-bookworm
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl git pkg-config protobuf-compiler libprotobuf-dev \
