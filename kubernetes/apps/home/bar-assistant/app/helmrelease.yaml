@@ -221,7 +221,7 @@ spec:
           app:
             image:
               repository: getmeili/meilisearch
-              tag: v1.50@sha256:9694a59df43ee3f54b3fda9c5de381a3ee9852678e3e31cadf37d6bddea7fc1b
+              tag: v1.56@sha256:9600db22be3fcbf3d506176d3a73dd70a65c5719d9aa1d2837355b75afb8f4fb
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
