@@ -13,7 +13,7 @@ spec:
       automountServiceAccountToken: false
       containers:
       - name: create-database
-        image: postgres:17.11-bookworm@sha256:665dc7b37ac52a17e298511414c21d23ffa4e6a6ef6225b3e5d59c7afb35e994
+        image: postgres:17.12-bookworm@sha256:40865bc877a289da75963d97d72b59633f639fc5af7a4e856bfa3714cae5b536
         env:
         - name: PGHOST
           value: postgres.nsg.svc.cluster.local
