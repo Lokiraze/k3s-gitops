@@ -35,7 +35,7 @@ spec:
           app:
             image:
               repository: ghcr.io/themepark-dev/theme.park
-              tag: 1.23.0@sha256:8ab4c2b0c416d21b51392b699f2193177ed9268acac6cd70232c4169de325c17
+              tag: 1.24.0@sha256:1d8433526c112a29f8332626ac829e6f4e771e82f0843163edff322f9c489c4f
             env:
               TZ: ${TIMEZONE}
               PUID: '568'
