@@ -107,7 +107,7 @@ spec:
           mongodb:
             image:
               repository: docker.io/library/mongo
-              tag: 8.0.34@sha256:b9924c330a8bbc5800fe9c69f04a84e221eca7b28fd049a0354147d9908fa142
+              tag: 9.0.8@sha256:b0c835c26e5997413e985000f1013c275377cd9607761c1784d486f6dd620b7f
             args:
             - --bind_ip
             - 127.0.0.1
