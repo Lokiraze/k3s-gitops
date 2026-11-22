@@ -9,6 +9,10 @@ After Flux reconciles, open <https://music.lokiraze.dev> and complete
 first-run setup by creating an administrator account. Add your music sources and
 confirm that your speakers are discovered and can play audio.
 
+The NAS music library is mounted read-only at `/music`. In Music Assistant, add
+the local-files provider and point it at `/music` so owned tracks are indexed
+directly by Music Assistant instead of going through Jellyfin.
+
 To expose Music Assistant players in Home Assistant, open **Settings → Devices &
 services → Add integration → Music Assistant**. Use `http://192.168.1.17:8095`
 and sign in with your Music Assistant administrator account when prompted.
@@ -21,8 +25,9 @@ the stream server uses TCP 8097, with additional dynamic ports for individual
 player protocols. Host networking enables mDNS/uPnP discovery. The HTTPS route
 is for browser access; it does not replace direct LAN streaming. Music Assistant
 and the players must share a layer-2 network. `NET_BIND_SERVICE` is the only
-added capability, needed for AirPlay 2 PTP timing on UDP 319/320. Mounting SMB/NFS
-shares inside this container is deliberately not enabled.
+added capability, needed for AirPlay 2 PTP timing on UDP 319/320. The NAS music
+share is mounted by Kubernetes and exposed as a read-only local path; mounting
+SMB/NFS shares from inside this container is deliberately not enabled.
 
 Validation: the pinned 2.10.7 image started on Bahamut with this configuration,
 reported its LAN address as `192.168.1.17`, and served `/setup` through a temporary

@@ -36,3 +36,21 @@ def test_music_assistant_retains_data_on_bahamut():
     assert pv['spec']['local']['path'] == '/var/lib/homelab/app-data/music-assistant-data'
     assert pv['spec']['nodeAffinity']['required']['nodeSelectorTerms'][0]['matchExpressions'][0]['values'] == ['k8s-summoner']
     assert data['globalMounts'] == [{'path': '/data'}]
+
+
+def test_music_assistant_mounts_owned_music_read_only():
+    music = read('helmrelease.yaml')['spec']['values']['persistence']['music']
+    assert music['enabled'] is True
+    assert music['type'] == 'nfs'
+    assert music['server'] == '${NFS_SERVER}'
+    assert music['path'] == '/mnt/user/media/music'
+    assert music['advancedMounts'] == {
+        'main': {
+            'app': [
+                {
+                    'path': '/music',
+                    'readOnly': True,
+                },
+            ],
+        },
+    }

@@ -92,3 +92,13 @@ spec:
         existingClaim: music-assistant-data
         globalMounts:
         - path: /data
+      music:
+        enabled: true
+        type: nfs
+        server: ${NFS_SERVER}
+        path: /mnt/user/media/music
+        advancedMounts:
+          main:
+            app:
+            - path: /music
+              readOnly: true
