@@ -13,7 +13,7 @@ spec:
       restartPolicy: OnFailure
       containers:
       - name: seed
-        image: postgres:17.12-bookworm@sha256:837bed18782820fe967067cb5328b02b0d9992c1be9a37ee0c9c492cfc03af3b
+        image: postgres:17.12-bookworm@sha256:1eff563f6c868b9b433566e9f3cf6e5c79fbd3b95bf70ec7277d376cdbfc50d7
         env:
         - name: DATABASE_DSN
           valueFrom:
