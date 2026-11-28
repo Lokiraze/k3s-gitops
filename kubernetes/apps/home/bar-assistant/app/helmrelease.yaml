@@ -150,7 +150,7 @@ spec:
           app:
             image:
               repository: barassistant/salt-rim
-              tag: 5.11.0@sha256:7aa57a94f7cd8b2456c44881254937d28e0b5ed897e299b05a4624ca7d822317
+              tag: 5.12.0@sha256:7d40a6b98cfac7fb0b82e28a082c168c5219fbcba739a5590d8b74065bd35782
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
